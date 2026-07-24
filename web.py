@@ -51,19 +51,20 @@ st.sidebar.markdown(
     "<link href='https://googleapis.com' rel='stylesheet'>"
     
     "<div style='text-align: center; margin-bottom: 30px; padding-top: 15px; user-select: none;'>"
-    # SHAZAM in Verde Smarald
+    # SHAZAM in Verde Smarald Neon, Stralucitor si ITALIC
     "<span style='font-family: \"Caveat\", cursive, sans-serif; "
-    "font-size: 38px; font-weight: 600; color: #097969; "
-    "text-shadow: 0 0 2px rgba(9,121,105,0.2); letter-spacing: 1px;'>"
+    "font-size: 42px; font-weight: 700; font-style: italic; color: #50C878; "
+    "text-shadow: 0 0 5px #50C878, 0 0 15px #50C878, 0 0 25px #50C878; letter-spacing: 1px;'>"
     "shazam</span>"
-    # Linia - in Rosu aprins
+    # Linia - in Rosu Laser, Stralucitoare si ITALIC
     "<span style='font-family: \"Caveat\", cursive, sans-serif; "
-    "font-size: 38px; font-weight: 600; color: #FF0000; margin: 0 2px;'>"
+    "font-size: 42px; font-weight: 700; font-style: italic; color: #FF3131; margin: 0 4px; "
+    "text-shadow: 0 0 5px #FF3131, 0 0 15px #FF3131;'>"
     "-</span>"
-    # BIM in Turcoaz inchis
+    # BIM in Turcoaz Electric, Stralucitor si ITALIC
     "<span style='font-family: \"Caveat\", cursive, sans-serif; "
-    "font-size: 38px; font-weight: 600; color: #005F73; "
-    "text-shadow: 0 0 2px rgba(0,95,115,0.2); letter-spacing: 1px;'>"
+    "font-size: 42px; font-weight: 700; font-style: italic; color: #008B8B; "
+    "text-shadow: 0 0 5px #00FFFF, 0 0 15px #008B8B, 0 0 25px #008B8B; letter-spacing: 1px;'>"
     "bim</span>"
     "</div>", 
     unsafe_allow_html=True

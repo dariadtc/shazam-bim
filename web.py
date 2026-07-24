@@ -78,7 +78,7 @@ if "otp_reset" not in st.session_state:
 if "email_reset_target" not in st.session_state:
   st.session_state.email_reset_target = None
 
-# 2. Injectare CSS Custom - DEEP EMERALD & OCEAN BLUE THEME (PROFESSIONAL UI)
+# 2. Injectare CSS Custom
 st.markdown(
     """
     <style>
@@ -249,7 +249,7 @@ st.markdown(
 )
 
 # -----------------------------------------------------------------------------
-# 3. BAZĂ DE DATE & MOTOR GEODEZIC REAL
+# 3. BAZĂ DE DATE & MOTOR GEODEZIC REAL (CU MIGRARE SIGURĂ)
 # -----------------------------------------------------------------------------
 
 
@@ -262,12 +262,14 @@ def init_db():
   c = conn.cursor()
   c.execute(
       "CREATE TABLE IF NOT EXISTS utilizatori (id INTEGER PRIMARY KEY"
-      " AUTOINCREMENT, email TEXT UNIQUE, parola TEXT, data_inregistrare TEXT)"
+      " AUTOINCREMENT, email TEXT UNIQUE, parola TEXT, data_inregistrare"
+      " TEXT)"
   )
   c.execute(
       "CREATE TABLE IF NOT EXISTS scanari (id INTEGER PRIMARY KEY"
-      " AUTOINCREMENT, user_email TEXT, nume_proiect TEXT, data_procesare TEXT,"
-      " suprafata REAL, volum REAL, min_z REAL, max_z REAL, puncte INTEGER)"
+      " AUTOINCREMENT, user_email TEXT, nume_proiect TEXT, data_procesare"
+      " TEXT, suprafata REAL, volum REAL, min_z REAL, max_z REAL, puncte"
+      " INTEGER)"
   )
   c.execute(
       "CREATE TABLE IF NOT EXISTS mesaje_contact (id INTEGER PRIMARY KEY"
@@ -275,19 +277,20 @@ def init_db():
       " mesaj TEXT)"
   )
 
-  # Migrare compatibilitate tabele vechi
-  try:
-    c.execute("ALTER TABLE scanari ADD COLUMN user_email TEXT")
-  except sqlite3.OperationalError:
-    pass
-  try:
-    c.execute("ALTER TABLE scanari ADD COLUMN suprafata REAL")
-  except sqlite3.OperationalError:
-    pass
-  try:
-    c.execute("ALTER TABLE scanari ADD COLUMN volum REAL")
-  except sqlite3.OperationalError:
-    pass
+  # Adăugare automată coloane lipsă pentru a evita erorile de migrare baze de date vechi
+  coloane_de_verificat = [
+      ("user_email", "TEXT"),
+      ("suprafata", "REAL"),
+      ("volum", "REAL"),
+      ("min_z", "REAL"),
+      ("max_z", "REAL"),
+      ("puncte", "INTEGER"),
+  ]
+  for col_nume, col_tip in coloane_de_verificat:
+    try:
+      c.execute(f"ALTER TABLE scanari ADD COLUMN {col_nume} {col_tip}")
+    except sqlite3.OperationalError:
+      pass
 
   conn.commit()
   conn.close()
@@ -765,7 +768,6 @@ with tab_main:
   if up is not None:
     nume_proiect = up.name
 
-    # Rulare calcul doar la apăsarea butonului
     if lansa_btn:
       with st.spinner(
           "⚙️ Se calculează rețeaua Delaunay și volumul prismatic pe fișierul"
@@ -788,7 +790,6 @@ with tab_main:
             f"🎉 Analiză geodezică finalizată pentru **{nume_proiect}**!"
         )
 
-    # Dacă avem rezultate salvate în sesiune le afișăm permanent
     if "ultimul_rezultat" in st.session_state:
       rezultate_geo, nume_proiect = st.session_state["ultimul_rezultat"]
 

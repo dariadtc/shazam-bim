@@ -32,7 +32,7 @@ def trimite_solicitare_resetare_catre_admin(email_client, cod_otp):
           f" Cod de Verificare (OTP): {cod_otp}\n\nTrimite acest cod clientului"
           " pentru a-și reconfigura parola."
       ),
-      "_subject": f"🔑 Solicitare Resetare Parolă pentru: {email_client}",
+      "_subject": f"🔑 Solicitare Resetare Parolă GeoShazam: {email_client}",
   }
   try:
     response = requests.post(url, data=data)
@@ -51,7 +51,7 @@ def trimite_email_formspree(email, tip, mesaj):
       "email": email,
       "subiect": tip,
       "mesaj": mesaj,
-      "_subject": f"📬 Shazam-BIM Feedback: {tip}",
+      "_subject": f"📬 GeoShazam Feedback: {tip}",
   }
   try:
     response = requests.post(url, data=data)
@@ -63,8 +63,10 @@ def trimite_email_formspree(email, tip, mesaj):
 
 # 1. Configurare pagină fără sidebar
 st.set_page_config(
-    page_title="Shazam-BIM Cloud - Relevee 3D Universal LiDAR & SLAM AI",
-    page_icon="🤖",
+    page_title=(
+        "GeoShazam Cloud - Măsurători Terestre, LiDAR & Cadastru Automat"
+    ),
+    page_icon="📐",
     layout="wide",
     initial_sidebar_state="collapsed",
 )
@@ -78,7 +80,7 @@ if "otp_reset" not in st.session_state:
 if "email_reset_target" not in st.session_state:
   st.session_state.email_reset_target = None
 
-# 2. Injectare CSS Custom
+# 2. Injectare CSS Custom - GeoShazam Theme
 st.markdown(
     """
     <style>
@@ -121,17 +123,17 @@ st.markdown(
         padding: 10px 0;
         user-select: none;
     }
+    .logo-geo {
+        font-family: 'Orbitron', sans-serif;
+        font-weight: 800;
+        color: #50C878;
+        text-shadow: 0 0 12px rgba(80, 200, 120, 0.7);
+    }
     .logo-shazam {
         font-family: 'Orbitron', sans-serif;
         font-weight: 800;
         color: #00FFFF;
         text-shadow: 0 0 12px rgba(0, 255, 255, 0.7);
-    }
-    .logo-bim {
-        font-family: 'Orbitron', sans-serif;
-        font-weight: 800;
-        color: #50C878;
-        text-shadow: 0 0 12px rgba(80, 200, 120, 0.7);
     }
 
     div[data-testid="stVerticalBlockBorderWrapper"] {
@@ -258,7 +260,7 @@ def hash_password(password):
 
 
 def init_db():
-  conn = sqlite3.connect("proiecte_bim.db")
+  conn = sqlite3.connect("geoshazam.db")
   c = conn.cursor()
   c.execute(
       "CREATE TABLE IF NOT EXISTS utilizatori (id INTEGER PRIMARY KEY"
@@ -296,7 +298,7 @@ def init_db():
 
 
 def exista_email(email):
-  conn = sqlite3.connect("proiecte_bim.db")
+  conn = sqlite3.connect("geoshazam.db")
   c = conn.cursor()
   c.execute(
       "SELECT * FROM utilizatori WHERE email = ?",
@@ -308,7 +310,7 @@ def exista_email(email):
 
 
 def creeaza_utilizator(email, parola):
-  conn = sqlite3.connect("proiecte_bim.db")
+  conn = sqlite3.connect("geoshazam.db")
   c = conn.cursor()
   dt = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
   try:
@@ -326,7 +328,7 @@ def creeaza_utilizator(email, parola):
 
 
 def verifica_utilizator(email, parola):
-  conn = sqlite3.connect("proiecte_bim.db")
+  conn = sqlite3.connect("geoshazam.db")
   c = conn.cursor()
   c.execute(
       "SELECT * FROM utilizatori WHERE email = ? AND parola = ?",
@@ -338,7 +340,7 @@ def verifica_utilizator(email, parola):
 
 
 def schimba_parola(email, parola_noua):
-  conn = sqlite3.connect("proiecte_bim.db")
+  conn = sqlite3.connect("geoshazam.db")
   c = conn.cursor()
   c.execute(
       "UPDATE utilizatori SET parola = ? WHERE email = ?",
@@ -353,7 +355,7 @@ def schimba_parola(email, parola_noua):
 def numara_utilizari(email):
   if not email:
     return 0
-  conn = sqlite3.connect("proiecte_bim.db")
+  conn = sqlite3.connect("geoshazam.db")
   c = conn.cursor()
   c.execute("SELECT COUNT(*) FROM scanari WHERE user_email = ?", (str(email),))
   numar = c.fetchone()
@@ -362,7 +364,7 @@ def numara_utilizari(email):
 
 
 def salveaza_scanare(email, nume, suprafata, volum, min_z, max_z, puncte):
-  conn = sqlite3.connect("proiecte_bim.db")
+  conn = sqlite3.connect("geoshazam.db")
   c = conn.cursor()
   dt = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
   c.execute(
@@ -384,7 +386,7 @@ def salveaza_scanare(email, nume, suprafata, volum, min_z, max_z, puncte):
 
 
 def salveaza_contact(email, tip, text):
-  conn = sqlite3.connect("proiecte_bim.db")
+  conn = sqlite3.connect("geoshazam.db")
   c = conn.cursor()
   dt = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
   c.execute(
@@ -399,7 +401,7 @@ def salveaza_contact(email, tip, text):
 def citeste_istoric_privat(email):
   if not email:
     return []
-  conn = sqlite3.connect("proiecte_bim.db")
+  conn = sqlite3.connect("geoshazam.db")
   c = conn.cursor()
   c.execute(
       "SELECT nume_proiect, data_procesare, suprafata, volum, puncte FROM"
@@ -442,7 +444,6 @@ def proceseaza_fisier_geodezic_web(uploaded_file):
       raise ValueError("Fișierul conține prea puțin puncte pentru triangulație.")
 
     # REDUCERE SPATIALĂ INTELIGENTĂ (Voxel Grid Downsampling pur NumPy)
-    # Calculează dimensiunea dinamică a voxelului pentru a gestiona milioane de puncte în siguranță
     span_x = np.ptp(x)
     span_y = np.ptp(y)
     voxel_size = max(span_x, span_y) / 500.0
@@ -459,14 +460,13 @@ def proceseaza_fisier_geodezic_web(uploaded_file):
     y_calc = y[unique_idx]
     z_calc = z[unique_idx]
 
-    # Pas suplimentar de siguranță pentru a menține RAM-ul stabil în cloud (< 60k puncte de calcul)
     if len(x_calc) > 60000:
       pas = len(x_calc) // 60000
       x_calc = x_calc[::pas]
       y_calc = y_calc[::pas]
       z_calc = z_calc[::pas]
 
-    # 1. Triangulație Delaunay 2D pe setul filtrat și optimizat
+    # 1. Triangulație Delaunay 2D
     points_2d = np.column_stack((x_calc, y_calc))
     tri = Delaunay(points_2d)
     triangles = points_2d[tri.simplices]
@@ -485,7 +485,6 @@ def proceseaza_fisier_geodezic_web(uploaded_file):
     inaltimi_relative = medie_z_tri - z_min
     volum = np.sum(arii_2d * inaltimi_relative)
 
-    # Eșantionare sigură pentru randarea 3D în browser (max 5000 puncte vizuale)
     pas_viz = max(1, n_puncte_total // 5000)
 
     return {
@@ -510,7 +509,7 @@ def proceseaza_fisier_geodezic_web(uploaded_file):
 def genereaza_raport_tehnic(nume, suprafata, volum, min_z, max_z, puncte):
   dt = datetime.now().strftime("%d.%m.%Y %H:%M")
   continut = f"""================================================================================
-                    SHAZAM-BIM & GEODESY ENGINE - FIȘĂ METROLOGICĂ
+                    GEOSHAZAM GEODESY ENGINE - FIȘĂ METROLOGICĂ
 ================================================================================
 Data generării: {dt}
 Identificator Fișier Sursă: {nume}
@@ -530,7 +529,7 @@ Acuratețe de Calcul: Matematică Exactă (Voxel Downsampling & Delaunay)
 - Status Validare Geometrie       : VALID (Optimizat pentru fișiere masive LiDAR)
 
 ================================================================================
-Document generat automat de platforma Shazam-BIM Cloud & Geodesy Processing.
+Document generat automat de platforma GeoShazam Cloud Geodesy.
 Verificarea oficială pe șantier revine inginerului geodez autorizat.
 ================================================================================
 """
@@ -547,9 +546,9 @@ if st.session_state.user_conectat is None:
   st.markdown(
       """
         <div class='logo-container' style='margin-top: 30px; margin-bottom: 10px;'>
-            <span class='logo-shazam' style='font-size: 45px;'>Shazam</span><span class='logo-bim' style='font-size: 45px;'>-BIM</span>
+            <span class='logo-geo'>Geo</span><span class='logo-shazam' style='font-size: 45px;'>Shazam</span>
             <p style='font-size: 13px; color: #50C878; font-weight: 600; margin-top: 8px; letter-spacing: 1px;'>
-                PLATFORMĂ UNIVERSALĂ CLOUD PENTRU RELEVEE STRUCTURALE ȘI INSTALAȚII MEP
+                PLATFORMĂ CLOUD PENTRU GEODEZIE, SCANARE LIDAR ȘI MĂSURĂTORI DE ȘANTIER
             </p>
         </div>
     """,
@@ -669,7 +668,7 @@ if st.session_state.user_conectat is None:
 st.markdown(
     """
     <div class='logo-container' style='margin-top: 10px; margin-bottom: 25px;'>
-        <span class='logo-shazam' style='font-size: 46px;'>Shazam</span><span class='logo-bim' style='font-size: 46px;'>-BIM</span>
+        <span class='logo-geo' style='font-size: 46px;'>Geo</span><span class='logo-shazam' style='font-size: 46px;'>Shazam</span>
     </div>
     """,
     unsafe_allow_html=True,
@@ -1046,7 +1045,7 @@ with f_col2:
 st.markdown(
     """
     <div style='text-align: center; color: #64748B; font-size: 11px; margin-top: 30px; margin-bottom: 15px;'>
-        © 2026 Shazam-BIM & Geodesy Engine. Toate drepturile rezervate.
+        © 2026 GeoShazam Geodesy Engine. Toate drepturile rezervate.
     </div>
 """,
     unsafe_allow_html=True,

@@ -605,13 +605,15 @@ if st.session_state.user_conectat is None:
 # SCENARIUL B: ECRANUL PRINCIPAL AUTENTIFICAT (SINGLE-PAGE APPLICATION)
 # -----------------------------------------------------------------------------
 
-# 1. BARĂ DE TITLU & HEADER UTILIZATOR
+# 1. BARĂ DE TITLU & HEADER UTILIZATOR (LOGO-UL ESTE GRUPAT CA SĂ NU AIBĂ SPAȚIU)
 col_head1, col_head2 = st.columns([3, 1])
 with col_head1:
     st.markdown(
         f"""
-        <div style='display: flex; align-items: center; gap: 18px; margin-top: 5px;'>
-            <span class='logo-shazam' style='font-size: 26px;'>Shazam</span><span class='logo-bim' style='font-size: 26px;'>-BIM</span>
+        <div style='display: flex; align-items: center; gap: 20px; margin-top: 5px;'>
+            <div style='display: inline-flex; align-items: center; white-space: nowrap;'>
+                <span class='logo-shazam' style='font-size: 26px;'>Shazam</span><span class='logo-bim' style='font-size: 26px;'>-BIM</span>
+            </div>
             <span style='background: rgba(0, 255, 255, 0.08); padding: 6px 14px; border-radius: 20px; border: 1px solid rgba(0, 255, 255, 0.25); font-size: 12px; color: #00FFFF;'>
                 👤 Cont Conectat: <b>{st.session_state.user_conectat}</b>
             </span>

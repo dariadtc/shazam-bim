@@ -131,25 +131,27 @@ st.markdown(
         text-shadow: 0 0 12px rgba(80, 200, 120, 0.7);
     }
 
-    /* FORȚARE ALINIERE LA DREAPTA PENTRU TOATĂ COLOANA DIN DREAPTA A HEADER-ULUI */
-    div[data-testid="stHorizontalBlock"]:first-of-type > div:last-child {
+    /* FORȚARE ALINIERE PERFECĂ LA DREAPTA PENTRU COLOANA UTILIZATORULUI */
+    div[data-testid="stHorizontalBlock"]:first-of-type > div:nth-child(2) {
         display: flex !important;
         flex-direction: column !important;
         align-items: flex-end !important;
+        justify-content: flex-start !important;
     }
 
     .user-badge-box {
         margin-bottom: 6px;
+        text-align: right;
     }
 
-    /* STILIZARE BUTON DELOGARE SIMPLU & ALINIAT PERFECT LA DREAPTA */
-    div[data-testid="stHorizontalBlock"]:first-of-type > div:last-child .stButton {
+    /* STILIZARE BUTON DELOGARE ALINIAT STRICT LA DREAPTA */
+    div[data-testid="stHorizontalBlock"]:first-of-type > div:nth-child(2) .stButton {
         display: flex !important;
         justify-content: flex-end !important;
-        width: auto !important;
+        width: 100% !important;
     }
     
-    div[data-testid="stHorizontalBlock"]:first-of-type > div:last-child div.stButton > button:first-child {
+    div[data-testid="stHorizontalBlock"]:first-of-type > div:nth-child(2) button {
         padding: 4px 14px !important;
         font-size: 11px !important;
         border-radius: 12px !important;
@@ -158,9 +160,10 @@ st.markdown(
         border: 1px solid rgba(255, 255, 255, 0.15) !important;
         box-shadow: none !important;
         font-weight: 500 !important;
-        margin: 0 !important;
+        margin-left: auto !important;
+        margin-right: 0 !important;
     }
-    div[data-testid="stHorizontalBlock"]:first-of-type > div:last-child div.stButton > button:first-child:hover {
+    div[data-testid="stHorizontalBlock"]:first-of-type > div:nth-child(2) button:hover {
         background: rgba(255, 255, 255, 0.12) !important;
         color: #FFFFFF !important;
         border-color: rgba(0, 255, 255, 0.3) !important;

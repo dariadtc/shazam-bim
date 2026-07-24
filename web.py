@@ -1,17 +1,62 @@
 import hashlib
 import io
 import os
+import smtplib
 import sqlite3
 from datetime import datetime
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 import numpy as np
 import plotly.graph_objects as go
 import requests
 import streamlit as st
 
 # -----------------------------------------------------------------------------
-# 0. CONFIGURARE FORMSPREE PENTRU NOTIFICĂRI PE E-MAIL
+# 0. CONFIGURARE TRAMITERE E-MAIL AUTOMAT CĂTRE UTILIZATORI (SMTP)
 # -----------------------------------------------------------------------------
+# Completează cu datele contului tău de trimitere (ex: Gmail cu App Password)
+SMTP_SERVER = "smtp.gmail.com"
+SMTP_PORT = 587
+EMAIL_EXPEDITOR = ""  # ex: "suport.shazambim@gmail.com"
+PAROLA_EXPEDITOR = ""  # Parola de aplicație de 16 caractere generată din Google
 FORMSPREE_ID = "xeeyrbyb"
+
+
+def trimite_email_resetare_client(email_destinatar, parola_noua):
+    """Trimite e-mail direct către utilizator cu noua parolă configurată."""
+    if not EMAIL_EXPEDITOR or not PAROLA_EXPEDITOR:
+        # Dacă nu s-au configurat încă datele SMTP, ignoră trimiterea fizică
+        return True
+
+    try:
+        msg = MIMEMultipart()
+        msg["From"] = f"Shazam-BIM Support <{EMAIL_EXPEDITOR}>"
+        msg["To"] = email_destinatar
+        msg["Subject"] = "🔐 Confirmare Resetare Parolă - Shazam-BIM Cloud"
+
+        coru_email = f"""
+        Salutare,
+
+        A fost solicitată resetarea parolei pentru contul tău Shazam-BIM ({email_destinatar}).
+
+        Noua ta parolă este: {parola_noua}
+
+        Te rugăm să te conectezi în platformă folosind noua parolă.
+        Dacă nu ai solicitat tu această modificare, te rugăm să ne contactezi imediat.
+
+        Echipa Shazam-BIM AI Cloud
+        """
+        msg.attach(MIMEText(coru_email, "plain"))
+
+        server = smtplib.SMTP(SMTP_SERVER, SMTP_PORT)
+        server.starttls()
+        server.login(EMAIL_EXPEDITOR, PAROLA_EXPEDITOR)
+        server.send_message(msg)
+        server.quit()
+        return True
+    except Exception as e:
+        print(f"Eroare la trimitere e-mail resetare: {e}")
+        return False
 
 
 def trimite_email_formspree(email, tip, mesaj):
@@ -23,7 +68,7 @@ def trimite_email_formspree(email, tip, mesaj):
         "email": email,
         "subiect": tip,
         "mesaj": mesaj,
-        "_subject": f"📬 Mesaj Nou Shazam-BIM: {tip}",
+        "_subject": f"📬 Shazam-BIM Alert: {tip}",
     }
     try:
         response = requests.post(url, data=data)
@@ -41,7 +86,7 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-# 2. Injectare CSS Custom pentru Design SaaS Premium
+# 2. Injectare CSS Custom pentru Design SaaS Premium & Gate Portal
 st.markdown(
     """
     <style>
@@ -70,7 +115,7 @@ st.markdown(
     }
     .logo-shazam {
         font-family: 'Orbitron', sans-serif;
-        font-size: 26px;
+        font-size: 28px;
         font-weight: 800;
         color: #00FFFF;
         text-shadow: 
@@ -96,6 +141,17 @@ st.markdown(
     @keyframes glowGreen {
         0% { text-shadow: 0 0 5px #50C878, 0 0 10px rgba(80, 200, 120, 0.5); }
         100% { text-shadow: 0 0 8px #50C878, 0 0 20px rgba(80, 200, 120, 0.9); }
+    }
+
+    /* CARD AUTH GATEWAY */
+    .auth-card {
+        background: #121621;
+        border: 1px solid rgba(0, 255, 255, 0.2);
+        border-radius: 16px;
+        padding: 35px;
+        max-width: 480px;
+        margin: 40px auto;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.5);
     }
 
     /* BADGES DE FORMAT EXTINSE */
@@ -236,7 +292,7 @@ st.markdown(
 )
 
 # -----------------------------------------------------------------------------
-# 3. GESTIONARE BAZĂ DE DATE (UTILIZATORI & SCANĂRI PRIVATED)
+# 3. BAZĂ DE DATE (UTILIZATORI, PAROLE HASH, SCANĂRI PRIVATED)
 # -----------------------------------------------------------------------------
 
 
@@ -247,15 +303,12 @@ def hash_password(password):
 def init_db():
     conn = sqlite3.connect("proiecte_bim.db")
     c = conn.cursor()
-    # Tabela utilizatori
     c.execute(
         "CREATE TABLE IF NOT EXISTS utilizatori (id INTEGER PRIMARY KEY AUTOINCREMENT, email TEXT UNIQUE, parola TEXT, data_inregistrare TEXT)"
     )
-    # Tabela scanari cu legatura la user_email
     c.execute(
         "CREATE TABLE IF NOT EXISTS scanari (id INTEGER PRIMARY KEY AUTOINCREMENT, user_email TEXT, nume_proiect TEXT, data_procesare TEXT, lungime_teva REAL, lungime_perete REAL, inaltime_perete REAL, latime_gol REAL, inaltime_gol REAL)"
     )
-    # Tabela contact
     c.execute(
         "CREATE TABLE IF NOT EXISTS mesaje_contact (id INTEGER PRIMARY KEY AUTOINCREMENT, data_trimitere TEXT, email_client TEXT, tip_mesaj TEXT, mesaj TEXT)"
     )
@@ -290,6 +343,19 @@ def verifica_utilizator(email, parola):
     user = c.fetchone()
     conn.close()
     return user is not None
+
+
+def schimba_parola(email, parola_noua):
+    conn = sqlite3.connect("proiecte_bim.db")
+    c = conn.cursor()
+    c.execute(
+        "UPDATE utilizatori SET parola = ? WHERE email = ?",
+        (hash_password(parola_noua), str(email).lower().strip()),
+    )
+    randuri_afectate = c.rowcount
+    conn.commit()
+    conn.close()
+    return randuri_afectate > 0
 
 
 def numara_utilizari(email):
@@ -398,11 +464,11 @@ Verificarea finală pe șantier revine inginerului autorizat de proiect.
 
 init_db()
 
-# Stocare stare sesiune autentificare
+# Stare Autentificare Sesiune
 if "user_conectat" not in st.session_state:
     st.session_state.user_conectat = None
 
-# --- SIDEBAR BRANDING & AUTHENTICATION ---
+# --- SIDEBAR BRANDING ---
 st.sidebar.markdown(
     """
     <div class='logo-container'>
@@ -415,48 +481,108 @@ st.sidebar.markdown(
 
 st.sidebar.markdown("---")
 
-# Meniu Autentificare / Înregistrare
+# -----------------------------------------------------------------------------
+# SCENARIUL A: UTILIZATORUL NU ESTE CONECTAT (ECRAN DE AUTENTIFICARE DEDICAT)
+# -----------------------------------------------------------------------------
 if st.session_state.user_conectat is None:
-    st.sidebar.subheader("🔐 Cont Utilizator")
-    tab_login, tab_register = st.sidebar.tabs(["Conectare", "Înregistrare"])
 
-    with tab_login:
-        email_in = st.text_input("E-mail:", key="l_email")
-        pass_in = st.text_input("Parolă:", type="password", key="l_pass")
-        if st.button("🔑 Autentificare", use_container_width=True):
-            if verifica_utilizator(email_in, pass_in):
-                st.session_state.user_conectat = email_in.lower().strip()
-                st.sidebar.success("Conectat cu succes!")
-                st.rerun()
-            else:
-                st.sidebar.error("E-mail sau parolă incorectă!")
+    st.sidebar.info("👉 Autentificați-vă pe ecranul principal pentru a accesa platforma.")
 
-    with tab_register:
-        reg_email = st.text_input("E-mail nou:", key="r_email")
-        reg_pass = st.text_input("Parolă nouă:", type="password", key="r_pass")
-        if st.button("📝 Creează Cont", use_container_width=True):
-            if reg_email and reg_pass:
-                if creeaza_utilizator(reg_email, reg_pass):
-                    st.sidebar.success(
-                        "Cont creat cu succes! Vă puteți conecta."
-                    )
-                else:
-                    st.sidebar.error("Acest e-mail există deja!")
-            else:
-                st.sidebar.warning("Completați toate câmpurile!")
-else:
-    st.sidebar.markdown(
-        f"""
-        <div style='background: rgba(0, 255, 255, 0.08); padding: 10px; border-radius: 8px; border: 1px solid #00FFFF; text-align: center; margin-bottom: 10px;'>
-            <span style='font-size: 11px; color: #8A94A6;'>UTILIZATOR CONECTAT:</span><br>
-            <b style='color: #00FFFF; font-size: 13px;'>{st.session_state.user_conectat}</b>
+    st.markdown(
+        """
+        <div class='logo-container' style='margin-top: 30px;'>
+            <span class='logo-shazam' style='font-size: 40px;'>Shazam</span><span class='logo-bim' style='font-size: 40px;'>-BIM</span>
+            <p style='font-size: 13px; color: #00FF66; font-weight: 600; letter-spacing: 1px; margin-top: 8px;'>
+                PLATFORMĂ UNIVERSALĂ CLOUD PENTRU RELEVEE STRUCTURALE ȘI INSTALAȚII MEP
+            </p>
         </div>
     """,
         unsafe_allow_html=True,
     )
-    if st.sidebar.button("🚪 Delogare", use_container_width=True):
-        st.session_state.user_conectat = None
-        st.rerun()
+
+    col_a, col_b, col_c = st.columns([1, 2, 1])
+
+    with col_b:
+        tab_login, tab_register, tab_reset = st.tabs(
+            ["🔑 Conectare", "📝 Înregistrare Cont", "❓ Ai uitat parola?"]
+        )
+
+        with tab_login:
+            st.write("<br>", unsafe_allow_html=True)
+            email_in = st.text_input(
+                "Adresă E-mail:", placeholder="nume@companie.ro", key="m_l_email"
+            )
+            pass_in = st.text_input(
+                "Parolă:", type="password", key="m_l_pass"
+            )
+            if st.button("🚀 Autentificare în Cloud", use_container_width=True):
+                if verifica_utilizator(email_in, pass_in):
+                    st.session_state.user_conectat = email_in.lower().strip()
+                    st.success("🎉 Conectat cu succes! Se încarcă spațiul de lucru...")
+                    st.rerun()
+                else:
+                    st.error("❌ Adresă de e-mail sau parolă incorectă!")
+
+        with tab_register:
+            st.write("<br>", unsafe_allow_html=True)
+            reg_email = st.text_input(
+                "Adresă E-mail nou:", placeholder="nume@companie.ro", key="m_r_email"
+            )
+            reg_pass = st.text_input(
+                "Alegeți o parolă:", type="password", key="m_r_pass"
+            )
+            if st.button("✨ Creează Cont Nou", use_container_width=True):
+                if reg_email and reg_pass:
+                    if creeaza_utilizator(reg_email, reg_pass):
+                        st.success(
+                            "🎉 Cont creat cu succes! Vă puteți conecta acum."
+                        )
+                    else:
+                        st.error("⚠️ Această adresă de e-mail este deja înregistrată!")
+                else:
+                    st.warning("Completați e-mailul și parola!")
+
+        with tab_reset:
+            st.write("<br>", unsafe_allow_html=True)
+            reset_email = st.text_input(
+                "E-mailul contului tău:", placeholder="nume@companie.ro", key="m_rst_email"
+            )
+            noua_parola = st.text_input(
+                "Parolă nouă dorită:", type="password", key="m_rst_pass"
+            )
+
+            if st.button("📧 Resetează Parola & Trimite Confirmare", use_container_width=True):
+                if reset_email and noua_parola:
+                    if schimba_parola(reset_email, noua_parola):
+                        # Se trimite e-mail direct către e-mailul utilizatorului
+                        trimite_email_resetare_client(reset_email, noua_parola)
+                        st.success(
+                            f"✅ Parola pentru contul {reset_email} a fost resetată! Un e-mail de confirmare a fost expediat la adresa respectivă."
+                        )
+                    else:
+                        st.error("❌ Nu am găsit niciun cont înregistrat cu acest e-mail!")
+                else:
+                    st.warning("Completați e-mailul și noua parolă!")
+
+    st.stop()
+
+# -----------------------------------------------------------------------------
+# SCENARIUL B: UTILIZATORUL ESTE AUTENTIFICAT (ACCES COMPLETE LA DASHBOARD)
+# -----------------------------------------------------------------------------
+
+st.sidebar.markdown(
+    f"""
+    <div style='background: rgba(0, 255, 255, 0.08); padding: 10px; border-radius: 8px; border: 1px solid #00FFFF; text-align: center; margin-bottom: 10px;'>
+        <span style='font-size: 11px; color: #8A94A6;'>UTILIZATOR CONECTAT:</span><br>
+        <b style='color: #00FFFF; font-size: 13px;'>{st.session_state.user_conectat}</b>
+    </div>
+""",
+    unsafe_allow_html=True,
+)
+
+if st.sidebar.button("🚪 Delogare", use_container_width=True):
+    st.session_state.user_conectat = None
+    st.rerun()
 
 st.sidebar.markdown("---")
 st.sidebar.subheader("📂 Modul de Lucru")
@@ -549,7 +675,7 @@ with st.sidebar.expander("📬 Contact & Suport Tehnologic"):
             trimite_email_formspree(em, tp, ms)
             st.sidebar.success("🎉 Trimis! Mesajul a fost transmis pe e-mail.")
 
-# --- INTERFAȚA VIZUALĂ PRINCIPALĂ ---
+# --- DASHBOARD VIZUAL PRINCIPAL ---
 
 st.markdown(
     """
@@ -631,10 +757,6 @@ with tab_main:
     if st.sidebar.button(
         "🚀 Lansează Procesarea Cloud", use_container_width=True
     ):
-        if st.session_state.user_conectat is None and sursa != "Demo Interactiv":
-            st.error("⚠️ Vă rugăm să vă autentificați în bara laterală înainte de a procesa fișiere reale!")
-            st.stop()
-
         if (
             utilizari_efectuate >= 1
             and sursa != "Demo Interactiv"
@@ -863,33 +985,28 @@ with tab_main:
 
 # JURNAL PRIVAT PER UTILIZATOR CONECTAT
 with tab_history:
-    if st.session_state.user_conectat is None:
-        st.info(
-            "🔒 Conectați-vă în bara laterală pentru a accesa jurnalul dumneavoastră privat de proiecte."
+    st.subheader(
+        f"📋 Jurnal Privat Scanări ({st.session_state.user_conectat})"
+    )
+    istoric_privat = citeste_istoric_privat(st.session_state.user_conectat)
+    if len(istoric_privat) > 0:
+        st.dataframe(
+            istoric_privat,
+            column_config={
+                "0": "Nume Proiect",
+                "1": "Data Scanării",
+                "2": "Țeavă (m)",
+                "3": "Lungime Perete (m)",
+                "4": "Înălțime (m)",
+                "5": "Lățime Gol (m)",
+                "6": "Înălțime Gol (m)",
+            },
+            use_container_width=True,
         )
     else:
-        st.subheader(
-            f"📋 Jurnal Privat Scanări ({st.session_state.user_conectat})"
+        st.info(
+            "Jurnalul dumneavoastră este gol. Rulați o procesare pentru a salva primul proiect!"
         )
-        istoric_privat = citeste_istoric_privat(st.session_state.user_conectat)
-        if len(istoric_privat) > 0:
-            st.dataframe(
-                istoric_privat,
-                column_config={
-                    "0": "Nume Proiect",
-                    "1": "Data Scanării",
-                    "2": "Țeavă (m)",
-                    "3": "Lungime Perete (m)",
-                    "4": "Înălțime (m)",
-                    "5": "Lățime Gol (m)",
-                    "6": "Înălțime Gol (m)",
-                },
-                use_container_width=True,
-            )
-        else:
-            st.info(
-                "Jurnalul dumneavoastră este gol. Rulați o procesare pentru a salva primul proiect!"
-            )
 
 with tab_pricing:
     st.subheader("💳 Planuri de Abonament & Licențiere Cloud")

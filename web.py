@@ -14,18 +14,16 @@ import streamlit as st
 # -----------------------------------------------------------------------------
 # 0. CONFIGURARE TRAMITERE E-MAIL AUTOMAT CĂTRE UTILIZATORI (SMTP)
 # -----------------------------------------------------------------------------
-# Completează cu datele contului tău de trimitere (ex: Gmail cu App Password)
 SMTP_SERVER = "smtp.gmail.com"
 SMTP_PORT = 587
 EMAIL_EXPEDITOR = ""  # ex: "suport.shazambim@gmail.com"
-PAROLA_EXPEDITOR = ""  # Parola de aplicație de 16 caractere generată din Google
+PAROLA_EXPEDITOR = ""  # Parola de aplicație de 16 caractere
 FORMSPREE_ID = "xeeyrbyb"
 
 
 def trimite_email_resetare_client(email_destinatar, parola_noua):
     """Trimite e-mail direct către utilizator cu noua parolă configurată."""
     if not EMAIL_EXPEDITOR or not PAROLA_EXPEDITOR:
-        # Dacă nu s-au configurat încă datele SMTP, ignoră trimiterea fizică
         return True
 
     try:
@@ -78,84 +76,88 @@ def trimite_email_formspree(email, tip, mesaj):
         return False
 
 
-# 1. Configurare pagină cu titlu SEO
+# 1. Configurare pagină
 st.set_page_config(
     page_title="Shazam-BIM Cloud - Relevee 3D Universal LiDAR & SLAM AI",
     page_icon="🤖",
     layout="wide",
-    initial_sidebar_state="expanded",
+    initial_sidebar_state="collapsed",
 )
 
-# 2. Injectare CSS Custom pentru Design SaaS Premium & Gate Portal
-st.markdown(
+# Stare Autentificare Sesiune
+if "user_conectat" not in st.session_state:
+    st.session_state.user_conectat = None
+
+# CSS dinamic în funcție de stare
+css_hide_sidebar = ""
+if st.session_state.user_conectat is None:
+    css_hide_sidebar = """
+        [data-testid="stSidebar"] {
+            display: none !important;
+        }
     """
+
+# 2. Injectare CSS Custom pentru Design SaaS Premium & Clean Auth Gate
+st.markdown(
+    f"""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@600;800;900&display=swap');
     
-    .stApp {
+    .stApp {{
         background-color: #090C10;
         font-family: 'Inter', sans-serif;
-    }
+    }}
     
-    #MainMenu {visibility: hidden;}
-    footer {visibility: hidden;}
+    #MainMenu {{visibility: hidden;}}
+    footer {{visibility: hidden;}}
+    
+    {css_hide_sidebar}
     
     /* ASCUNDE ICONIȚA NATIVĂ DE LINK / ANCHOR DIN STREAMLIT */
     .stMarkdown a.anchor-link, 
     [data-testid="stHeaderActionElements"],
-    a.header-anchor {
+    a.header-anchor {{
         display: none !important;
-    }
+    }}
     
     /* LOGO NEON GLOW EFFECTS */
-    .logo-container {
+    .logo-container {{
         text-align: center;
         padding: 15px 0 10px 0;
         user-select: none;
-    }
-    .logo-shazam {
+    }}
+    .logo-shazam {{
         font-family: 'Orbitron', sans-serif;
-        font-size: 28px;
+        font-size: 32px;
         font-weight: 800;
         color: #00FFFF;
         text-shadow: 
             0 0 5px #00FFFF,
             0 0 15px rgba(0, 255, 255, 0.7);
         animation: glowCyan 2.5s infinite alternate;
-    }
-    .logo-bim {
+    }}
+    .logo-bim {{
         font-family: 'Orbitron', sans-serif;
-        font-size: 26px;
+        font-size: 32px;
         font-weight: 800;
         color: #50C878;
         text-shadow: 
             0 0 5px #50C878,
             0 0 15px rgba(80, 200, 120, 0.7);
         animation: glowGreen 2.5s infinite alternate;
-    }
+    }}
 
-    @keyframes glowCyan {
-        0% { text-shadow: 0 0 5px #00FFFF, 0 0 10px rgba(0, 255, 255, 0.5); }
-        100% { text-shadow: 0 0 8px #00FFFF, 0 0 20px rgba(0, 255, 255, 0.9); }
-    }
-    @keyframes glowGreen {
-        0% { text-shadow: 0 0 5px #50C878, 0 0 10px rgba(80, 200, 120, 0.5); }
-        100% { text-shadow: 0 0 8px #50C878, 0 0 20px rgba(80, 200, 120, 0.9); }
-    }
-
-    /* CARD AUTH GATEWAY */
-    .auth-card {
-        background: #121621;
-        border: 1px solid rgba(0, 255, 255, 0.2);
-        border-radius: 16px;
-        padding: 35px;
-        max-width: 480px;
-        margin: 40px auto;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-    }
+    @keyframes glowCyan {{
+        0% {{ text-shadow: 0 0 5px #00FFFF, 0 0 10px rgba(0, 255, 255, 0.5); }}
+        100% {{ text-shadow: 0 0 8px #00FFFF, 0 0 20px rgba(0, 255, 255, 0.9); }}
+    }}
+    @keyframes glowGreen {{
+        0% {{ text-shadow: 0 0 5px #50C878, 0 0 10px rgba(80, 200, 120, 0.5); }}
+        100% {{ text-shadow: 0 0 8px #50C878, 0 0 20px rgba(80, 200, 120, 0.9); }}
+    }}
 
     /* BADGES DE FORMAT EXTINSE */
-    .format-badge {
+    .format-badge {{
         display: inline-block;
         background: rgba(0, 255, 255, 0.08);
         border: 1px solid rgba(0, 255, 255, 0.25);
@@ -166,10 +168,10 @@ st.markdown(
         margin-right: 3px;
         margin-bottom: 4px;
         font-weight: 600;
-    }
+    }}
 
     /* Status Badge Pulsant */
-    .status-badge {
+    .status-badge {{
         display: inline-flex;
         align-items: center;
         background: rgba(80, 200, 120, 0.1);
@@ -179,8 +181,8 @@ st.markdown(
         color: #50C878;
         font-size: 11px;
         font-weight: 600;
-    }
-    .gpu-badge {
+    }}
+    .gpu-badge {{
         display: inline-flex;
         align-items: center;
         background: rgba(168, 85, 247, 0.1);
@@ -191,18 +193,18 @@ st.markdown(
         font-size: 11px;
         font-weight: 600;
         margin-left: 8px;
-    }
-    .pulse-dot {
+    }}
+    .pulse-dot {{
         width: 7px;
         height: 7px;
         background-color: #50C878;
         border-radius: 50%;
         margin-right: 6px;
         box-shadow: 0 0 8px #50C878;
-    }
+    }}
 
     /* Carduri KPI Custom */
-    .kpi-card {
+    .kpi-card {{
         background: rgba(18, 22, 33, 0.6);
         border: 1px solid rgba(255, 255, 255, 0.08);
         border-radius: 12px;
@@ -210,34 +212,34 @@ st.markdown(
         text-align: center;
         backdrop-filter: blur(10px);
         transition: transform 0.2s ease, border-color 0.2s ease;
-    }
-    .kpi-card:hover {
+    }}
+    .kpi-card:hover {{
         transform: translateY(-2px);
         border-color: rgba(0, 255, 255, 0.3);
-    }
-    .kpi-label {
+    }}
+    .kpi-label {{
         color: #8A94A6;
         font-size: 11px;
         font-weight: 600;
         letter-spacing: 1px;
         text-transform: uppercase;
         margin-bottom: 4px;
-    }
-    .kpi-value {
+    }}
+    .kpi-value {{
         color: #FFFFFF;
         font-size: 20px;
         font-weight: 700;
         font-family: 'Orbitron', sans-serif;
-    }
+    }}
 
     /* Stilizare Panou Lateral */
-    [data-testid="stSidebar"] {
+    [data-testid="stSidebar"] {{
         background-color: #0E121B;
         border-right: 1px solid rgba(255, 255, 255, 0.05);
-    }
+    }}
     
     /* Stilizare Buton Principal */
-    div.stButton > button:first-child {
+    div.stButton > button:first-child {{
         background: linear-gradient(135deg, #00E5FF 0%, #0088FF 100%);
         color: #000000;
         font-weight: 700;
@@ -247,45 +249,45 @@ st.markdown(
         padding: 12px 24px;
         box-shadow: 0 4px 15px rgba(0, 229, 255, 0.25);
         transition: all 0.2s ease;
-    }
-    div.stButton > button:first-child:hover {
+    }}
+    div.stButton > button:first-child:hover {{
         box-shadow: 0 6px 22px rgba(0, 229, 255, 0.45);
         transform: scale(1.01);
-    }
+    }}
 
     /* Stilizare Tab-uri */
-    .stTabs [data-baseweb="tab-list"] {
+    .stTabs [data-baseweb="tab-list"] {{
         gap: 8px;
         background-color: #121621;
         padding: 6px;
         border-radius: 10px;
         border: 1px solid rgba(255, 255, 255, 0.05);
-    }
-    .stTabs [data-baseweb="tab"] {
+    }}
+    .stTabs [data-baseweb="tab"] {{
         height: 40px;
         border-radius: 6px;
         color: #8A94A6;
         font-weight: 600;
         font-size: 13px;
-    }
-    .stTabs [aria-selected="true"] {
+    }}
+    .stTabs [aria-selected="true"] {{
         background-color: #1A202C !important;
         color: #00FFFF !important;
-    }
+    }}
 
     /* Carduri de Prețuri */
-    .price-card {
+    .price-card {{
         background: #121621;
         border: 1px solid rgba(255, 255, 255, 0.08);
         border-radius: 12px;
         padding: 20px;
         text-align: center;
         height: 100%;
-    }
-    .price-card-pro {
+    }}
+    .price-card-pro {{
         border: 1.5px solid #00FFFF;
         box-shadow: 0 0 15px rgba(0, 255, 255, 0.15);
-    }
+    }}
     </style>
 """,
     unsafe_allow_html=True,
@@ -464,35 +466,16 @@ Verificarea finală pe șantier revine inginerului autorizat de proiect.
 
 init_db()
 
-# Stare Autentificare Sesiune
-if "user_conectat" not in st.session_state:
-    st.session_state.user_conectat = None
-
-# --- SIDEBAR BRANDING ---
-st.sidebar.markdown(
-    """
-    <div class='logo-container'>
-        <span class='logo-shazam'>Shazam</span><span class='logo-bim'>-BIM</span>
-        <p style='font-size: 10px; color: #6C7A9C; letter-spacing: 2px; margin-top: 4px; font-weight: 600;'>AI CLOUD ENGINE v2.4</p>
-    </div>
-""",
-    unsafe_allow_html=True,
-)
-
-st.sidebar.markdown("---")
-
 # -----------------------------------------------------------------------------
-# SCENARIUL A: UTILIZATORUL NU ESTE CONECTAT (ECRAN DE AUTENTIFICARE DEDICAT)
+# SCENARIUL A: UTILIZATORUL NU ESTE CONECTAT (FULL SCREEN LOGIN)
 # -----------------------------------------------------------------------------
 if st.session_state.user_conectat is None:
 
-    st.sidebar.info("👉 Autentificați-vă pe ecranul principal pentru a accesa platforma.")
-
     st.markdown(
         """
-        <div class='logo-container' style='margin-top: 30px;'>
-            <span class='logo-shazam' style='font-size: 40px;'>Shazam</span><span class='logo-bim' style='font-size: 40px;'>-BIM</span>
-            <p style='font-size: 13px; color: #00FF66; font-weight: 600; letter-spacing: 1px; margin-top: 8px;'>
+        <div class='logo-container' style='margin-top: 50px;'>
+            <span class='logo-shazam' style='font-size: 45px;'>Shazam</span><span class='logo-bim' style='font-size: 45px;'>-BIM</span>
+            <p style='font-size: 13px; color: #00FF66; font-weight: 600; letter-spacing: 1px; margin-top: 10px;'>
                 PLATFORMĂ UNIVERSALĂ CLOUD PENTRU RELEVEE STRUCTURALE ȘI INSTALAȚII MEP
             </p>
         </div>
@@ -503,8 +486,8 @@ if st.session_state.user_conectat is None:
     col_a, col_b, col_c = st.columns([1, 2, 1])
 
     with col_b:
-        tab_login, tab_register, tab_reset = st.tabs(
-            ["🔑 Conectare", "📝 Înregistrare Cont", "❓ Ai uitat parola?"]
+        tab_login, tab_register = st.tabs(
+            ["🔑 Conectare", "📝 Înregistrare Cont"]
         )
 
         with tab_login:
@@ -515,6 +498,7 @@ if st.session_state.user_conectat is None:
             pass_in = st.text_input(
                 "Parolă:", type="password", key="m_l_pass"
             )
+
             if st.button("🚀 Autentificare în Cloud", use_container_width=True):
                 if verifica_utilizator(email_in, pass_in):
                     st.session_state.user_conectat = email_in.lower().strip()
@@ -522,6 +506,27 @@ if st.session_state.user_conectat is None:
                     st.rerun()
                 else:
                     st.error("❌ Adresă de e-mail sau parolă incorectă!")
+
+            # ❓ OPTIUNEA „AI UITAT PAROLA?” AMELASATĂ SUB BUTON
+            st.write("<br>", unsafe_allow_html=True)
+            with st.expander("❓ Ai uitat parola?", expanded=False):
+                reset_email = st.text_input(
+                    "E-mailul contului tău:", placeholder="nume@companie.ro", key="sub_rst_email"
+                )
+                noua_parola = st.text_input(
+                    "Parolă nouă dorită:", type="password", key="sub_rst_pass"
+                )
+                if st.button("📧 Resetează Parola & Trimite Confirmare", use_container_width=True):
+                    if reset_email and noua_parola:
+                        if schimba_parola(reset_email, noua_parola):
+                            trimite_email_resetare_client(reset_email, noua_parola)
+                            st.success(
+                                f"✅ Parola pentru contul {reset_email} a fost resetată! Un e-mail de confirmare a fost expediat."
+                            )
+                        else:
+                            st.error("❌ Nu am găsit niciun cont înregistrat cu acest e-mail!")
+                    else:
+                        st.warning("Completați e-mailul și noua parolă!")
 
         with tab_register:
             st.write("<br>", unsafe_allow_html=True)
@@ -542,34 +547,13 @@ if st.session_state.user_conectat is None:
                 else:
                     st.warning("Completați e-mailul și parola!")
 
-        with tab_reset:
-            st.write("<br>", unsafe_allow_html=True)
-            reset_email = st.text_input(
-                "E-mailul contului tău:", placeholder="nume@companie.ro", key="m_rst_email"
-            )
-            noua_parola = st.text_input(
-                "Parolă nouă dorită:", type="password", key="m_rst_pass"
-            )
-
-            if st.button("📧 Resetează Parola & Trimite Confirmare", use_container_width=True):
-                if reset_email and noua_parola:
-                    if schimba_parola(reset_email, noua_parola):
-                        # Se trimite e-mail direct către e-mailul utilizatorului
-                        trimite_email_resetare_client(reset_email, noua_parola)
-                        st.success(
-                            f"✅ Parola pentru contul {reset_email} a fost resetată! Un e-mail de confirmare a fost expediat la adresa respectivă."
-                        )
-                    else:
-                        st.error("❌ Nu am găsit niciun cont înregistrat cu acest e-mail!")
-                else:
-                    st.warning("Completați e-mailul și noua parolă!")
-
     st.stop()
 
 # -----------------------------------------------------------------------------
-# SCENARIUL B: UTILIZATORUL ESTE AUTENTIFICAT (ACCES COMPLETE LA DASHBOARD)
+# SCENARIUL B: UTILIZATORUL ESTE AUTENTIFICAT (DASHBOARD)
 # -----------------------------------------------------------------------------
 
+# Informații Cont în Sidebar
 st.sidebar.markdown(
     f"""
     <div style='background: rgba(0, 255, 255, 0.08); padding: 10px; border-radius: 8px; border: 1px solid #00FFFF; text-align: center; margin-bottom: 10px;'>

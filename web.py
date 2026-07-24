@@ -44,7 +44,8 @@ def numara_utilizari():
     cursor.execute("SELECT COUNT(*) FROM scanari")
     numar = cursor.fetchone()
     conn.close()
-    return numar
+    # REPARARE: Extragem numărul scalar din interiorul tuplului (dacă e gol, returnează 0)
+    return numar[0] if numar else 0
 
 def salveaza_in_baza_date(nume, l_t, l_w, h_w, l_g, h_g):
     conn = sqlite3.connect("proiecte_bim.db")
@@ -100,7 +101,7 @@ if st.sidebar.button("🚀 Procesează"):
             <p style='color: #FFFFFF; font-size: 16px;'>Ai testat cu succes motorul nostru geometric! Pentru a procesa scanări nelimitate și a descărca elemente CAD solide (.OBJ) pentru Revit, alege planul care ți se potrivește:</p>
             <hr style='border: 1px solid #333;'>
             <div style='display: flex; justify-content: space-around; margin-top: 20px; flex-wrap: wrap;'>
-                <!-- CASETA LUNARĂ DE 29.99 € CU LINK-UL TĂU REAL -->
+                <!-- CASETA LUNARĂ DE 29.99 € -->
                 <div style='background-color: #2D2D44; padding: 20px; border-radius: 10px; width: 45%; min-width: 250px; border: 1px solid #50C878; margin-bottom: 15px;'>
                     <h3 style='color: #50C878;'>Plan Lunar PRO</h3>
                     <h2 style='color: #FFFFFF;'>29.99 € <span style='font-size: 14px;'>/ lună</span></h2>
@@ -108,13 +109,13 @@ if st.sidebar.button("🚀 Procesează"):
                     <br>
                     <a href='https://stripe.com' target='_blank'><button style='background-color: #50C878; color: black; font-weight: bold; padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer; width: 100%; box-shadow: 0 0 10px rgba(80,200,120,0.3);'>Abonează-te Lunar</button></a>
                 </div>
-                <!-- CASETA ANUALĂ DE 249 € CU LINK-UL TĂU REAL -->
+                <!-- CASETA ANUALĂ DE 249 € -->
                 <div style='background-color: #2D2D44; padding: 20px; border-radius: 10px; width: 45%; min-width: 250px; border: 1px solid #00FFFF; margin-bottom: 15px;'>
                     <h3 style='color: #00FFFF;'>Plan Anual BIZ</h3>
                     <h2 style='color: #FFFFFF;'>249 € <span style='font-size: 14px;'>/ an</span></h2>
                     <p style='font-size: 13px; color: #AAA;'>• Economisești peste 30%<br>• Prioritate procesare în Cloud<br>• Suport tehnic 24/7 dedicat</p>
                     <br>
-                    <a href='https://buy.stripe.com/test_5kQ7sLb5r4ld9rJ4Tg1RC01' target='_blank'><button style='background-color: #00FFFF; color: black; font-weight: bold; padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer; width: 100%; box-shadow: 0 0 10px rgba(0,255,255,0.3);'>Abonează-te Anual</button></a>
+                    <a href='https://stripe.com' target='_blank'><button style='background-color: #00FFFF; color: black; font-weight: bold; padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer; width: 100%; box-shadow: 0 0 10px rgba(0,255,255,0.3);'>Abonează-te Anual</button></a>
                 </div>
             </div>
         </div>

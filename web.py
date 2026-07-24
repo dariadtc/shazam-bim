@@ -749,277 +749,260 @@ tab_main, tab_history, tab_settings, tab_pricing, tab_legal = st.tabs(
 utilizari_efectuate = numara_utilizari(st.session_state.user_conectat)
 
 with tab_main:
+    # Verificare limită trial fără st.stop() ca să nu blocheze întreaga aplicație
+    blocat_trial = False
     if lansa_btn and sursa != "Demo Interactiv (Camera Model)":
         if utilizari_efectuate >= 1:
-            st.error("❌ Limita planului tău gratuit a fost atinsă!")
-            st.markdown(
-                f"""
-                <div style='background-color: #0D1E26; padding: 25px; border-radius: 14px; border: 1.5px solid #50C878; text-align: center; margin-top: 15px;'>
-                    <h3 style='color: #50C878; margin-bottom: 10px;'>🔒 Deblocați puterea maximă Shazam-BIM</h3>
-                    <p style='color: #E2E8F0; font-size: 13px;'>Alegeți planul potrivit pentru a procesa scanări nelimitate:</p>
-                    <hr style='border: 1px solid #162C38; margin: 15px 0;'>
-                    <div style='display: flex; justify-content: space-around; flex-wrap: wrap; gap: 15px;'>
-                        <div style='background-color: #061017; padding: 20px; border-radius: 10px; width: 45%; border: 1.5px solid #50C878;'>
-                            <h4 style='color: #50C878; margin-top:0;'>Plan Lunar PRO</h4>
-                            <h2 style='color:#FFF; margin: 5px 0;'>29.99 € <span style='font-size:12px; color:#AAA;'>/ lună</span></h2>
-                            <br>
-                            <a href='https://buy.stripe.com/aFaeVdgqJ03l6c4fJEbAs00' target='_blank'>
-                                <button style='background: linear-gradient(135deg, #00E5FF 0%, #10B981 100%); color:#061017; font-weight:bold; padding:10px 15px; border:none; border-radius:6px; cursor:pointer; width:100%;'>Abonează-te Lunar</button>
-                            </a>
-                        </div>
-                        <div style='background-color: #061017; padding: 20px; border-radius: 10px; width: 45%; border: 1.5px solid #50C878;'>
-                            <h4 style='color: #50C878; margin-top:0;'>Plan Anual BIZ</h4>
-                            <h2 style='color:#FFF; margin: 5px 0;'>249.99 € <span style='font-size:12px; color:#AAA;'>/ an</span></h2>
-                            <br>
-                            <a href='https://buy.stripe.com/8x23cvcat9DVgQIgNIbAs01' target='_blank'>
-                                <button style='background: linear-gradient(135deg, #00E5FF 0%, #10B981 100%); color:#061017; font-weight:bold; padding:10px 15px; border:none; border-radius:6px; cursor:pointer; width:100%;'>Abonează-te Anual</button>
-                            </a>
-                        </div>
+            blocat_trial = True
+
+    if blocat_trial:
+        st.error("❌ Limita planului tău gratuit a fost atinsă!")
+        st.markdown(
+            f"""
+            <div style='background-color: #0D1E26; padding: 25px; border-radius: 14px; border: 1.5px solid #50C878; text-align: center; margin-top: 15px;'>
+                <h3 style='color: #50C878; margin-bottom: 10px;'>🔒 Deblocați puterea maximă Shazam-BIM</h3>
+                <p style='color: #E2E8F0; font-size: 13px;'>Alegeți planul potrivit pentru a procesa scanări nelimitate:</p>
+                <hr style='border: 1px solid #162C38; margin: 15px 0;'>
+                <div style='display: flex; justify-content: space-around; flex-wrap: wrap; gap: 15px;'>
+                    <div style='background-color: #061017; padding: 20px; border-radius: 10px; width: 45%; border: 1.5px solid #50C878;'>
+                        <h4 style='color: #50C878; margin-top:0;'>Plan Lunar PRO</h4>
+                        <h2 style='color:#FFF; margin: 5px 0;'>29.99 € <span style='font-size:12px; color:#AAA;'>/ lună</span></h2>
+                        <br>
+                        <a href='https://buy.stripe.com/aFaeVdgqJ03l6c4fJEbAs00' target='_blank'>
+                            <button style='background: linear-gradient(135deg, #00E5FF 0%, #10B981 100%); color:#061017; font-weight:bold; padding:10px 15px; border:none; border-radius:6px; cursor:pointer; width:100%;'>Abonează-te Lunar</button>
+                        </a>
+                    </div>
+                    <div style='background-color: #061017; padding: 20px; border-radius: 10px; width: 45%; border: 1.5px solid #50C878;'>
+                        <h4 style='color: #50C878; margin-top:0;'>Plan Anual BIZ</h4>
+                        <h2 style='color:#FFF; margin: 5px 0;'>249.99 € <span style='font-size:12px; color:#AAA;'>/ an</span></h2>
+                        <br>
+                        <a href='https://buy.stripe.com/8x23cvcat9DVgQIgNIbAs01' target='_blank'>
+                            <button style='background: linear-gradient(135deg, #00E5FF 0%, #10B981 100%); color:#061017; font-weight:bold; padding:10px 15px; border:none; border-radius:6px; cursor:pointer; width:100%;'>Abonează-te Anual</button>
+                        </a>
                     </div>
                 </div>
-                """,
-                unsafe_allow_html=True,
-            )
-            st.stop()
-
-    nume_proiect = (
-        "CAMERA_DEMO_COMPLETĂ"
-        if sursa == "Demo Interactiv (Camera Model)"
-        else (up.name if up else "SCAN_UNKNOWN")
-    )
-
-    l_t, l_w, h_w, l_gol, h_gol = 5.02, 5.04, 3.03, 1.00, 2.10
-
-    if lansa_btn:
-        with st.spinner(
-            "⚡ Se rulează motorul AI Cloud (Voxelization & Parametric Fitting)..."
-        ):
-            time.sleep(1.8)
-        if sursa != "Demo Interactiv (Camera Model)":
-            salveaza_scanare(
-                st.session_state.user_conectat,
-                nume_proiect,
-                l_t,
-                l_w,
-                h_w,
-                l_gol,
-                h_gol,
-            )
-
-    mep_data = (
-        "# Shazam-BIM Generated Cylinder MEP\n"
-        "v 0.0 2.35 2.0\n"
-        "v 5.0 2.35 2.0\n"
-        "v 5.0 2.65 2.0\n"
-        "v 0.0 2.65 2.0\n"
-        "f 1 2 3 4\n"
-    )
-    wall_data = (
-        "# Shazam-BIM Generated Wall Solid\n"
-        "v 0.0 0.0 0.0\n"
-        "v 5.04 0.0 0.0\n"
-        "v 5.04 0.20 0.0\n"
-        "v 0.0 0.20 0.0\n"
-        "v 0.0 0.0 3.03\n"
-        "v 5.04 0.0 3.03\n"
-        "v 5.04 0.20 3.03\n"
-        "v 0.0 0.20 3.03\n"
-        "f 1 2 3 4\n"
-        "f 5 6 7 8\n"
-        "f 1 2 6 5\n"
-        "f 2 3 7 6\n"
-        "f 3 4 8 7\n"
-        "f 4 1 5 8\n"
-    )
-    dxf_data = "# DXF CAD Format Export\n0\nSECTION\n2\nHEADER\n0\nENDSEC\n0\nEOF"
-    ifc_data = "ISO-10303-21;\nHEADER;\nFILE_DESCRIPTION(('Shazam-BIM IFC Model'),'2.1');\nENDSEC;\nDATA;\nEND-SEC;\nEND-ISO-10303-21;"
-    csv_data = "Point_ID,X(m),Y(m),Z(m),Class\n1,0.0,0.0,0.0,Floor\n2,5.0,0.0,3.0,Wall\n3,2.5,0.3,2.2,MEP_Pipe\n"
-
-    st.success(
-        f"🎉 Model 3D extras cu succes pentru proiectul: **{nume_proiect}**"
-    )
-
-    c1, c2, c3 = st.columns(3)
-    c1.metric("Țevi MEP (Lungime)", f"{l_t:.2f} m")
-    c1.metric("Lungime Perete", f"{l_w:.2f} m")
-    c2.metric("Înălțime Perete", f"{h_w:.2f} m")
-    c2.metric("Grosime Perete", "20.0 cm")
-    c3.metric("Lățime Gol Ușă", f"{l_gol:.2f} m")
-    c3.metric("Înălțime Gol", f"{h_gol:.2f} m")
-
-    st.write("<br>", unsafe_allow_html=True)
-    st.subheader("👁️ Previzualizare Model 3D Extras")
-
-    # -------------------------------------------------------------------------
-    # GENERARE DINAMICĂ BAZATĂ PE SLIDERE
-    # -------------------------------------------------------------------------
-    np.random.seed(42)
-
-    num_podea = int(1200 * (0.04 / vox))
-    num_tavan = int(1000 * (0.04 / vox))
-    num_pereti = int(1500 * (0.04 / vox))
-
-    floor_x = np.random.uniform(0, 5.0, num_podea)
-    floor_y = np.random.uniform(0, 3.0, num_podea)
-    floor_z = np.zeros(num_podea) + np.random.normal(0, 0.01, num_podea)
-
-    ceiling_x = np.random.uniform(0, 5.0, num_tavan)
-    ceiling_y = np.random.uniform(0, 3.0, num_tavan)
-    ceiling_z = np.full(num_tavan, 3.0) + np.random.normal(0, 0.01, num_tavan)
-
-    wall_x_list, wall_y_list, wall_z_list = [], [], []
-
-    for _ in range(num_pereti):
-        x = np.random.uniform(0, 5.0)
-        z = np.random.uniform(0, 3.0)
-        if not (0.2 <= x <= 1.2 and z <= 2.1):
-            wall_x_list.append(x)
-            wall_y_list.append(0.0 + np.random.normal(0, 0.01))
-            wall_z_list.append(z)
-
-    for _ in range(num_pereti):
-        wall_x_list.append(np.random.uniform(0, 5.0))
-        wall_y_list.append(3.0 + np.random.normal(0, 0.01))
-        wall_z_list.append(np.random.uniform(0, 3.0))
-
-    wall_x = np.array(wall_x_list)
-    wall_y = np.array(wall_y_list)
-    wall_z = np.array(wall_z_list)
-
-    pipe_x_list, pipe_y_list, pipe_z_list = [], [], []
-    radius = r_c
-    length_x = np.linspace(0.5, 4.5, 100)
-
-    for x in length_x:
-        angles = np.random.uniform(0, 2 * np.pi, 20)
-        r_vals = np.random.uniform(radius * 0.8, radius, 20)
-        for angle, r in zip(angles, r_vals):
-            pipe_x_list.append(x)
-            pipe_y_list.append(0.30 + r * np.cos(angle))
-            pipe_z_list.append(2.20 + r * np.sin(angle))
-
-    pipe_x = np.array(pipe_x_list)
-    pipe_y = np.array(pipe_y_list)
-    pipe_z = np.array(pipe_z_list)
-
-    fig = go.Figure()
-
-    fig.add_trace(
-        go.Scatter3d(
-            x=floor_x,
-            y=floor_y,
-            z=floor_z,
-            mode="markers",
-            marker=dict(size=2, color="#50C878", opacity=0.75),
-            name="Podea / Sol",
+            </div>
+            """,
+            unsafe_allow_html=True,
         )
-    )
-
-    fig.add_trace(
-        go.Scatter3d(
-            x=wall_x,
-            y=wall_y,
-            z=wall_z,
-            mode="markers",
-            marker=dict(size=2, color="#FF4D4D", opacity=0.75),
-            name="Pereți Structură (x4)",
+    else:
+        nume_proiect = (
+            "CAMERA_DEMO_COMPLETĂ"
+            if sursa == "Demo Interactiv (Camera Model)"
+            else (up.name if up else "SCAN_UNKNOWN")
         )
-    )
 
-    fig.add_trace(
-        go.Scatter3d(
-            x=ceiling_x,
-            y=ceiling_y,
-            z=ceiling_z,
-            mode="markers",
-            marker=dict(size=2, color="#00E5FF", opacity=0.75),
-            name="Plafon / Tavan",
+        l_t, l_w, h_w, l_gol, h_gol = 5.02, 5.04, 3.03, 1.00, 2.10
+
+        if lansa_btn:
+            with st.spinner(
+                "⚡ Se rulează motorul AI Cloud (Voxelization & Parametric Fitting)..."
+            ):
+                time.sleep(1.8)
+            if sursa != "Demo Interactiv (Camera Model)" and up is not None:
+                salveaza_scanare(
+                    st.session_state.user_conectat,
+                    nume_proiect,
+                    l_t,
+                    l_w,
+                    h_w,
+                    l_gol,
+                    h_gol,
+                )
+
+        mep_data = (
+            "# Shazam-BIM Generated Cylinder MEP\n"
+            "v 0.0 2.35 2.0\n"
+            "v 5.0 2.35 2.0\n"
+            "v 5.0 2.65 2.0\n"
+            "v 0.0 2.65 2.0\n"
+            "f 1 2 3 4\n"
         )
-    )
-
-    fig.add_trace(
-        go.Scatter3d(
-            x=pipe_x,
-            y=pipe_y,
-            z=pipe_z,
-            mode="markers",
-            marker=dict(size=3, color="#FFC72C", opacity=0.9),
-            name=f"Țeavă MEP (Rază: {r_c:.2f}m)",
+        dxf_data = (
+            "# DXF CAD Format Export\n0\nSECTION\n2\nHEADER\n0\nENDSEC\n0\nEOF"
         )
-    )
+        ifc_data = "ISO-10303-21;\nHEADER;\nFILE_DESCRIPTION(('Shazam-BIM IFC Model'),'2.1');\nENDSEC;\nDATA;\nEND-SEC;\nEND-ISO-10303-21;"
+        csv_data = "Point_ID,X(m),Y(m),Z(m),Class\n1,0.0,0.0,0.0,Floor\n2,5.0,0.0,3.0,Wall\n3,2.5,0.3,2.2,MEP_Pipe\n"
 
-    if op:
+        st.success(
+            f"🎉 Model 3D extras cu succes pentru proiectul: **{nume_proiect}**"
+        )
+
+        c1, c2, c3 = st.columns(3)
+        c1.metric("Țevi MEP (Lungime)", f"{l_t:.2f} m")
+        c1.metric("Lungime Perete", f"{l_w:.2f} m")
+        c2.metric("Înălțime Perete", f"{h_w:.2f} m")
+        c2.metric("Grosime Perete", "20.0 cm")
+        c3.metric("Lățime Gol Ușă", f"{l_gol:.2f} m")
+        c3.metric("Înălțime Gol", f"{h_gol:.2f} m")
+
+        st.write("<br>", unsafe_allow_html=True)
+        st.subheader("👁️ Previzualizare Model 3D Extras")
+
+        np.random.seed(42)
+        num_podea = int(1200 * (0.04 / vox))
+        num_tavan = int(1000 * (0.04 / vox))
+        num_pereti = int(1500 * (0.04 / vox))
+
+        floor_x = np.random.uniform(0, 5.0, num_podea)
+        floor_y = np.random.uniform(0, 3.0, num_podea)
+        floor_z = np.zeros(num_podea) + np.random.normal(0, 0.01, num_podea)
+
+        ceiling_x = np.random.uniform(0, 5.0, num_tavan)
+        ceiling_y = np.random.uniform(0, 3.0, num_tavan)
+        ceiling_z = (
+            np.full(num_tavan, 3.0) + np.random.normal(0, 0.01, num_tavan)
+        )
+
+        wall_x_list, wall_y_list, wall_z_list = [], [], []
+
+        for _ in range(num_pereti):
+            x = np.random.uniform(0, 5.0)
+            z = np.random.uniform(0, 3.0)
+            if not (0.2 <= x <= 1.2 and z <= 2.1):
+                wall_x_list.append(x)
+                wall_y_list.append(0.0 + np.random.normal(0, 0.01))
+                wall_z_list.append(z)
+
+        for _ in range(num_pereti):
+            wall_x_list.append(np.random.uniform(0, 5.0))
+            wall_y_list.append(3.0 + np.random.normal(0, 0.01))
+            wall_z_list.append(np.random.uniform(0, 3.0))
+
+        wall_x = np.array(wall_x_list)
+        wall_y = np.array(wall_y_list)
+        wall_z = np.array(wall_z_list)
+
+        pipe_x_list, pipe_y_list, pipe_z_list = [], [], []
+        radius = r_c
+        length_x = np.linspace(0.5, 4.5, 100)
+
+        for x in length_x:
+            angles = np.random.uniform(0, 2 * np.pi, 20)
+            r_vals = np.random.uniform(radius * 0.8, radius, 20)
+            for angle, r in zip(angles, r_vals):
+                pipe_x_list.append(x)
+                pipe_y_list.append(0.30 + r * np.cos(angle))
+                pipe_z_list.append(2.20 + r * np.sin(angle))
+
+        pipe_x = np.array(pipe_x_list)
+        pipe_y = np.array(pipe_y_list)
+        pipe_z = np.array(pipe_z_list)
+
+        fig = go.Figure()
         fig.add_trace(
             go.Scatter3d(
-                x=[seed_x],
-                y=[seed_y],
-                z=[seed_z],
-                mode="markers+text",
-                marker=dict(size=12, color="#FF0000", symbol="diamond"),
-                text=["🎯 SEED POINT"],
-                textposition="top center",
-                name="🎯 Punct de Ghidaj (Seed)",
+                x=floor_x,
+                y=floor_y,
+                z=floor_z,
+                mode="markers",
+                marker=dict(size=2, color="#50C878", opacity=0.75),
+                name="Podea / Sol",
+            )
+        )
+        fig.add_trace(
+            go.Scatter3d(
+                x=wall_x,
+                y=wall_y,
+                z=wall_z,
+                mode="markers",
+                marker=dict(size=2, color="#FF4D4D", opacity=0.75),
+                name="Pereți Structură (x4)",
+            )
+        )
+        fig.add_trace(
+            go.Scatter3d(
+                x=ceiling_x,
+                y=ceiling_y,
+                z=ceiling_z,
+                mode="markers",
+                marker=dict(size=2, color="#00E5FF", opacity=0.75),
+                name="Plafon / Tavan",
+            )
+        )
+        fig.add_trace(
+            go.Scatter3d(
+                x=pipe_x,
+                y=pipe_y,
+                z=pipe_z,
+                mode="markers",
+                marker=dict(size=3, color="#FFC72C", opacity=0.9),
+                name=f"Țeavă MEP (Rază: {r_c:.2f}m)",
             )
         )
 
-    fig.update_layout(
-        scene=dict(
-            xaxis_title="X (m)",
-            yaxis_title="Y (m)",
-            zaxis_title="Z (m)",
-            bgcolor="#061017",
-        ),
-        paper_bgcolor="#0D1E26",
-        font=dict(color="#E2E8F0"),
-        margin=dict(l=0, r=0, b=0, t=20),
-        height=450,
-    )
+        if op:
+            fig.add_trace(
+                go.Scatter3d(
+                    x=[seed_x],
+                    y=[seed_y],
+                    z=[seed_z],
+                    mode="markers+text",
+                    marker=dict(size=12, color="#FF0000", symbol="diamond"),
+                    text=["🎯 SEED POINT"],
+                    textposition="top center",
+                    name="🎯 Punct de Ghidaj (Seed)",
+                )
+            )
 
-    st.plotly_chart(fig, use_container_width=True)
+        fig.update_layout(
+            scene=dict(
+                xaxis_title="X (m)",
+                yaxis_title="Y (m)",
+                zaxis_title="Z (m)",
+                bgcolor="#061017",
+            ),
+            paper_bgcolor="#0D1E26",
+            font=dict(color="#E2E8F0"),
+            margin=dict(l=0, r=0, b=0, t=20),
+            height=450,
+        )
 
-    st.subheader("💾 Export Formate Profesionale CAD & BIM")
+        st.plotly_chart(fig, use_container_width=True)
 
-    col_d1, col_d2, col_d3, col_d4 = st.columns(4)
-    col_d1.download_button(
-        "📥 Format .OBJ",
-        data=mep_data,
-        file_name=f"MEP_{nume_proiect}.obj",
-        mime="model/obj",
-        use_container_width=True,
-    )
-    col_d2.download_button(
-        "📥 Format .DXF",
-        data=dxf_data,
-        file_name=f"CAD_{nume_proiect}.dxf",
-        mime="application/dxf",
-        use_container_width=True,
-    )
-    col_d3.download_button(
-        "📥 Format .IFC",
-        data=ifc_data,
-        file_name=f"BIM_{nume_proiect}.ifc",
-        mime="application/octet-stream",
-        use_container_width=True,
-    )
-    col_d4.download_button(
-        "📥 Format .CSV",
-        data=csv_data,
-        file_name=f"Points_{nume_proiect}.csv",
-        mime="text/csv",
-        use_container_width=True,
-    )
+        st.subheader("💾 Export Formate Profesionale CAD & BIM")
 
-    st.write("")
-    raport_text = genereaza_raport_tehnic(
-        nume_proiect, l_t, l_w, h_w, l_gol, h_gol
-    )
-    st.download_button(
-        "📄 Descarcă Fișa Tehnică de Releveu (Raport Complet)",
-        data=raport_text,
-        file_name=f"RAPORT_TEHNIC_{nume_proiect}.txt",
-        mime="text/plain",
-        use_container_width=True,
-    )
+        col_d1, col_d2, col_d3, col_d4 = st.columns(4)
+        col_d1.download_button(
+            "📥 Format .OBJ",
+            data=mep_data,
+            file_name=f"MEP_{nume_proiect}.obj",
+            mime="model/obj",
+            use_container_width=True,
+        )
+        col_d2.download_button(
+            "📥 Format .DXF",
+            data=dxf_data,
+            file_name=f"CAD_{nume_proiect}.dxf",
+            mime="application/dxf",
+            use_container_width=True,
+        )
+        col_d3.download_button(
+            "📥 Format .IFC",
+            data=ifc_data,
+            file_name=f"BIM_{nume_proiect}.ifc",
+            mime="application/octet-stream",
+            use_container_width=True,
+        )
+        col_d4.download_button(
+            "📥 Format .CSV",
+            data=csv_data,
+            file_name=f"Points_{nume_proiect}.csv",
+            mime="text/csv",
+            use_container_width=True,
+        )
+
+        st.write("")
+        raport_text = genereaza_raport_tehnic(
+            nume_proiect, l_t, l_w, h_w, l_gol, h_gol
+        )
+        st.download_button(
+            "📄 Descarcă Fișa Tehnică de Releveu (Raport Complet)",
+            data=raport_text,
+            file_name=f"RAPORT_TEHNIC_{nume_proiect}.txt",
+            mime="text/plain",
+            use_container_width=True,
+        )
 
 # JURNAL SCANĂRI
 with tab_history:
@@ -1041,7 +1024,8 @@ with tab_history:
         )
     else:
         st.info(
-            "Jurnalul dumneavoastră este gol. Rulați o procesare în tab-ul principal pentru a salva primul proiect!"
+            "Jurnalul dumneavoastră este gol. Rulați o procesare în tab-ul"
+            " principal pentru a salva primul proiect!"
         )
 
 # SETĂRI CONT
@@ -1083,7 +1067,7 @@ with tab_pricing:
                 <h2 style='color: #FFF;'>0 € <span style='font-size:12px; color:#AAA;'>/ gratuit</span></h2>
                 <p style='font-size:12px; color:#94A3B8; text-align:left;'>
                 • 1 Scanare de test inclusă<br>
-                • Suport toate scanerele (E57, LAS)<br>
+                • Suport toate scanerele (E57, LAS, BIN)<br>
                 • Export Solide .OBJ<br>
                 • Vizualizator 3D Interactiv
                 </p>
@@ -1099,7 +1083,7 @@ with tab_pricing:
                 <h4 style='color: #50C878; margin-top:0;'>PLAN PRO LUNAR</h4>
                 <h2 style='color: #FFF;'>29.99 € <span style='font-size:12px; color:#AAA;'>/ lună</span></h2>
                 <p style='font-size:12px; color:#CBD5E1; text-align:left;'>
-                • <b>Scanări Nelimitate (E57, SLAM, LiDAR)</b><br>
+                • <b>Scanări Nelimitate (E57, SLAM, LiDAR, BIN)</b><br>
                 • Extragere automată MEP & Structură<br>
                 • Export nativ DXF, IFC & OBJ<br>
                 • Prioritate Server Cloud AI

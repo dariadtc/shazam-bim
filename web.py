@@ -104,7 +104,7 @@ st.markdown(
     
     /* LIMITARE LĂȚIME & SPAȚIERE CORECTĂ ÎN SUS */
     .block-container {
-        max-width: 1150px !important;
+        max-width: 1100px !important;
         padding-top: 2rem !important;
         padding-bottom: 3rem !important;
         margin: 0 auto !important;
@@ -118,55 +118,15 @@ st.markdown(
     }
     .logo-shazam {
         font-family: 'Orbitron', sans-serif;
-        font-size: 38px;
         font-weight: 800;
         color: #00FFFF;
         text-shadow: 0 0 12px rgba(0, 255, 255, 0.7);
     }
     .logo-bim {
         font-family: 'Orbitron', sans-serif;
-        font-size: 38px;
         font-weight: 800;
         color: #50C878;
         text-shadow: 0 0 12px rgba(80, 200, 120, 0.7);
-    }
-
-    /* FORȚARE ALINIERE PERFECĂ LA DREAPTA PENTRU COLOANA UTILIZATORULUI */
-    div[data-testid="stHorizontalBlock"]:first-of-type > div:nth-child(2) {
-        display: flex !important;
-        flex-direction: column !important;
-        align-items: flex-end !important;
-        justify-content: flex-start !important;
-    }
-
-    .user-badge-box {
-        margin-bottom: 6px;
-        text-align: right;
-    }
-
-    /* STILIZARE BUTON DELOGARE ALINIAT STRICT LA DREAPTA */
-    div[data-testid="stHorizontalBlock"]:first-of-type > div:nth-child(2) .stButton {
-        display: flex !important;
-        justify-content: flex-end !important;
-        width: 100% !important;
-    }
-    
-    div[data-testid="stHorizontalBlock"]:first-of-type > div:nth-child(2) button {
-        padding: 4px 14px !important;
-        font-size: 11px !important;
-        border-radius: 12px !important;
-        background: rgba(255, 255, 255, 0.05) !important;
-        color: #94A3B8 !important;
-        border: 1px solid rgba(255, 255, 255, 0.15) !important;
-        box-shadow: none !important;
-        font-weight: 500 !important;
-        margin-left: auto !important;
-        margin-right: 0 !important;
-    }
-    div[data-testid="stHorizontalBlock"]:first-of-type > div:nth-child(2) button:hover {
-        background: rgba(255, 255, 255, 0.12) !important;
-        color: #FFFFFF !important;
-        border-color: rgba(0, 255, 255, 0.3) !important;
     }
 
     /* CARDURI COMPACTE SMARALD */
@@ -236,7 +196,7 @@ st.markdown(
         font-family: 'Orbitron', sans-serif;
     }
     
-    /* BUTOANE LUMINATE GENERALE */
+    /* BUTOANE LUMINATE GENERALE (FIJATE LA 44PX PENTRU ALINIERE PERFECTĂ) */
     div.stButton > button:first-child {
         background: linear-gradient(135deg, #00E5FF 0%, #10B981 100%);
         color: #061017;
@@ -247,6 +207,8 @@ st.markdown(
         padding: 10px 20px;
         box-shadow: 0 4px 15px rgba(0, 229, 255, 0.2);
         transition: all 0.2s ease;
+        height: 44px !important;
+        margin: 0 !important;
     }
     div.stButton > button:first-child:hover {
         box-shadow: 0 6px 20px rgba(0, 229, 255, 0.4);
@@ -630,38 +592,37 @@ if st.session_state.user_conectat is None:
 # SCENARIUL B: ECRANUL PRINCIPAL AUTENTIFICAT (SINGLE-PAGE APPLICATION)
 # -----------------------------------------------------------------------------
 
-# 1. HEADER ALINIAT PERFECT LA DREAPTA
-col_h1, col_h2 = st.columns([2.3, 1.2])
-
-with col_h1:
-    st.markdown(
-        """
-        <div style='display: inline-flex; align-items: center; white-space: nowrap;'>
-            <span class='logo-shazam' style='font-size: 38px;'>Shazam</span><span class='logo-bim' style='font-size: 38px;'>-BIM</span>
-        </div>
+# 1. LOGO MARE CENTRAT DEASUPRA TUTUROR
+st.markdown(
+    """
+    <div class='logo-container' style='margin-top: 10px; margin-bottom: 25px;'>
+        <span class='logo-shazam' style='font-size: 46px;'>Shazam</span><span class='logo-bim' style='font-size: 46px;'>-BIM</span>
+    </div>
     """,
-        unsafe_allow_html=True,
-    )
+    unsafe_allow_html=True,
+)
 
-with col_h2:
+# 2. BARĂ DE NAVIGARE (UTILIZATOR + DELOGARE) - ALINIERE PERFECTĂ PE ACEEAȘI LINIE
+col_u1, col_u2 = st.columns([5, 1])
+
+with col_u1:
     st.markdown(
         f"""
-        <div class='user-badge-box'>
-            <span style='background: rgba(0, 255, 255, 0.08); padding: 5px 12px; border-radius: 16px; border: 1px solid rgba(0, 255, 255, 0.25); font-size: 11px; color: #00FFFF;'>
-                👤 Cont: <b>{st.session_state.user_conectat}</b>
-            </span>
+        <div style='background-color: #0D1E26; border: 1px solid rgba(80, 200, 120, 0.25); border-radius: 8px; height: 44px; display: flex; align-items: center; padding: 0 20px; color: #94A3B8; font-size: 13px; box-shadow: 0 4px 10px rgba(0,0,0,0.2);'>
+            👤 Autentificat ca:&nbsp; <span style='color: #00FFFF; font-weight: 600; font-size: 14px;'>{st.session_state.user_conectat}</span>
         </div>
-    """,
+        """,
         unsafe_allow_html=True,
     )
 
-    if st.button("🚪 Delogare", key="btn_logout_top"):
+with col_u2:
+    if st.button("🚪 Delogare", use_container_width=True):
         st.session_state.user_conectat = None
         st.rerun()
 
 st.write("<br>", unsafe_allow_html=True)
 
-# 2. BANNER DE BINE-AI VENIT & STATUS AI ENGINE
+# 3. BANNER DE BINE-AI VENIT & STATUS AI ENGINE
 st.markdown(
     """
     <div style='background: linear-gradient(135deg, #0F2229 0%, #0B1924 100%); padding: 20px 24px; border-radius: 14px; border: 1px solid rgba(80, 200, 120, 0.2); margin-bottom: 20px;'>
@@ -680,7 +641,7 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-# 3. PANOU CONTROL MODUL DE LUCRU & ÎNCĂRCARE DATE (DOUĂ COLOANE COMPACTE)
+# 4. PANOU CONTROL MODUL DE LUCRU & ÎNCĂRCARE DATE
 st.markdown(
     "<h4 style='color: #00FFFF; font-family: Orbitron, sans-serif; margin-bottom: 8px;'>📂 Sursă Date & Încărcare Nor de Puncte</h4>",
     unsafe_allow_html=True,
@@ -1054,7 +1015,7 @@ with tab_pricing:
         )
 
 # -----------------------------------------------------------------------------
-# 4. FOOTER IN JOSUL PAGINII
+# 5. FOOTER IN JOSUL PAGINII
 # -----------------------------------------------------------------------------
 st.write("<br><br>", unsafe_allow_html=True)
 st.markdown("---")

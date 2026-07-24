@@ -54,6 +54,13 @@ st.markdown(
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
     
+    /* ASCUNDE ICONIȚA NATIVĂ DE LINK / ANCHOR DIN STREAMLIT */
+    .stMarkdown a.anchor-link, 
+    [data-testid="stHeaderActionElements"],
+    a.header-anchor {
+        display: none !important;
+    }
+    
     /* LOGO NEON GLOW EFFECTS */
     .logo-container {
         text-align: center;
@@ -362,7 +369,6 @@ sursa = st.sidebar.radio(
 
 up = None
 if sursa != "Demo Interactiv":
-    # EXTINDERE FORMATE ACCEPTATE PENTRU ORICE TIP DE SCANNER / SLAM / LIDAR
     up = st.sidebar.file_uploader(
         "Încarcă nor de puncte (orice scanner):",
         type=["las", "laz", "ply", "e57", "xyz", "txt", "pts"],

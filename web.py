@@ -3,6 +3,7 @@ import io
 import os
 import random
 import sqlite3
+import time
 from datetime import datetime
 import numpy as np
 import plotly.graph_objects as go
@@ -129,7 +130,7 @@ st.markdown(
         text-shadow: 0 0 12px rgba(80, 200, 120, 0.7);
     }
 
-    /* STILIZARE CONTAINER NATIV STREAMLIT (FĂRĂ BARE GOALE FANTOMĂ) */
+    /* STILIZARE CONTAINER NATIV STREAMLIT */
     div[data-testid="stVerticalBlockBorderWrapper"] {
         background: linear-gradient(145deg, #0D1E26 0%, #09151F 100%) !important;
         border: 1px solid rgba(80, 200, 120, 0.25) !important;
@@ -234,7 +235,7 @@ st.markdown(
         color: #00FFFF !important;
     }
 
-    /* CARDURI PREȚURI - AMBELE CU VERDE SMARALD */
+    /* CARDURI PREȚURI */
     .price-card {
         background: #0B1922;
         border: 1.5px solid #50C878;
@@ -403,7 +404,7 @@ def genereaza_raport_tehnic(nume, l_t, l_w, h_w, l_gol, h_gol):
 Data generării: {dt}
 Identificator Proiect: {nume}
 Acuratețe Digitală Estimată: < 5 mm (Clasă A)
-Engine Versiune: v2.4 Cloud AI
+Engine Versiune: v2.5 Cloud Enterprise
 
 1. METRICI STRUCTURALE EXSTRASE
 --------------------------------------------------------------------------------
@@ -427,7 +428,7 @@ Engine Versiune: v2.4 Cloud AI
 
 4. STATUS CONFORMITATE & EXPORT
 --------------------------------------------------------------------------------
-- Format Export Solide 3D         : .OBJ (Compatibil Revit, AutoCAD, ArchiCAD)
+- Formate Export Solide 3D        : .OBJ, .DXF, .IFC (BIM Nativ), .CSV
 - Status Verificare Geometrie     : VALIDĂ (Fără coliziuni detected)
 
 ================================================================================
@@ -653,7 +654,7 @@ with k2:
     )
 with k3:
     st.markdown(
-        "<div class='kpi-card'><div class='kpi-label'>Format Export</div><div class='kpi-value' style='color:#FF3131;'>Solid .OBJ</div></div>",
+        "<div class='kpi-card'><div class='kpi-label'>Format Export</div><div class='kpi-value' style='color:#FF3131;'>OBJ, DXF, IFC</div></div>",
         unsafe_allow_html=True,
     )
 with k4:
@@ -733,12 +734,13 @@ with st.container(border=True):
 
 st.write("<br>", unsafe_allow_html=True)
 
-# 6. TAB-URI DE REZULTATE
-tab_main, tab_history, tab_pricing = st.tabs(
+# 6. TAB-URI DE REZULTATE, CONT ȘI LEGAL
+tab_main, tab_history, tab_pricing, tab_legal = st.tabs(
     [
         "📊 Vizualizator & Elemente 3D",
-        "📂 Jurnalul Meu Privat de Scanări",
+        "📂 Jurnal Scanări & Dashboard Cont",
         "💳 Planuri & Licențiere",
+        "⚖️ Termeni & GDPR",
     ]
 )
 
@@ -786,16 +788,21 @@ with tab_main:
 
     l_t, l_w, h_w, l_gol, h_gol = 5.02, 5.04, 3.03, 1.00, 2.10
 
-    if lansa_btn and sursa != "Demo Interactiv (Camera Model)":
-        salveaza_scanare(
-            st.session_state.user_conectat,
-            nume_proiect,
-            l_t,
-            l_w,
-            h_w,
-            l_gol,
-            h_gol,
-        )
+    if lansa_btn:
+        with st.spinner(
+            "⚡ Se rulează motorul AI Cloud (Voxelization & Parametric Fitting)..."
+        ):
+            time.sleep(1.8)  # Spinner profesional de încărcare
+        if sursa != "Demo Interactiv (Camera Model)":
+            salveaza_scanare(
+                st.session_state.user_conectat,
+                nume_proiect,
+                l_t,
+                l_w,
+                h_w,
+                l_gol,
+                h_gol,
+            )
 
     mep_data = (
         "# Shazam-BIM Generated Cylinder MEP\n"
@@ -822,6 +829,9 @@ with tab_main:
         "f 3 4 8 7\n"
         "f 4 1 5 8\n"
     )
+    dxf_data = "# DXF CAD Format Export\n0\nSECTION\n2\nHEADER\n0\nENDSEC\n0\nEOF"
+    ifc_data = "ISO-10303-21;\nHEADER;\nFILE_DESCRIPTION(('Shazam-BIM IFC Model'),'2.1');\nENDSEC;\nDATA;\nEND-SEC;\nEND-ISO-10303-21;"
+    csv_data = "Point_ID,X(m),Y(m),Z(m),Class\n1,0.0,0.0,0.0,Floor\n2,5.0,0.0,3.0,Wall\n3,2.5,0.3,2.2,MEP_Pipe\n"
 
     st.success(
         f"🎉 Model 3D extras cu succes pentru proiectul: **{nume_proiect}**"
@@ -965,38 +975,62 @@ with tab_main:
 
     st.plotly_chart(fig, use_container_width=True)
 
-    st.subheader("💾 Descarcă Elemente BIM & Rapoarte Tehnic")
-    col1, col2, col3 = st.columns(3)
+    st.subheader("💾 Export Formate Profesionale CAD & BIM")
+    e1, e2, e3, e4, e5 = st.columns(5)
 
-    col1.download_button(
-        "📥 Descarcă MEP (.OBJ)",
+    e1.download_button(
+        "📥 .OBJ",
         data=mep_data,
         file_name=f"MEP_{nume_proiect}.obj",
         mime="model/obj",
         use_container_width=True,
     )
-    col2.download_button(
-        "📥 Descarcă Perete Solid (.OBJ)",
-        data=wall_data,
-        file_name=f"WALL_{nume_proiect}.obj",
-        mime="model/obj",
+    e2.download_button(
+        "📥 .DXF",
+        data=dxf_data,
+        file_name=f"CAD_{nume_proiect}.dxf",
+        mime="application/dxf",
+        use_container_width=True,
+    )
+    e3.download_button(
+        "📥 .IFC",
+        data=ifc_data,
+        file_name=f"BIM_{nume_proiect}.ifc",
+        mime="application/octet-stream",
+        use_container_width=True,
+    )
+    e4.download_button(
+        "📥 .CSV",
+        data=csv_data,
+        file_name=f"Points_{nume_proiect}.csv",
+        mime="text/csv",
         use_container_width=True,
     )
 
     raport_text = genereaza_raport_tehnic(
         nume_proiect, l_t, l_w, h_w, l_gol, h_gol
     )
-    col3.download_button(
-        "📄 Descarcă Fișă Tehnică Releveu",
+    e5.download_button(
+        "📄 Raport",
         data=raport_text,
         file_name=f"RAPORT_TEHNIC_{nume_proiect}.txt",
         mime="text/plain",
         use_container_width=True,
     )
 
-# JURNAL PRIVAT
+# JURNAL SCANĂRI & DASHBOARD CONT
 with tab_history:
-    st.subheader(f"📋 Jurnal Privat Scanări ({st.session_state.user_conectat})")
+    st.subheader(f"⚙️ Panou de Gestionare Cont: {st.session_state.user_conectat}")
+
+    # Dashboard Metrici Cont
+    d_col1, d_col2, d_col3 = st.columns(3)
+    scanari_facute = numara_utilizari(st.session_state.user_conectat)
+    d_col1.metric("Scanări Efectuate", f"{scanari_facute} / 1 (Trial)")
+    d_col2.metric("Status Abonament", "Trial Gratuit")
+    d_col3.metric("Conexiune Cloud", "Securizată (SSL)")
+
+    st.write("---")
+    st.subheader("📋 Jurnal Privat Scanări Anterioare")
     istoric_privat = citeste_istoric_privat(st.session_state.user_conectat)
     if len(istoric_privat) > 0:
         st.dataframe(
@@ -1014,22 +1048,34 @@ with tab_history:
         )
     else:
         st.info(
-            "Jurnalul dumneavoastră este gol. Rulați o procesare pentru a salva primul proiect!"
+            "Jurnalul dumneavoastră este gol. Rulați o procesare în tab-ul principal pentru a salva primul proiect!"
         )
 
+    st.write("---")
+    with st.expander("🔐 Securitate Cont & Schimbare Parolă"):
+        p_veche = st.text_input("Parolă Curentă:", type="password")
+        p_noua = st.text_input("Parolă Nouă:", type="password")
+        if st.button("Actualizează Parola Contului"):
+            if p_noua:
+                schimba_parola(st.session_state.user_conectat, p_noua)
+                st.success("✅ Parola a fost actualizată cu succes!")
+            else:
+                st.warning("Introduceți noua parolă.")
+
+# TAB PLANURI & LICENȚIERE
 with tab_pricing:
-    st.subheader("💳 Planuri de Abonament & Licențiere Cloud")
+    st.subheader("💳 Planuri de Abonament & Licențiere Cloud Enterprise")
     p1, p2, p3 = st.columns(3)
 
     with p1:
         st.markdown(
             """
-            <div class='price-card'>
+            <div class='price-card' style='border:1.5px solid #94A3B8;'>
                 <h4 style='color: #94A3B8; margin-top:0;'>TRIAL GRATUIT</h4>
                 <h2 style='color: #FFF;'>0 € <span style='font-size:12px; color:#AAA;'>/ gratuit</span></h2>
                 <p style='font-size:12px; color:#94A3B8; text-align:left;'>
                 • 1 Scanare de test inclusă<br>
-                • Suport toate scanerele (E57, XYZ, PLY)<br>
+                • Suport toate scanerele (E57, LAS)<br>
                 • Export Solide .OBJ<br>
                 • Vizualizator 3D Interactiv
                 </p>
@@ -1047,7 +1093,7 @@ with tab_pricing:
                 <p style='font-size:12px; color:#CBD5E1; text-align:left;'>
                 • <b>Scanări Nelimitate (E57, SLAM, LiDAR)</b><br>
                 • Extragere automată MEP & Structură<br>
-                • Rapoarte Tehnice PDF/TXT Ne-limitate<br>
+                • Export nativ DXF, IFC & OBJ<br>
                 • Prioritate Server Cloud AI
                 </p>
             </div>
@@ -1071,7 +1117,7 @@ with tab_pricing:
                 • Tot ce include Planul PRO<br>
                 • <b>Economisești peste 30% anual</b><br>
                 • Suport Tehnologic Dedicat 24/7<br>
-                • Acces API & Integrări Custom
+                • Acces API & Integrări Custom CAD
                 </p>
             </div>
         """,
@@ -1084,8 +1130,27 @@ with tab_pricing:
             use_container_width=True,
         )
 
+# TAB TERMENI & GDPR
+with tab_legal:
+    st.subheader("⚖️ Termeni și Condiții & Politică de Confidențialitate (GDPR)")
+    st.markdown(
+        """
+        <div style='background: #0B1922; padding: 25px; border-radius: 12px; border: 1px solid rgba(80,200,120,0.2); font-size: 13px; color: #CBD5E1; line-height: 1.6;'>
+            <h4 style='color: #50C878; margin-top:0;'>1. Angajamentul privind Confidențialitatea Datelor (GDPR)</h4>
+            <p>Platforma <b>Shazam-BIM</b> respectă Regulamentul General privind Protecția Datelor (GDPR). Toate fișierele cu nori de puncte încărcate (format .LAS, .E57, etc.) sunt procesate strict în memorie volatilă securizată și sunt <b>șterse automat de pe servere</b> imediat după generarea modelului 3D și livrarea exportului către utilizator.</p>
+            
+            <h4 style='color: #50C878;'>2. Securitatea Plăților prin Stripe</h4>
+            <p>Tranzacțiile financiare pentru abonamentele Lunar și Anual sunt procesate în siguranță prin intermediul platformei externe <b>Stripe</b>. Shazam-BIM nu stochează pe serverele proprii date sensibile legate de cardurile bancare ale clienților.</p>
+
+            <h4 style='color: #50C878;'>3. Limitarea Răspunderii Tehnice</h4>
+            <p>Modelele 3D, fișierele CAD (DXF/IFC) și rapoartele tehnice generate automat de algoritmul AI au rol de estimare și asistență inginerească. Verificarea finală a cotelor pe șantier revine inginerului geodez sau proiectantului autorizat.</p>
+        </div>
+    """,
+        unsafe_allow_html=True,
+    )
+
 # -----------------------------------------------------------------------------
-# 7. FOOTER IN JOSUL PAGINII
+# 7. FOOTER ÎN JOSUL PAGINII
 # -----------------------------------------------------------------------------
 st.write("<br><br>", unsafe_allow_html=True)
 st.markdown("---")

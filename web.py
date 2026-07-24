@@ -53,7 +53,7 @@ def trimite_email_formspree(email, tip, mesaj):
         return False
 
 
-# 1. Configurare pagină
+# 1. Configurare pagină fără sidebar
 st.set_page_config(
     page_title="Shazam-BIM Cloud - Relevee 3D Universal LiDAR & SLAM AI",
     page_icon="🤖",
@@ -70,7 +70,7 @@ if "otp_reset" not in st.session_state:
 if "email_reset_target" not in st.session_state:
     st.session_state.email_reset_target = None
 
-# 2. Injectare CSS Custom - CONTAINMENT COMPACT & DESIGN COMPACT
+# 2. Injectare CSS Custom - ASCUNDERE BARA SHARE & ELIMINARE TĂIETURĂ HEADER
 st.markdown(
     """
     <style>
@@ -84,6 +84,13 @@ st.markdown(
     
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
+    
+    /* ASCUNDE BARA NATIVĂ STREAMLIT DIN TOP (SHARE, STAR, GITHUB) */
+    header[data-testid="stHeader"],
+    [data-testid="stHeader"] {
+        display: none !important;
+        height: 0px !important;
+    }
     
     /* ASCUNDE DEFINITIV SIDEBAR-UL ȘI SĂGEȚILE */
     [data-testid="stSidebar"],
@@ -99,10 +106,10 @@ st.markdown(
         display: none !important;
     }
     
-    /* LIMITARE LATIME PENTRU ASPECT COMPACT & ESTETIC (MAX 1150PX) */
+    /* LIMITARE LĂȚIME & SPAȚIERE CORECTĂ ÎN SUS CA SĂ NU MAI FIE TĂIAT CÂMPUL */
     .block-container {
         max-width: 1150px !important;
-        padding-top: 1.5rem !important;
+        padding-top: 2.5rem !important;
         padding-bottom: 3rem !important;
         margin: 0 auto !important;
     }
@@ -448,7 +455,7 @@ if st.session_state.user_conectat is None:
 
     st.markdown(
         """
-        <div class='logo-container' style='margin-top: 40px; margin-bottom: 10px;'>
+        <div class='logo-container' style='margin-top: 20px; margin-bottom: 10px;'>
             <span class='logo-shazam'>Shazam</span><span class='logo-bim'>-BIM</span>
             <p style='font-size: 12px; color: #50C878; font-weight: 600; margin-top: 6px; letter-spacing: 1px;'>
                 PLATFORMĂ UNIVERSALĂ CLOUD PENTRU RELEVEE STRUCTURALE ȘI INSTALAȚII MEP
@@ -719,7 +726,6 @@ tab_main, tab_history, tab_pricing = st.tabs(
 utilizari_efectuate = numara_utilizari(st.session_state.user_conectat)
 
 with tab_main:
-    # AICI GENERĂM AUTOMAT MODELUL 3D FĂRĂ SĂ MAI AȘTEPTE PE O CASETĂ ALBĂSTRĂ URÂTĂ!
     nume_proiect = (
         "CAMERA_DEMO_COMPLETĂ"
         if sursa == "Demo Interactiv (Camera Model)"

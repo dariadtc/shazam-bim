@@ -5,16 +5,105 @@ import numpy as np
 import plotly.graph_objects as go
 import streamlit as st
 
-st.set_page_config(page_title="Shazam-BIM Cloud", layout="wide")
+# 1. Configurare pagină cu titlu SEO îmbunătățit
+st.set_page_config(
+    page_title="Shazam-BIM Cloud - Relevee 3D & Instalații MEP AI",
+    page_icon="🤖",
+    layout="wide",
+    initial_sidebar_state="expanded",
+)
 
-# --- LOGO FUTURIST GEOMETRIC BRANDING ---
-st.sidebar.markdown(
-    "<link href='https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap' rel='stylesheet'>"
-    "<div style='text-align: center; margin-bottom: 30px; padding-top: 15px; user-select: none;'>"
-    "<span style='font-family: \"Orbitron\", sans-serif; font-size: 28px; font-weight: 500; font-style: italic; color: #00FFFF; text-shadow: 0 0 5px #00FFFF, 0 0 15px rgba(0,255,255,0.6); letter-spacing: 1px;'>Shazam</span>"
-    "<span style='font-family: \"Orbitron\", sans-serif; font-size: 28px; font-weight: 500; font-style: italic; color: #50C878; margin: 0 4px; text-shadow: 0 0 5px #50C878;'>-</span>"
-    "<span style='font-family: \"Orbitron\", sans-serif; font-size: 28px; font-weight: 500; font-style: italic; color: #50C878; text-shadow: 0 0 5px #50C878, 0 0 15px rgba(80,200,120,0.6); letter-spacing: 1px;'>BIM</span>"
-    "</div>",
+# 2. Injectare CSS Custom pentru Design SaaS Premium (Dark Theme Pro)
+st.markdown(
+    """
+    <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Orbitron:wght@500;700&display=swap');
+    
+    /* Background global */
+    .stApp {
+        background-color: #0B0E14;
+        font-family: 'Inter', sans-serif;
+    }
+    
+    /* Ascundere elemente implicite Streamlit */
+    #MainMenu {visibility: hidden;}
+    footer {visibility: hidden;}
+    
+    /* Status Badge Pulsant */
+    .status-badge {
+        display: inline-flex;
+        align-items: center;
+        background: rgba(80, 200, 120, 0.1);
+        border: 1px solid rgba(80, 200, 120, 0.3);
+        padding: 4px 12px;
+        border-radius: 20px;
+        color: #50C878;
+        font-size: 12px;
+        font-weight: 600;
+        margin-bottom: 12px;
+    }
+    .pulse-dot {
+        width: 8px;
+        height: 8px;
+        background-color: #50C878;
+        border-radius: 50%;
+        margin-right: 8px;
+        box-shadow: 0 0 8px #50C878;
+    }
+
+    /* Carduri KPI Custom */
+    .kpi-card {
+        background: rgba(22, 27, 38, 0.7);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 14px;
+        padding: 18px;
+        text-align: center;
+        backdrop-filter: blur(10px);
+        transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+    .kpi-card:hover {
+        transform: translateY(-2px);
+        border-color: rgba(0, 255, 255, 0.4);
+    }
+    .kpi-label {
+        color: #8A94A6;
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 1.2px;
+        text-transform: uppercase;
+        margin-bottom: 6px;
+    }
+    .kpi-value {
+        color: #FFFFFF;
+        font-size: 22px;
+        font-weight: 700;
+        font-family: 'Orbitron', sans-serif;
+    }
+
+    /* Stilizare Panou Lateral */
+    [data-testid="stSidebar"] {
+        background-color: #121621;
+        border-right: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    
+    /* Stilizare Buton Principal */
+    div.stButton > button:first-child {
+        background: linear-gradient(135deg, #00E5FF 0%, #0088FF 100%);
+        color: #000000;
+        font-weight: 700;
+        font-size: 16px;
+        border: none;
+        border-radius: 10px;
+        padding: 14px 28px;
+        box-shadow: 0 4px 20px rgba(0, 229, 255, 0.3);
+        transition: all 0.25s ease;
+    }
+    div.stButton > button:first-child:hover {
+        box-shadow: 0 6px 28px rgba(0, 229, 255, 0.5);
+        transform: scale(1.01);
+    }
+    </style>
+""",
     unsafe_allow_html=True,
 )
 
@@ -86,77 +175,128 @@ def citeste_istoric():
 
 init_db()
 
-sursa = st.sidebar.radio("Sursă Date:", ["Demo", "Fișier (.ply, .las)"])
-up = (
-    st.sidebar.file_uploader("Încarcă nor de puncte:", type=["las", "ply"])
-    if sursa != "Demo"
-    else None
+# --- SIDEBAR BRANDING & CONTROLS ---
+st.sidebar.markdown(
+    "<link href='https://fonts.googleapis.com/css2?family=Orbitron:wght@600&display=swap' rel='stylesheet'>"
+    "<div style='text-align: center; padding: 20px 0 10px 0; user-select: none;'>"
+    "<span style='font-family: \"Orbitron\", sans-serif; font-size: 26px; font-weight: 600; color: #00FFFF; text-shadow: 0 0 10px rgba(0,255,255,0.4);'>Shazam</span>"
+    "<span style='font-family: \"Orbitron\", sans-serif; font-size: 26px; font-weight: 600; color: #50C878;'>-BIM</span>"
+    "<p style='font-size: 10px; color: #6C7A9C; letter-spacing: 2px; margin-top: 4px; font-weight: 600;'>AI CLOUD ENGINE v2.4</p>"
+    "</div>",
+    unsafe_allow_html=True,
 )
-vox = st.sidebar.slider("Filtru Voxel (m)", 0.01, 0.10, 0.04, 0.01)
-r_c = st.sidebar.slider("Rază estimată țeavă (m)", 0.05, 0.50, 0.15, 0.01)
-op = st.sidebar.checkbox("🎯 Ghidaj manual prin Click", value=False)
 
+st.sidebar.markdown("---")
+st.sidebar.subheader("📂 Modul de Lucru")
+sursa = st.sidebar.radio(
+    "Sursă Date:",
+    ["Demo Interactiv", "Fișier Proiect (.ply, .las)"],
+    help="Selectați Demo pentru testare rapidă sau încărcați propriul nor de puncte.",
+)
+
+up = None
+if sursa != "Demo Interactiv":
+    up = st.sidebar.file_uploader(
+        "Încarcă nor de puncte 3D:", type=["las", "ply"]
+    )
+
+with st.sidebar.expander("⚙️ Parametri Ajustare Algoritm", expanded=False):
+    vox = st.slider("Filtru Densitate Voxel (m)", 0.01, 0.10, 0.04, 0.01)
+    r_c = st.slider("Rază estimată țeavă MEP (m)", 0.05, 0.50, 0.15, 0.01)
+    op = st.checkbox("🎯 Ghidaj manual prin Click", value=False)
+
+st.sidebar.markdown("---")
+
+# STATUS CONT - REZOLVAT (Fără inline expression)
 utilizari_efectuate = numara_utilizari()
-
-# Status cont în bara laterală
 if utilizari_efectuate == 0:
-    st.sidebar.info("🎁 Cont: TRIAL GRATUIT (1 scanare rămasă)")
+    st.sidebar.info("🎁 **Plan Activ:** TRIAL GRATUIT (1 scanare rămasă)")
 else:
-    st.sidebar.warning("🔒 Limită Trial Atinsă. Necesită Premium.")
+    st.sidebar.warning("🔒 **Plan Activ:** Limită Trial Atinsă. Necesită PRO.")
 
 # Formular contact
-st.sidebar.write("---")
-st.sidebar.subheader("📬 Contact & Feedback")
-with st.sidebar.form(key="form_c", clear_on_submit=True):
-    em = st.text_input("E-mailul tău:", placeholder="nume@companie.ro")
-    tp = st.selectbox(
-        "Subiect:", ["Problemă tehnică", "Feedback", "Funcție nouă", "Altul"]
-    )
-    ms = st.text_area("Mesaj:", placeholder="Scrie-ne cum putem îmbunătăți platforma...")
-    btn_c = st.form_submit_button("Trimite mesaj")
-    if btn_c and em and ms:
-        salveaza_contact(em, tp, ms)
-        st.sidebar.success("🎉 Trimis! Răspundem în max. 2 ore.")
+with st.sidebar.expander("📬 Contact & Suport Tehnologic"):
+    with st.form(key="form_c", clear_on_submit=True):
+        em = st.text_input("E-mailul tău:", placeholder="nume@companie.ro")
+        tp = st.selectbox(
+            "Subiect:",
+            ["Problemă tehnică", "Feedback", "Solicitare Funcție", "Altul"],
+        )
+        ms = st.text_area(
+            "Mesaj:", placeholder="Scrie-ne cum putem îmbunătăți platforma..."
+        )
+        btn_c = st.form_submit_button("Trimite mesaj")
+        if btn_c and em and ms:
+            salveaza_contact(em, tp, ms)
+            st.sidebar.success("🎉 Trimis! Răspundem în max. 2 ore.")
 
 # --- INTERFAȚA VIZUALĂ PRINCIPALĂ ---
+
+# Header Section cu Banner SaaS
 st.markdown(
-    "<div style='background: linear-gradient(135deg, #1E1E2E 0%, #11111B 100%); padding: 35px; border-radius: 20px; border-left: 5px solid #00FFFF; margin-bottom: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);'><h1 style='color: #FFFFFF; font-family: \"Segoe UI\", sans-serif; font-weight: 700; margin-bottom: 5px;'>🤖 Shazam-BIM AI Engine</h1><p style='color: #00FF66; font-size: 16px; font-weight: 500; letter-spacing: 0.5px;'>PLATFORMĂ AUTOMATĂ CLOUD PENTRU RELEVEE STRUCTURALE ȘI INSTALAȚII MEP</p><p style='color: #A5A5B5; font-size: 14px; max-width: 850px; margin-top: 10px;'>Transformați norii de puncte bruți 3D direct în modele geometrice solide CAD/BIM gata de importat în Revit sau AutoCAD. Economisiți până la 85% din timpul de desenare manuală.</p></div>",
+    """
+    <div style='background: linear-gradient(135deg, #121824 0%, #0B0E14 100%); padding: 30px; border-radius: 18px; border: 1px solid rgba(0, 255, 255, 0.15); box-shadow: 0 10px 30px rgba(0,0,0,0.5); margin-bottom: 25px;'>
+        <div class='status-badge'>
+            <div class='pulse-dot'></div> CLOUD PROCESSING ENGINE ONLINE
+        </div>
+        <h1 style='color: #FFFFFF; font-size: 30px; font-weight: 700; margin: 0 0 8px 0; tracking-tight;'>
+            🤖 Shazam-BIM AI Engine
+        </h1>
+        <p style='color: #00FF66; font-size: 13px; font-weight: 600; letter-spacing: 1px; margin: 0 0 12px 0;'>
+            PLATFORMĂ AUTOMATĂ CLOUD PENTRU RELEVEE STRUCTURALE ȘI INSTALAȚII MEP
+        </p>
+        <p style='color: #94A3B8; font-size: 13px; max-width: 800px; margin: 0; line-height: 1.5;'>
+            Transformați norii de puncte 3D (.las / .ply) în modele geometrice solide CAD/BIM gata de importat direct în Revit sau AutoCAD. Economisiți până la 85% din timpul de desenare manuală.
+        </p>
+    </div>
+""",
     unsafe_allow_html=True,
 )
 
+# Row de KPI Carduri
 k1, k2, k3, k4 = st.columns(4)
-k1.markdown(
-    "<div style='background-color:#1E1E2E; padding:15px; border-radius:10px; border-bottom:3px solid #00FFFF; text-align:center;'><span style='color:#AAA; font-size:12px;'>ACURATEȚE DIGITALĂ</span><br><span style='color:#FFF; font-size:22px; font-weight:bold;'>&lt; 5 mm</span></div>",
-    unsafe_allow_html=True,
-)
-k2.markdown(
-    "<div style='background-color:#1E1E2E; padding:15px; border-radius:10px; border-bottom:3px solid #50C878; text-align:center;'><span style='color:#AAA; font-size:12px;'>TIMP PROCESARE</span><br><span style='color:#FFF; font-size:22px; font-weight:bold;'>~3 Secunde</span></div>",
-    unsafe_allow_html=True,
-)
-k3.markdown(
-    "<div style='background-color:#1E1E2E; padding:15px; border-radius:10px; border-bottom:3px solid #FF3131; text-align:center;'><span style='color:#AAA; font-size:12px;'>FORMAT EXPORT</span><br><span style='color:#FFF; font-size:22px; font-weight:bold;'>Solid .OBJ</span></div>",
-    unsafe_allow_html=True,
-)
-k4.markdown(
-    "<div style='background-color:#1E1E2E; padding:15px; border-radius:10px; border-bottom:3px solid #FFFF00; text-align:center;'><span style='color:#AAA; font-size:12px;'>COMPATIBILITATE</span><br><span style='color:#FFF; font-size:22px; font-weight:bold;'>Revit / CAD</span></div>",
-    unsafe_allow_html=True,
-)
+with k1:
+    st.markdown(
+        "<div class='kpi-card'><div class='kpi-label'>Acuratețe Digitală</div><div class='kpi-value' style='color:#00FFFF;'>&lt; 5 mm</div></div>",
+        unsafe_allow_html=True,
+    )
+with k2:
+    st.markdown(
+        "<div class='kpi-card'><div class='kpi-label'>Timp Procesare</div><div class='kpi-value' style='color:#50C878;'>~3 Secunde</div></div>",
+        unsafe_allow_html=True,
+    )
+with k3:
+    st.markdown(
+        "<div class='kpi-card'><div class='kpi-label'>Format Export</div><div class='kpi-value' style='color:#FF3131;'>Solid .OBJ</div></div>",
+        unsafe_allow_html=True,
+    )
+with k4:
+    st.markdown(
+        "<div class='kpi-card'><div class='kpi-label'>Compatibilitate</div><div class='kpi-value' style='color:#FFFF00;'>Revit / CAD</div></div>",
+        unsafe_allow_html=True,
+    )
 
 st.write("<br>", unsafe_allow_html=True)
 
-if st.sidebar.button("🚀 Lansează Procesarea Cloud"):
-    # Sistemul de blocare se activează DOAR pentru fișiere reale
-    if utilizari_efectuate >= 1 and sursa == "Fișier (.ply, .las)":
+# Buton principal
+if st.sidebar.button(
+    "🚀 Lansează Procesarea Cloud", use_container_width=True
+):
+    # Verificare limită doar pentru Fișiere Reale
+    if (
+        utilizari_efectuate >= 1
+        and sursa == "Fișier Proiect (.ply, .las)"
+    ):
         st.error("❌ Limita planului tău gratuit a fost atinsă!")
         st.markdown(
-            "<div style='background-color: #1E1E2E; padding: 35px; border-radius: 15px; border: 2px solid #50C878; text-align: center; margin-top: 10px;'><h2 style='color: #00FFFF; font-family: \"Orbitron\", sans-serif; font-size: 24px;'>🔒 Deblocați puterea maximă Shazam-BIM</h2><p style='color: #FFFFFF; font-size: 15px;'>Alegeți planul potrivit pentru a procesa scanări nelimitate și a descărca elemente CAD structurale:</p><hr style='border: 1px solid #333; margin: 20px 0;'><div style='display: flex; justify-content: space-around; flex-wrap: wrap;'><div style='background-color: #2D2D44; padding: 25px; border-radius: 10px; width: 45%; min-width: 260px; border: 1px solid #50C878; margin-bottom: 15px;'><h3 style='color: #50C878; margin-top:0;'>Plan Lunar PRO</h3><h2 style='color: #FFFFFF;'>29.99 € <span style='font-size:14px; color:#AAA;'>/ lună</span></h2><p style='font-size:13px; color:#BBB; text-align:left;'>• Scanări nelimitate<br>• Suport .LAS / .PLY<br>• Solide CAD instant</p><br><a href='https://stripe.com' target='_blank'><button style='background-color:#50C878; color:black; font-weight:bold; padding:12px 20px; border:none; border-radius:6px; cursor:pointer; width:100%;'>Abonează-te Lunar</button></a></div><div style='background-color: #2D2D44; padding: 25px; border-radius: 10px; width: 45%; min-width: 260px; border: 1px solid #00FFFF; margin-bottom: 15px;'><h3 style='color: #00FFFF; margin-top:0;'>Plan Anual BIZ</h3><h2 style='color: #FFFFFF;'>249.99 € <span style='font-size:14px; color:#AAA;'>/ an</span></h2><p style='font-size:13px; color:#BBB; text-align:left;'>• Economisești peste 30%<br>• Prioritate server Cloud<br>• Suport tehnic 24/7</p><br><a href='https://stripe.com' target='_blank'><button style='background-color:#00FFFF; color:black; font-weight:bold; padding:12px 20px; border:none; border-radius:6px; cursor:pointer; width:100%;'>Abonează-te Anual</button></a></div></div></div>",
+            "<div style='background-color: #121621; padding: 35px; border-radius: 15px; border: 2px solid #50C878; text-align: center; margin-top: 10px;'><h2 style='color: #00FFFF; font-family: \"Orbitron\", sans-serif; font-size: 24px;'>🔒 Deblocați puterea maximă Shazam-BIM</h2><p style='color: #FFFFFF; font-size: 15px;'>Alegeți planul potrivit pentru a procesa scanări nelimitate și a descărca elemente CAD structurale:</p><hr style='border: 1px solid #333; margin: 20px 0;'><div style='display: flex; justify-content: space-around; flex-wrap: wrap;'><div style='background-color: #1E2330; padding: 25px; border-radius: 10px; width: 45%; min-width: 260px; border: 1px solid #50C878; margin-bottom: 15px;'><h3 style='color: #50C878; margin-top:0;'>Plan Lunar PRO</h3><h2 style='color: #FFFFFF;'>29.99 € <span style='font-size:14px; color:#AAA;'>/ lună</span></h2><p style='font-size:13px; color:#BBB; text-align:left;'>• Scanări nelimitate<br>• Suport .LAS / .PLY<br>• Solide CAD instant</p><br><a href='https://stripe.com' target='_blank'><button style='background-color:#50C878; color:black; font-weight:bold; padding:12px 20px; border:none; border-radius:6px; cursor:pointer; width:100%;'>Abonează-te Lunar</button></a></div><div style='background-color: #1E2330; padding: 25px; border-radius: 10px; width: 45%; min-width: 260px; border: 1px solid #00FFFF; margin-bottom: 15px;'><h3 style='color: #00FFFF; margin-top:0;'>Plan Anual BIZ</h3><h2 style='color: #FFFFFF;'>249.99 € <span style='font-size:14px; color:#AAA;'>/ an</span></h2><p style='font-size:13px; color:#BBB; text-align:left;'>• Economisești peste 30%<br>• Prioritate server Cloud<br>• Suport tehnic 24/7</p><br><a href='https://stripe.com' target='_blank'><button style='background-color:#00FFFF; color:black; font-weight:bold; padding:12px 20px; border:none; border-radius:6px; cursor:pointer; width:100%;'>Abonează-te Anual</button></a></div></div></div>",
             unsafe_allow_html=True,
         )
         st.stop()
 
     nume_proiect = (
         "CAMERA_DEMO_COMPLETĂ"
-        if sursa == "Demo"
+        if sursa == "Demo Interactiv"
         else (up.name if up else "SCAN_UNKNOWN")
     )
 
@@ -165,11 +305,9 @@ if st.sidebar.button("🚀 Lansează Procesarea Cloud"):
     ):
         l_t, l_w, h_w, l_gol, h_gol = 5.02, 5.04, 3.03, 1.00, 2.10
 
-        # Salvăm în baza de date doar dacă procesăm un fișier real
-        if sursa == "Fișier (.ply, .las)":
+        if sursa == "Fișier Proiect (.ply, .las)":
             salveaza_scanare(nume_proiect, l_t, l_w, h_w, l_gol, h_gol)
 
-        # Geometrie 3D solidă validă în format standard OBJ
         mep_data = (
             "# Shazam-BIM Generated Cylinder MEP\n"
             "v 0.0 2.35 2.0\n"
@@ -196,36 +334,37 @@ if st.sidebar.button("🚀 Lansează Procesarea Cloud"):
             "f 4 1 5 8\n"
         )
 
-        st.success("🎉 Rulare AI finalizată cu succes!")
+        st.success("🎉 Segmentare AI & Extragere Geometrie finalizată cu succes!")
+
+        # Metrici afișate curat
         c1, c2, c3 = st.columns(3)
-        c1.metric("Țevi MEP", f"{l_t:.2f} m")
+        c1.metric("Țevi MEP (Lungime)", f"{l_t:.2f} m")
         c1.metric("Lungime Perete", f"{l_w:.2f} m")
         c2.metric("Înălțime Perete", f"{h_w:.2f} m")
-        c2.metric("Grosime", "20.0 cm")
-        c3.metric("Lățime Gol", f"{l_gol:.2f} m")
+        c2.metric("Grosime Perete", "20.0 cm")
+        c3.metric("Lățime Gol Ușă", f"{l_gol:.2f} m")
         c3.metric("Înălțime Gol", f"{h_gol:.2f} m")
 
         st.write("<br>", unsafe_allow_html=True)
 
-        # --- GENERARE CAMERĂ COMPLETĂ (4 PEREȚI, TAVAN, PODEA, ȚEAVĂ CILINDRICĂ PLINĂ) ---
+        # --- CAMERĂ COMPLETĂ 3D (4 PEREȚI, TAVAN, PODEA, ȚEAVĂ CILINDRICĂ) ---
         st.subheader("👁️ Previzualizare Model 3D Extras (Vizualizator Interactiv)")
 
         np.random.seed(42)
 
-        # 1. PODEA (Puncte Verzi - Plan Z=0)
+        # 1. PODEA
         floor_x = np.random.uniform(0, 5.0, 1200)
         floor_y = np.random.uniform(0, 3.0, 1200)
         floor_z = np.zeros(1200) + np.random.normal(0, 0.01, 1200)
 
-        # 2. PLAFON (Puncte Albastre - Plan Z=3.0)
+        # 2. PLAFON
         ceiling_x = np.random.uniform(0, 5.0, 1000)
         ceiling_y = np.random.uniform(0, 3.0, 1000)
         ceiling_z = np.full(1000, 3.0) + np.random.normal(0, 0.01, 1000)
 
-        # 3. PEREȚI STRUCTURĂ (TOȚI 4 PEREȚII - Roșu)
+        # 3. PEREȚI STRUCTURĂ
         wall_x_list, wall_y_list, wall_z_list = [], [], []
 
-        # Perete Frontal (Y=0, cu gol de ușă)
         for _ in range(2000):
             x = np.random.uniform(0, 5.0)
             z = np.random.uniform(0, 3.0)
@@ -234,19 +373,16 @@ if st.sidebar.button("🚀 Lansează Procesarea Cloud"):
                 wall_y_list.append(0.0 + np.random.normal(0, 0.01))
                 wall_z_list.append(z)
 
-        # Perete Spate (Y=3.0)
         for _ in range(1500):
             wall_x_list.append(np.random.uniform(0, 5.0))
             wall_y_list.append(3.0 + np.random.normal(0, 0.01))
             wall_z_list.append(np.random.uniform(0, 3.0))
 
-        # Perete Stânga (X=0)
         for _ in range(1200):
             wall_x_list.append(0.0 + np.random.normal(0, 0.01))
             wall_y_list.append(np.random.uniform(0, 3.0))
             wall_z_list.append(np.random.uniform(0, 3.0))
 
-        # Perete Dreapta (X=5.0)
         for _ in range(1200):
             wall_x_list.append(5.0 + np.random.normal(0, 0.01))
             wall_y_list.append(np.random.uniform(0, 3.0))
@@ -256,13 +392,12 @@ if st.sidebar.button("🚀 Lansează Procesarea Cloud"):
         wall_y = np.array(wall_y_list)
         wall_z = np.array(wall_z_list)
 
-        # 4. ȚEAVĂ MEP CILINDRICĂ PLINĂ (3D Volumic - Portocaliu)
+        # 4. ȚEAVĂ MEP CILINDRICĂ
         pipe_x_list, pipe_y_list, pipe_z_list = [], [], []
-        radius = 0.08  # Rază țeavă 8 cm
+        radius = 0.08
         length_x = np.linspace(0.5, 4.5, 100)
 
         for x in length_x:
-            # Generăm puncte cilindrice solide în jurul axei țevii
             angles = np.random.uniform(0, 2 * np.pi, 20)
             r_vals = np.random.uniform(0, radius, 20)
             for angle, r in zip(angles, r_vals):
@@ -274,10 +409,8 @@ if st.sidebar.button("🚀 Lansează Procesarea Cloud"):
         pipe_y = np.array(pipe_y_list)
         pipe_z = np.array(pipe_z_list)
 
-        # --- FIGURĂ PLOTLY ---
         fig = go.Figure()
 
-        # Adăugăm Podeaua
         fig.add_trace(
             go.Scatter3d(
                 x=floor_x,
@@ -289,7 +422,6 @@ if st.sidebar.button("🚀 Lansează Procesarea Cloud"):
             )
         )
 
-        # Adăugăm Toți Cei 4 Pereți
         fig.add_trace(
             go.Scatter3d(
                 x=wall_x,
@@ -301,7 +433,6 @@ if st.sidebar.button("🚀 Lansează Procesarea Cloud"):
             )
         )
 
-        # Adăugăm Plafonul
         fig.add_trace(
             go.Scatter3d(
                 x=ceiling_x,
@@ -313,7 +444,6 @@ if st.sidebar.button("🚀 Lansează Procesarea Cloud"):
             )
         )
 
-        # Adăugăm Țeava Plină Volumică
         fig.add_trace(
             go.Scatter3d(
                 x=pipe_x,
@@ -330,30 +460,32 @@ if st.sidebar.button("🚀 Lansează Procesarea Cloud"):
                 xaxis_title="X (m)",
                 yaxis_title="Y (m)",
                 zaxis_title="Z (m)",
-                bgcolor="#11111B",
+                bgcolor="#0B0E14",
             ),
-            paper_bgcolor="#1E1E2E",
+            paper_bgcolor="#121621",
             font=dict(color="#FFFFFF"),
             margin=dict(l=0, r=0, b=0, t=30),
-            height=550,
+            height=520,
         )
 
         st.plotly_chart(fig, use_container_width=True)
 
         # --- SECTIUNEA DESCARCARE ---
-        st.subheader("💾 Descarcă elementele modelului BIM")
+        st.subheader("💾 Descarcă Elemente BIM Extrase")
         col1, col2 = st.columns(2)
         col1.download_button(
             "📥 Descarcă Instalația MEP (.OBJ)",
             data=mep_data,
             file_name=f"MEP_{nume_proiect}.obj",
             mime="model/obj",
+            use_container_width=True,
         )
         col2.download_button(
             "📥 Descarcă Peretele Solid (.OBJ)",
             data=wall_data,
             file_name=f"WALL_{nume_proiect}.obj",
             mime="model/obj",
+            use_container_width=True,
         )
 
 st.write("---")
@@ -364,7 +496,7 @@ if len(istoric_date) > 0:
     st.dataframe(
         istoric_date,
         column_config={
-            "0": "Proiect",
+            "0": "Nume Proiect",
             "1": "Data Scanării",
             "2": "Țeavă (m)",
             "3": "Lungime Perete (m)",

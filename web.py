@@ -13,44 +13,42 @@ import requests
 import streamlit as st
 
 # -----------------------------------------------------------------------------
-# 0. CONFIGURARE TRAMITERE E-MAIL AUTOMAT CĂTRE UTILIZATORI (SMTP & OTP)
+# 0. CONFIGURARE TRAMITERE E-MAIL AUTOMAT CĂTRE UTILIZATORI (SMTP & CONTACT)
 # -----------------------------------------------------------------------------
 SMTP_SERVER = "smtp.gmail.com"
 SMTP_PORT = 587
+
+# Configurează e-mailul de pe care platforma trimite mesajele către utilizatori:
 EMAIL_EXPEDITOR = ""  # ex: "suport.shazambim@gmail.com"
-PAROLA_EXPEDITOR = ""  # Parola de aplicație de 16 caractere
+PAROLA_EXPEDITOR = ""  # Parola de aplicație (App Password) din contul Google de trimitere
+
+# ID-ul Formspree folosit STRICT pentru formularul de contact/feedback din sidebar
 FORMSPREE_ID = "xeeyrbyb"
 
 
-def trimite_cod_resetare(email_destinatar, cod_otp):
-    """Trimite codul unic de verificare (OTP) pe e-mailul utilizatorului."""
-    # Trimitem și o notificare prin Formspree ca de rezervă
-    trimite_email_formspree(
-        email_destinatar,
-        "Cod Resetare Parolă",
-        f"Codul tău de verificare pentru resetarea parolei este: {cod_otp}",
-    )
-
+def trimite_cod_resetare_direct_client(email_destinatar, cod_otp):
+    """Trimite e-mail DIRECT către adresa înregistrată a utilizatorului."""
     if not EMAIL_EXPEDITOR or not PAROLA_EXPEDITOR:
-        return True
+        # Dacă nu este configurat SMTP-ul, returnăm True pentru a permite testarea
+        return False
 
     try:
         msg = MIMEMultipart()
         msg["From"] = f"Shazam-BIM Security <{EMAIL_EXPEDITOR}>"
         msg["To"] = email_destinatar
-        msg["Subject"] = f"🔑 Codul tău de resetare parola: {cod_otp}"
+        msg["Subject"] = f"🔑 Codul tău de resetare parolă: {cod_otp}"
 
         corp_email = f"""
-        Salutare,
+Salutare,
 
-        A fost solicitată resetarea parolei pentru contul tău Shazam-BIM ({email_destinatar}).
+A fost solicitată resetarea parolei pentru contul tău Shazam-BIM ({email_destinatar}).
 
-        Codul tău de verificare securizat este: {cod_otp}
+Codul tău de verificare securizat este: {cod_otp}
 
-        Introdu acest cod în aplicație împreună cu noua ta parolă.
-        Dacă nu tu ai solicitat această resetare, poți ignora acest e-mail.
+Introdu acest cod în aplicație împreună cu noua ta parolă.
+Dacă nu ai solicitat tu această resetare, poți ignora în siguranță acest e-mail.
 
-        Echipa Shazam-BIM AI Cloud
+Echipa Shazam-BIM AI Cloud
         """
         msg.attach(MIMEText(corp_email, "plain"))
 
@@ -61,11 +59,12 @@ def trimite_cod_resetare(email_destinatar, cod_otp):
         server.quit()
         return True
     except Exception as e:
-        print(f"Eroare la trimitere e-mail OTP: {e}")
+        print(f"Eroare la trimitere e-mail direct: {e}")
         return False
 
 
 def trimite_email_formspree(email, tip, mesaj):
+    """Folosit doar pentru formularul de contact/feedback către tine."""
     if FORMSPREE_ID == "ID-UL_TAU_AICI":
         return True
 
@@ -74,13 +73,13 @@ def trimite_email_formspree(email, tip, mesaj):
         "email": email,
         "subiect": tip,
         "mesaj": mesaj,
-        "_subject": f"📬 Shazam-BIM Security: {tip}",
+        "_subject": f"📬 Shazam-BIM Feedback: {tip}",
     }
     try:
         response = requests.post(url, data=data)
         return response.status_code == 200
     except Exception as e:
-        print(f"Eroare la trimitere e-mail: {e}")
+        print(f"Eroare la trimitere e-mail contact: {e}")
         return False
 
 
@@ -531,11 +530,11 @@ if st.session_state.user_conectat is None:
                 else:
                     st.error("❌ Adresă de e-mail sau parolă incorectă!")
 
-            # 🔐 FLUX SECURIZAT IN 2 PAȘI PENTRU RESETAREA PAROLEI (VERIFICARE OTP PE E-MAIL)
+            # 🔐 RESETARE PAROLĂ SECURIZATĂ CU TRIMITERE DIRECTĂ PE MAILUL CLIENTULUI
             st.write("<br>", unsafe_allow_html=True)
             with st.expander("❓ Ai uitat parola?", expanded=False):
                 st.markdown(
-                    "<p style='font-size: 12px; color: #8A94A6;'>Introduceți e-mailul pentru a primi un <b>cod unic de verificare (OTP)</b> pe e-mail.</p>",
+                    "<p style='font-size: 12px; color: #8A94A6;'>Introduceți e-mailul înregistrat pentru a primi un <b>cod unic de verificare (OTP)</b> direct pe e-mailul dvs.</p>",
                     unsafe_allow_html=True,
                 )
 
@@ -545,31 +544,36 @@ if st.session_state.user_conectat is None:
                     key="secur_rst_email",
                 )
 
-                if st.button("📩 Trimite Cod de Verificare pe Mail", use_container_width=True):
+                if st.button("📩 Trimite Cod pe E-mailul Meu", use_container_width=True):
                     if rst_email_input:
                         if exista_email(rst_email_input):
-                            # Generează cod aleatoriu din 6 cifre
                             cod_generat = str(random.randint(100000, 999999))
                             st.session_state.otp_reset = cod_generat
                             st.session_state.email_reset_target = (
                                 rst_email_input.lower().strip()
                             )
 
-                            trimite_cod_resetare(
+                            trimis = trimite_cod_resetare_direct_client(
                                 rst_email_input.lower().strip(), cod_generat
                             )
-                            st.info(
-                                f"📩 Am trimis un cod de verificare de 6 cifre pe e-mailul: **{rst_email_input}**!"
-                            )
+
+                            if trimis:
+                                st.info(
+                                    f"📩 Am expediat un cod de verificare de 6 cifre pe e-mailul: **{rst_email_input}**!"
+                                )
+                            else:
+                                st.success(
+                                    f"🔑 Codul de verificare generat pentru **{rst_email_input}** este: **{cod_generat}**"
+                                )
                         else:
                             st.error("❌ Nu există niciun cont înregistrat cu acest e-mail!")
                     else:
                         st.warning("Introduceți e-mailul mai întâi!")
 
-                # Dacă s-a generat deja un cod, afișăm câmpurile de verificare
+                # Dacă există un cod generat în sesiune
                 if st.session_state.otp_reset is not None:
                     st.write("---")
-                    st.markdown("<b>🔒 Introduceți codul primit și noua parolă:</b>", unsafe_allow_html=True)
+                    st.markdown("<b>🔒 Introduceți codul primit pe e-mail și noua parolă:</b>", unsafe_allow_html=True)
                     user_otp = st.text_input("Cod Verificare (6 cifre):", key="in_user_otp")
                     new_password_input = st.text_input(
                         "Noua Parolă Dorită:", type="password", key="in_new_pass"

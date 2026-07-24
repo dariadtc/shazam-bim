@@ -602,14 +602,16 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-# 2. BARĂ DE NAVIGARE (UTILIZATOR + DELOGARE) - ALINIERE PERFECTĂ PE ACEEAȘI LINIE
+# 2. BARĂ DE NAVIGARE (UTILIZATOR + DELOGARE) ALINIATĂ LA DREAPTA
 col_u1, col_u2 = st.columns([5, 1])
 
 with col_u1:
     st.markdown(
         f"""
-        <div style='background-color: #0D1E26; border: 1px solid rgba(80, 200, 120, 0.25); border-radius: 8px; height: 44px; display: flex; align-items: center; padding: 0 20px; color: #94A3B8; font-size: 13px; box-shadow: 0 4px 10px rgba(0,0,0,0.2);'>
-            👤 Autentificat ca:&nbsp; <span style='color: #00FFFF; font-weight: 600; font-size: 14px;'>{st.session_state.user_conectat}</span>
+        <div style='display: flex; justify-content: flex-end; align-items: center; height: 44px;'>
+            <div style='background-color: #0D1E26; border: 1px solid rgba(80, 200, 120, 0.25); border-radius: 8px; height: 44px; display: inline-flex; align-items: center; padding: 0 20px; color: #94A3B8; font-size: 13px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); width: fit-content; white-space: nowrap;'>
+                👤 Autentificat ca:&nbsp; <span style='color: #00FFFF; font-weight: 600; font-size: 14px;'>{st.session_state.user_conectat}</span>
+            </div>
         </div>
         """,
         unsafe_allow_html=True,

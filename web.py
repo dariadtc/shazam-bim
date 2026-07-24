@@ -196,7 +196,7 @@ st.markdown(
         font-family: 'Orbitron', sans-serif;
     }
     
-    /* BUTOANE LUMINATE GENERALE */
+    /* BUTOANE LUMINATE GENERALE (FIJATE LA 44PX PENTRU ALINIERE PERFECTĂ) */
     div.stButton > button:first-child {
         background: linear-gradient(135deg, #00E5FF 0%, #10B981 100%);
         color: #061017;
@@ -684,7 +684,23 @@ with col_input2:
     st.markdown("<b>⚙️ Parametri Algoritm AI:</b>", unsafe_allow_html=True)
     vox = st.slider("Filtru Densitate Voxel (m)", 0.01, 0.10, 0.04, 0.01)
     r_c = st.slider("Rază estimată țeavă MEP (m)", 0.05, 0.50, 0.15, 0.01)
-    op = st.checkbox("🎯 Ghidaj manual prin Click", value=False)
+
+    # CHECKBOX SI COORDONATE INTERACTIVE PENTRU GHIDAJ MANUAL
+    op = st.checkbox("🎯 Ghidaj manual prin Coordonate Seed", value=False)
+
+    seed_x, seed_y, seed_z = 2.5, 0.30, 2.20
+    if op:
+        st.markdown(
+            "<p style='font-size:11px; color:#00FFFF; margin-bottom: 2px;'>Ajustează poziția punctului de ghidaj (Seed Point) în spațiu:</p>",
+            unsafe_allow_html=True,
+        )
+        c_sx, c_sy, c_sz = st.columns(3)
+        with c_sx:
+            seed_x = st.number_input("X (m)", 0.0, 5.0, 2.5, 0.1)
+        with c_sy:
+            seed_y = st.number_input("Y (m)", 0.0, 3.0, 0.30, 0.1)
+        with c_sz:
+            seed_z = st.number_input("Z (m)", 0.0, 3.0, 2.20, 0.1)
 
     st.write("<br>", unsafe_allow_html=True)
     lansa_btn = st.button(
@@ -798,7 +814,6 @@ with tab_main:
     # -------------------------------------------------------------------------
     np.random.seed(42)
 
-    # Densitatea este controlată de vox (număr mai mare de puncte dacă vox e mic)
     num_podea = int(1200 * (0.04 / vox))
     num_tavan = int(1000 * (0.04 / vox))
     num_pereti = int(1500 * (0.04 / vox))
@@ -830,9 +845,8 @@ with tab_main:
     wall_y = np.array(wall_y_list)
     wall_z = np.array(wall_z_list)
 
-    # ȚEAVA MEP ÎȘI SCHIMBĂ DIAMETRUL DINAMIC BAZAT PE r_c
     pipe_x_list, pipe_y_list, pipe_z_list = [], [], []
-    radius = r_c  # Folosește valoarea aleasă pe slider!
+    radius = r_c
     length_x = np.linspace(0.5, 4.5, 100)
 
     for x in length_x:
@@ -893,16 +907,18 @@ with tab_main:
         )
     )
 
-    # Dacă este bifat Ghidajul Manual prin Click, afișăm un Marker Roșu de Seed Point
+    # AFISARE MARKER ROȘU INTERACTIV PENTRU GHIDAJ MANUAL SEED POINT
     if op:
         fig.add_trace(
             go.Scatter3d(
-                x=[2.5],
-                y=[0.30],
-                z=[2.20],
-                mode="markers",
-                marker=dict(size=10, color="#FF0000", symbol="diamond"),
-                name="🎯 Seed Point (Ghidaj Click)",
+                x=[seed_x],
+                y=[seed_y],
+                z=[seed_z],
+                mode="markers+text",
+                marker=dict(size=12, color="#FF0000", symbol="diamond"),
+                text=["🎯 SEED POINT"],
+                textposition="top center",
+                name="🎯 Punct de Ghidaj (Seed)",
             )
         )
 

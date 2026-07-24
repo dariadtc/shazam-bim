@@ -278,7 +278,7 @@ st.markdown(
 )
 
 # -----------------------------------------------------------------------------
-# 3. BAZĂ DE DATE
+# 3. BAZĂ DE DATE (CU MIGRARE AUTOMATĂ PENTRU COLOANE NOI)
 # -----------------------------------------------------------------------------
 
 
@@ -298,6 +298,13 @@ def init_db():
     c.execute(
         "CREATE TABLE IF NOT EXISTS mesaje_contact (id INTEGER PRIMARY KEY AUTOINCREMENT, data_trimitere TEXT, email_client TEXT, tip_mesaj TEXT, mesaj TEXT)"
     )
+
+    # Migrare automată: adăugăm user_email dacă baza de date a fost creată pe o versiune mai veche
+    try:
+        c.execute("ALTER TABLE scanari ADD COLUMN user_email TEXT")
+    except sqlite3.OperationalError:
+        pass  # Coloana există deja
+
     conn.commit()
     conn.close()
 
@@ -306,7 +313,8 @@ def exista_email(email):
     conn = sqlite3.connect("proiecte_bim.db")
     c = conn.cursor()
     c.execute(
-        "SELECT * FROM utilizatori WHERE email = ?", (str(email).lower().strip(),)
+        "SELECT * FROM utilizatori WHERE email = ?",
+        (str(email).lower().strip(),),
     )
     user = c.fetchone()
     conn.close()
@@ -488,16 +496,18 @@ if st.session_state.user_conectat is None:
         with tab_login:
             st.write("<br>", unsafe_allow_html=True)
             email_in = st.text_input(
-                "Adresă E-mail:", placeholder="nume@companie.ro", key="m_l_email"
+                "Adresă E-mail:",
+                placeholder="nume@companie.ro",
+                key="m_l_email",
             )
-            pass_in = st.text_input(
-                "Parolă:", type="password", key="m_l_pass"
-            )
+            pass_in = st.text_input("Parolă:", type="password", key="m_l_pass")
 
             if st.button("🚀 Autentificare în Cloud", use_container_width=True):
                 if verifica_utilizator(email_in, pass_in):
                     st.session_state.user_conectat = email_in.lower().strip()
-                    st.success("🎉 Conectat cu succes! Se încarcă spațiul de lucru...")
+                    st.success(
+                        "🎉 Conectat cu succes! Se încarcă spațiul de lucru..."
+                    )
                     st.rerun()
                 else:
                     st.error("❌ Adresă de e-mail sau parolă incorectă!")
@@ -516,7 +526,9 @@ if st.session_state.user_conectat is None:
                     key="secur_rst_email",
                 )
 
-                if st.button("📩 Solicită Cod de Verificare", use_container_width=True):
+                if st.button(
+                    "📩 Solicită Cod de Verificare", use_container_width=True
+                ):
                     if rst_email_input:
                         if exista_email(rst_email_input):
                             cod_generat = str(random.randint(100000, 999999))
@@ -536,20 +548,31 @@ if st.session_state.user_conectat is None:
                             else:
                                 st.error("Eroare la transmiterea solicitării.")
                         else:
-                            st.error("❌ Nu există niciun cont înregistrat cu acest e-mail!")
+                            st.error(
+                                "❌ Nu există niciun cont înregistrat cu acest e-mail!"
+                            )
                     else:
                         st.warning("Introduceți e-mailul mai întâi!")
 
                 # Pasul 2: Introducerea codului primit de la tine
                 if st.session_state.otp_reset is not None:
                     st.write("---")
-                    st.markdown("<b>🔒 Introduceți codul primit și noua parolă:</b>", unsafe_allow_html=True)
-                    user_otp = st.text_input("Cod Verificare (6 cifre):", key="in_user_otp")
+                    st.markdown(
+                        "<b>🔒 Introduceți codul primit și noua parolă:</b>",
+                        unsafe_allow_html=True,
+                    )
+                    user_otp = st.text_input(
+                        "Cod Verificare (6 cifre):", key="in_user_otp"
+                    )
                     new_password_input = st.text_input(
-                        "Noua Parolă Dorită:", type="password", key="in_new_pass"
+                        "Noua Parolă Dorită:",
+                        type="password",
+                        key="in_new_pass",
                     )
 
-                    if st.button("🔐 Confirmă & Schimbă Parola", use_container_width=True):
+                    if st.button(
+                        "🔐 Confirmă & Schimbă Parola", use_container_width=True
+                    ):
                         if user_otp.strip() == st.session_state.otp_reset:
                             if new_password_input:
                                 schimba_parola(
@@ -564,12 +587,16 @@ if st.session_state.user_conectat is None:
                             else:
                                 st.warning("Completați noua parolă!")
                         else:
-                            st.error("❌ Codul de verificare introdus este incorect!")
+                            st.error(
+                                "❌ Codul de verificare introdus este incorect!"
+                            )
 
         with tab_register:
             st.write("<br>", unsafe_allow_html=True)
             reg_email = st.text_input(
-                "Adresă E-mail nou:", placeholder="nume@companie.ro", key="m_r_email"
+                "Adresă E-mail nou:",
+                placeholder="nume@companie.ro",
+                key="m_r_email",
             )
             reg_pass = st.text_input(
                 "Alegeți o parolă:", type="password", key="m_r_pass"
@@ -581,7 +608,9 @@ if st.session_state.user_conectat is None:
                             "🎉 Cont creat cu succes! Vă puteți conecta acum."
                         )
                     else:
-                        st.error("⚠️ Această adresă de e-mail este deja înregistrată!")
+                        st.error(
+                            "⚠️ Această adresă de e-mail este deja înregistrată!"
+                        )
                 else:
                     st.warning("Completați e-mailul și parola!")
 
@@ -778,10 +807,7 @@ with tab_main:
     if st.sidebar.button(
         "🚀 Lansează Procesarea Cloud", use_container_width=True
     ):
-        if (
-            utilizari_efectuate >= 1
-            and sursa != "Demo Interactiv"
-        ):
+        if utilizari_efectuate >= 1 and sursa != "Demo Interactiv":
             st.error("❌ Limita planului tău gratuit a fost atinsă!")
             st.markdown(
                 "<div style='background-color: #121621; padding: 30px; border-radius: 12px; border: 1.5px solid #50C878; text-align: center; margin-top: 10px;'><h3 style='color: #00FFFF; font-family: \"Orbitron\", sans-serif;'>🔒 Deblocați puterea maximă Shazam-BIM</h3><p style='color: #FFFFFF; font-size: 14px;'>Alegeți planul potrivit pentru a procesa scanări nelimitate:</p><hr style='border: 1px solid #333; margin: 15px 0;'><div style='display: flex; justify-content: space-around; flex-wrap: wrap;'><div style='background-color: #1E2330; padding: 20px; border-radius: 8px; width: 45%; border: 1px solid #50C878;'><h4 style='color: #50C878;'>Plan Lunar PRO</h4><h2>29.99 € <span style='font-size:12px; color:#AAA;'>/ lună</span></h2><br><a href='https://stripe.com' target='_blank'><button style='background-color:#50C878; color:black; font-weight:bold; padding:10px 15px; border:none; border-radius:6px; cursor:pointer; width:100%;'>Abonează-te Lunar</button></a></div><div style='background-color: #1E2330; padding: 20px; border-radius: 8px; width: 45%; border: 1px solid #00FFFF;'><h4 style='color: #00FFFF;'>Plan Anual BIZ</h4><h2>249.99 € <span style='font-size:12px; color:#AAA;'>/ an</span></h2><br><a href='https://stripe.com' target='_blank'><button style='background-color:#00FFFF; color:black; font-weight:bold; padding:10px 15px; border:none; border-radius:6px; cursor:pointer; width:100%;'>Abonează-te Anual</button></a></div></div></div>",
@@ -1006,9 +1032,7 @@ with tab_main:
 
 # JURNAL PRIVAT PER UTILIZATOR CONECTAT
 with tab_history:
-    st.subheader(
-        f"📋 Jurnal Privat Scanări ({st.session_state.user_conectat})"
-    )
+    st.subheader(f"📋 Jurnal Privat Scanări ({st.session_state.user_conectat})")
     istoric_privat = citeste_istoric_privat(st.session_state.user_conectat)
     if len(istoric_privat) > 0:
         st.dataframe(

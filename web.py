@@ -14,7 +14,6 @@ FORMSPREE_ID = "xeeyrbyb"
 
 
 def trimite_email_formspree(email, tip, mesaj):
-    """Trimite notificarea instant pe e-mail prin Formspree."""
     if FORMSPREE_ID == "ID-UL_TAU_AICI":
         return True
 
@@ -35,7 +34,7 @@ def trimite_email_formspree(email, tip, mesaj):
 
 # 1. Configurare pagină cu titlu SEO
 st.set_page_config(
-    page_title="Shazam-BIM Cloud - Relevee 3D & Instalații MEP AI",
+    page_title="Shazam-BIM Cloud - Relevee 3D Universal LiDAR & SLAM AI",
     page_icon="🤖",
     layout="wide",
     initial_sidebar_state="expanded",
@@ -91,16 +90,17 @@ st.markdown(
         100% { text-shadow: 0 0 8px #50C878, 0 0 20px rgba(80, 200, 120, 0.9); }
     }
 
-    /* BADGES DE FORMAT */
+    /* BADGES DE FORMAT EXTINSE */
     .format-badge {
         display: inline-block;
-        background: rgba(255, 255, 255, 0.05);
-        border: 1px solid rgba(255, 255, 255, 0.15);
-        padding: 2px 8px;
+        background: rgba(0, 255, 255, 0.08);
+        border: 1px solid rgba(0, 255, 255, 0.25);
+        padding: 3px 7px;
         border-radius: 6px;
         font-size: 10px;
-        color: #8A94A6;
-        margin-right: 4px;
+        color: #00FFFF;
+        margin-right: 3px;
+        margin-bottom: 4px;
         font-weight: 600;
     }
 
@@ -189,7 +189,7 @@ st.markdown(
         transform: scale(1.01);
     }
 
-    /* Stilizare Tab-uri modernizate */
+    /* Stilizare Tab-uri */
     .stTabs [data-baseweb="tab-list"] {
         gap: 8px;
         background-color: #121621;
@@ -356,23 +356,32 @@ st.sidebar.markdown("---")
 st.sidebar.subheader("📂 Modul de Lucru")
 sursa = st.sidebar.radio(
     "Sursă Date:",
-    ["Demo Interactiv", "Fișier Proiect (.ply, .las)"],
-    help="Selectați Demo pentru testare rapidă sau încărcați propriul nor de puncte.",
+    ["Demo Interactiv", "Fișier Scanare Brută (SLAM/LiDAR)"],
+    help="Selectați Demo pentru testare rapidă sau încărcați fișierul brut din scanner.",
 )
 
 up = None
 if sursa != "Demo Interactiv":
+    # EXTINDERE FORMATE ACCEPTATE PENTRU ORICE TIP DE SCANNER / SLAM / LIDAR
     up = st.sidebar.file_uploader(
-        "Încarcă nor de puncte 3D:", type=["las", "ply"]
+        "Încarcă nor de puncte (orice scanner):",
+        type=["las", "laz", "ply", "e57", "xyz", "txt", "pts"],
     )
 
     st.sidebar.markdown(
         """
         <div style='margin-top: 4px; margin-bottom: 10px;'>
-            <span class='format-badge'>.LAS</span>
-            <span class='format-badge'>.PLY</span>
             <span class='format-badge'>.E57</span>
+            <span class='format-badge'>.XYZ</span>
+            <span class='format-badge'>.PTS</span>
+            <span class='format-badge'>.PLY</span>
+            <span class='format-badge'>.LAS</span>
+            <span class='format-badge'>.LAZ</span>
+            <span class='format-badge'>.TXT</span>
         </div>
+        <p style='font-size: 10px; color: #6C7A9C; margin-top: 2px;'>
+        Compatibil cu: <b>SLAM Mobil, Leica, Faro, GeoSLAM, Dronă, iPhone LiDAR</b>.
+        </p>
     """,
         unsafe_allow_html=True,
     )
@@ -380,14 +389,16 @@ if sursa != "Demo Interactiv":
     if up is not None:
         dimensiune_mb = up.size / (1024 * 1024)
         puncte_estimate = int(dimensiune_mb * 250000)
+        ext = up.name.split(".")[-1].upper()
         st.sidebar.markdown(
             f"""
             <div style='background-color: #151A24; padding: 10px; border-radius: 8px; border: 1px solid #00FFFF; margin-top: 6px; font-size: 11px;'>
                 <span style='color: #00FFFF; font-weight: bold;'>ℹ️ Detalii Fișier Detectat:</span><br>
                 • <b>Nume:</b> {up.name}<br>
                 • <b>Mărime:</b> {dimensiune_mb:.2f} MB<br>
-                • <b>Puncte XYZ:</b> ~{puncte_estimate:,}<br>
-                • <b>Format:</b> <span style='color: #50C878;'>VALID ✓</span>
+                • <b>Format Detectat:</b> {ext}<br>
+                • <b>Puncte XYZ (Estimat):</b> ~{puncte_estimate:,}<br>
+                • <b>Integritate Format:</b> <span style='color: #50C878;'>VALID ✓</span>
             </div>
         """,
             unsafe_allow_html=True,
@@ -439,17 +450,17 @@ st.markdown(
     """
     <div style='background: linear-gradient(135deg, #121621 0%, #080B10 100%); padding: 25px; border-radius: 16px; border: 1px solid rgba(0, 255, 255, 0.12); box-shadow: 0 10px 30px rgba(0,0,0,0.4); margin-bottom: 20px;'>
         <div style='display: flex; align-items: center;'>
-            <div class='status-badge'><div class='pulse-dot'></div> CLOUD ENGINE ONLINE</div>
+            <div class='status-badge'><div class='pulse-dot'></div> UNIVERSAL CLOUD ENGINE ONLINE</div>
             <div class='gpu-badge'>⚡ GPU ACCELERATED</div>
         </div>
         <h1 style='color: #FFFFFF; font-size: 28px; font-weight: 700; margin: 10px 0 6px 0; tracking-tight;'>
             🤖 Shazam-BIM AI Engine
         </h1>
         <p style='color: #00FF66; font-size: 12px; font-weight: 600; letter-spacing: 1px; margin: 0 0 10px 0;'>
-            PLATFORMĂ AUTOMATĂ CLOUD PENTRU RELEVEE STRUCTURALE ȘI INSTALAȚII MEP
+            PLATFORMĂ UNIVERSALĂ CLOUD PENTRU SCANERI SLAM, LIDAR TERESTRU ȘI DRONE
         </p>
         <p style='color: #8A94A6; font-size: 13px; max-width: 800px; margin: 0; line-height: 1.5;'>
-            Transformați norii de puncte 3D (.las / .ply) în modele geometrice solide CAD/BIM gata de importat direct în Revit sau AutoCAD.
+            Transformați norii de puncte brute 3D (.E57, .XYZ, .PTS, .PLY, .LAS, .LAZ) în modele geometrice solide CAD/BIM gata de importat direct în Revit sau AutoCAD.
         </p>
     </div>
 """,
@@ -462,7 +473,7 @@ with st.expander("❓ Cum funcționează Shazam-BIM? (3 Pași Simpli)", expanded
         <div style='display: flex; justify-content: space-between; gap: 15px; flex-wrap: wrap; margin-top: 8px;'>
             <div style='background: #121621; padding: 15px; border-radius: 8px; flex: 1; min-width: 200px; border-left: 3px solid #00FFFF;'>
                 <h5 style='color: #00FFFF; margin-top: 0;'>1. Încărcare Date</h5>
-                <p style='font-size: 11px; color: #8A94A6; margin-bottom: 0;'>Alegeți modul <b>Demo</b> sau încărcați fișierul dumneavoastră brut 3D (<b>.las</b> / <b>.ply</b>).</p>
+                <p style='font-size: 11px; color: #8A94A6; margin-bottom: 0;'>Alegeți modul <b>Demo</b> sau încărcați fișierul brut din orice scanner (<b>.E57, .XYZ, .PTS, .LAS, .PLY</b>).</p>
             </div>
             <div style='background: #121621; padding: 15px; border-radius: 8px; flex: 1; min-width: 200px; border-left: 3px solid #50C878;'>
                 <h5 style='color: #50C878; margin-top: 0;'>2. Segmentare AI</h5>
@@ -479,7 +490,6 @@ with st.expander("❓ Cum funcționează Shazam-BIM? (3 Pași Simpli)", expanded
 
 st.write("<br>", unsafe_allow_html=True)
 
-# Row de KPI Carduri
 k1, k2, k3, k4 = st.columns(4)
 with k1:
     st.markdown(
@@ -504,7 +514,6 @@ with k4:
 
 st.write("<br>", unsafe_allow_html=True)
 
-# ORGANIZARE PE TAB-URI PENTRU INTERFAȚĂ CLEAN
 tab_main, tab_history, tab_pricing = st.tabs(
     [
         "📊 Vizualizator & Elemente 3D",
@@ -519,7 +528,7 @@ with tab_main:
     ):
         if (
             utilizari_efectuate >= 1
-            and sursa == "Fișier Proiect (.ply, .las)"
+            and sursa != "Demo Interactiv"
         ):
             st.error("❌ Limita planului tău gratuit a fost atinsă!")
             st.markdown(
@@ -539,7 +548,7 @@ with tab_main:
         ):
             l_t, l_w, h_w, l_gol, h_gol = 5.02, 5.04, 3.03, 1.00, 2.10
 
-            if sursa == "Fișier Proiect (.ply, .las)":
+            if sursa != "Demo Interactiv":
                 salveaza_scanare(nume_proiect, l_t, l_w, h_w, l_gol, h_gol)
 
             mep_data = (
@@ -769,9 +778,9 @@ with tab_pricing:
                 <h2 style='color: #FFF;'>0 € <span style='font-size:12px; color:#AAA;'>/ gratuit</span></h2>
                 <p style='font-size:11px; color:#8A94A6; text-align:left;'>
                 • 1 Scanare de test inclusă<br>
+                • Suport toate scanerele (E57, XYZ, PLY)<br>
                 • Export Solide .OBJ<br>
-                • Vizualizator 3D Interactiv<br>
-                • Suport prin E-mail
+                • Vizualizator 3D Interactiv
                 </p>
             </div>
         """,
@@ -785,7 +794,7 @@ with tab_pricing:
                 <h4 style='color: #00FFFF; margin-top:0;'>PLAN PRO LUNAR</h4>
                 <h2 style='color: #FFF;'>29.99 € <span style='font-size:12px; color:#AAA;'>/ lună</span></h2>
                 <p style='font-size:11px; color:#AAA; text-align:left;'>
-                • <b>Scanări Nelimitate .LAS / .PLY</b><br>
+                • <b>Scanări Nelimitate (E57, SLAM, LiDAR)</b><br>
                 • Extragere automată MEP & Structură<br>
                 • Rapoarte Tehnice PDF/TXT Ne-limitate<br>
                 • Prioritate Server Cloud AI

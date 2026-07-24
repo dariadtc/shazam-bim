@@ -129,14 +129,13 @@ st.markdown(
         text-shadow: 0 0 12px rgba(80, 200, 120, 0.7);
     }
 
-    /* CARDURI COMPACTE SMARALD */
-    .emerald-card {
-        background: linear-gradient(145deg, #0D1E26 0%, #09151F 100%);
-        border: 1px solid rgba(80, 200, 120, 0.25);
-        border-radius: 14px;
-        padding: 20px 24px;
-        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
-        margin-bottom: 20px;
+    /* STILIZARE CONTAINER NATIV STREAMLIT (FĂRĂ BARE GOALE FANTOMĂ) */
+    div[data-testid="stVerticalBlockBorderWrapper"] {
+        background: linear-gradient(145deg, #0D1E26 0%, #09151F 100%) !important;
+        border: 1px solid rgba(80, 200, 120, 0.25) !important;
+        border-radius: 14px !important;
+        padding: 15px !important;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4) !important;
     }
 
     /* BADGES DE FORMAT */
@@ -196,7 +195,7 @@ st.markdown(
         font-family: 'Orbitron', sans-serif;
     }
     
-    /* BUTOANE LUMINATE GENERALE (FIJATE LA 44PX PENTRU ALINIERE PERFECTĂ) */
+    /* BUTOANE LUMINATE GENERALE */
     div.stButton > button:first-child {
         background: linear-gradient(135deg, #00E5FF 0%, #10B981 100%);
         color: #061017;
@@ -668,70 +667,74 @@ with k4:
 
 st.write("<br>", unsafe_allow_html=True)
 
-# 5. PANOU CONTROL MODUL DE LUCRU & ÎNCĂRCARE DATE (ACUM MAI APROAPE DE MODELUL 3D)
+# 5. PANOU CONTROL MODUL DE LUCRU & ÎNCĂRCARE DATE (CONTAINER NATIV FĂRĂ DREPTUNGHIURI GOALE)
 st.markdown(
     "<h4 style='color: #00FFFF; font-family: Orbitron, sans-serif; margin-bottom: 8px;'>📂 Sursă Date & Încărcare Nor de Puncte</h4>",
     unsafe_allow_html=True,
 )
 
-st.markdown("<div class='emerald-card'>", unsafe_allow_html=True)
-col_input1, col_input2 = st.columns(2)
+with st.container(border=True):
+    col_input1, col_input2 = st.columns(2)
 
-with col_input1:
-    sursa = st.radio(
-        "Alegeți Modul de Lucru:",
-        ["Demo Interactiv (Camera Model)", "Fișier Scanare Brută (SLAM/LiDAR)"],
-        help="Selectați Demo pentru testare rapidă sau încărcați fișierul brut din scanner.",
-    )
-
-    if sursa != "Demo Interactiv (Camera Model)":
-        up = st.file_uploader(
-            "Încărcați fișierul 3D:",
-            type=["las", "laz", "ply", "e57", "xyz", "txt", "pts"],
+    with col_input1:
+        sursa = st.radio(
+            "Alegeți Modul de Lucru:",
+            [
+                "Demo Interactiv (Camera Model)",
+                "Fișier Scanare Brută (SLAM/LiDAR)",
+            ],
+            help="Selectați Demo pentru testare rapidă sau încărcați fișierul brut din scanner.",
         )
-        st.markdown(
-            """
-            <div>
-                <span class='format-badge'>.E57</span>
-                <span class='format-badge'>.XYZ</span>
-                <span class='format-badge'>.PTS</span>
-                <span class='format-badge'>.PLY</span>
-                <span class='format-badge'>.LAS</span>
-            </div>
-        """,
-            unsafe_allow_html=True,
+
+        if sursa != "Demo Interactiv (Camera Model)":
+            up = st.file_uploader(
+                "Încărcați fișierul 3D:",
+                type=["las", "laz", "ply", "e57", "xyz", "txt", "pts"],
+            )
+            st.markdown(
+                """
+                <div>
+                    <span class='format-badge'>.E57</span>
+                    <span class='format-badge'>.XYZ</span>
+                    <span class='format-badge'>.PTS</span>
+                    <span class='format-badge'>.PLY</span>
+                    <span class='format-badge'>.LAS</span>
+                </div>
+            """,
+                unsafe_allow_html=True,
+            )
+        else:
+            up = None
+            st.info("ℹ️ Este selectată camera demonstrativă predefinită.")
+
+    with col_input2:
+        st.markdown("<b>⚙️ Parametri Algoritm AI:</b>", unsafe_allow_html=True)
+        vox = st.slider("Filtru Densitate Voxel (m)", 0.01, 0.10, 0.04, 0.01)
+        r_c = st.slider("Rază estimată țeavă MEP (m)", 0.05, 0.50, 0.15, 0.01)
+
+        op = st.checkbox("🎯 Ghidaj manual prin Coordonate Seed", value=False)
+
+        seed_x, seed_y, seed_z = 2.5, 0.30, 2.20
+        if op:
+            st.markdown(
+                "<p style='font-size:11px; color:#00FFFF; margin-bottom: 2px;'>Ajustează poziția punctului de ghidaj (Seed Point) în spațiu:</p>",
+                unsafe_allow_html=True,
+            )
+            c_sx, c_sy, c_sz = st.columns(3)
+            with c_sx:
+                seed_x = st.number_input("X (m)", 0.0, 5.0, 2.5, 0.1)
+            with c_sy:
+                seed_y = st.number_input("Y (m)", 0.0, 3.0, 0.30, 0.1)
+            with c_sz:
+                seed_z = st.number_input("Z (m)", 0.0, 3.0, 2.20, 0.1)
+
+        st.write("<br>", unsafe_allow_html=True)
+        lansa_btn = st.button(
+            "🚀 Actualizează / Lansează Procesarea Cloud",
+            use_container_width=True,
         )
-    else:
-        up = None
-        st.info("ℹ️ Este selectată camera demonstrativă predefinită.")
 
-with col_input2:
-    st.markdown("<b>⚙️ Parametri Algoritm AI:</b>", unsafe_allow_html=True)
-    vox = st.slider("Filtru Densitate Voxel (m)", 0.01, 0.10, 0.04, 0.01)
-    r_c = st.slider("Rază estimată țeavă MEP (m)", 0.05, 0.50, 0.15, 0.01)
-
-    op = st.checkbox("🎯 Ghidaj manual prin Coordonate Seed", value=False)
-
-    seed_x, seed_y, seed_z = 2.5, 0.30, 2.20
-    if op:
-        st.markdown(
-            "<p style='font-size:11px; color:#00FFFF; margin-bottom: 2px;'>Ajustează poziția punctului de ghidaj (Seed Point) în spațiu:</p>",
-            unsafe_allow_html=True,
-        )
-        c_sx, c_sy, c_sz = st.columns(3)
-        with c_sx:
-            seed_x = st.number_input("X (m)", 0.0, 5.0, 2.5, 0.1)
-        with c_sy:
-            seed_y = st.number_input("Y (m)", 0.0, 3.0, 0.30, 0.1)
-        with c_sz:
-            seed_z = st.number_input("Z (m)", 0.0, 3.0, 2.20, 0.1)
-
-    st.write("<br>", unsafe_allow_html=True)
-    lansa_btn = st.button(
-        "🚀 Actualizează / Lansează Procesarea Cloud", use_container_width=True
-    )
-
-st.markdown("</div>", unsafe_allow_html=True)
+st.write("<br>", unsafe_allow_html=True)
 
 # 6. TAB-URI DE REZULTATE (DIRECT SUB CONTROL)
 tab_main, tab_history, tab_pricing = st.tabs(

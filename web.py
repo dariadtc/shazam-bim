@@ -56,7 +56,7 @@ def trimite_email_formspree(email, tip, mesaj):
 # 1. Configurare pagină fără sidebar
 st.set_page_config(
     page_title="Shazam-BIM Cloud - Relevee 3D Universal LiDAR & SLAM AI",
-    page_icon="🤖",
+    page_icon="⚡",
     layout="wide",
     initial_sidebar_state="collapsed",
 )
@@ -70,21 +70,22 @@ if "otp_reset" not in st.session_state:
 if "email_reset_target" not in st.session_state:
     st.session_state.email_reset_target = None
 
-# 2. Injectare CSS Custom - ASCUNDEREA DEFINITIVĂ A SIDEBAR-ULUI ȘI A SĂGEȚILOR
+# 2. Injectare CSS Custom - ELEGANT WARM DARK THEME (CUIURI CALDE & MINIMALIST)
 st.markdown(
     """
     <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@600;800;900&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap');
     
     .stApp {
-        background-color: #090C10;
-        font-family: 'Inter', sans-serif;
+        background-color: #0C0E14;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        color: #E2E8F0;
     }
     
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
     
-    /* ASCUNDE BARA LATERALĂ ȘI SĂGEȚICA STREAMLIT PE TOT SITE-UL */
+    /* ASCUNDE DEFINITIV SIDEBAR-UL ȘI SĂGEȚILE */
     [data-testid="stSidebar"],
     [data-testid="collapsedControl"],
     button[aria-label="Close sidebar"],
@@ -92,192 +93,168 @@ st.markdown(
         display: none !important;
     }
     
-    /* ASCUNDE ICONIȚA NATIVĂ DE LINK / ANCHOR DIN STREAMLIT */
+    /* ASCUNDE ANCHOR LINKS */
     .stMarkdown a.anchor-link, 
     [data-testid="stHeaderActionElements"],
     a.header-anchor {
         display: none !important;
     }
     
-    /* LOGO NEON GLOW EFFECTS */
+    /* LOGO ELEGANT WARM GOLD */
     .logo-container {
         text-align: center;
-        padding: 15px 0 10px 0;
+        padding: 20px 0 10px 0;
         user-select: none;
     }
     .logo-shazam {
-        font-family: 'Orbitron', sans-serif;
-        font-size: 32px;
-        font-weight: 800;
-        color: #00FFFF;
-        text-shadow: 
-            0 0 5px #00FFFF,
-            0 0 15px rgba(0, 255, 255, 0.7);
-        animation: glowCyan 2.5s infinite alternate;
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 38px;
+        font-weight: 700;
+        color: #FFB800;
+        text-shadow: 0 0 20px rgba(255, 184, 0, 0.35);
+        letter-spacing: -0.5px;
     }
     .logo-bim {
-        font-family: 'Orbitron', sans-serif;
-        font-size: 32px;
-        font-weight: 800;
-        color: #50C878;
-        text-shadow: 
-            0 0 5px #50C878,
-            0 0 15px rgba(80, 200, 120, 0.7);
-        animation: glowGreen 2.5s infinite alternate;
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 38px;
+        font-weight: 700;
+        color: #F59E0B;
+        text-shadow: 0 0 20px rgba(245, 158, 11, 0.35);
+        letter-spacing: -0.5px;
     }
 
-    @keyframes glowCyan {
-        0% { text-shadow: 0 0 5px #00FFFF, 0 0 10px rgba(0, 255, 255, 0.5); }
-        100% { text-shadow: 0 0 8px #00FFFF, 0 0 20px rgba(0, 255, 255, 0.9); }
-    }
-    @keyframes glowGreen {
-        0% { text-shadow: 0 0 5px #50C878, 0 0 10px rgba(80, 200, 120, 0.5); }
-        100% { text-shadow: 0 0 8px #50C878, 0 0 20px rgba(80, 200, 120, 0.9); }
-    }
-
-    /* CARD CONTROL PRINCIPAL */
-    .control-card {
-        background: #121621;
-        border: 1px solid rgba(0, 255, 255, 0.15);
-        border-radius: 12px;
-        padding: 20px;
+    /* CARDURI MINIMALISTE CALDE */
+    .warm-card {
+        background: #141722;
+        border: 1px solid rgba(255, 184, 0, 0.12);
+        border-radius: 16px;
+        padding: 28px;
+        box-shadow: 0 12px 35px rgba(0, 0, 0, 0.4);
         margin-bottom: 25px;
     }
 
-    /* BADGES DE FORMAT EXTINSE */
+    .auth-box {
+        background: #141722;
+        border: 1px solid rgba(255, 184, 0, 0.2);
+        border-radius: 20px;
+        padding: 35px;
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
+    }
+
+    /* BADGES & CHIPS */
     .format-badge {
         display: inline-block;
-        background: rgba(0, 255, 255, 0.08);
-        border: 1px solid rgba(0, 255, 255, 0.25);
-        padding: 3px 7px;
-        border-radius: 6px;
-        font-size: 10px;
-        color: #00FFFF;
-        margin-right: 3px;
-        margin-bottom: 4px;
+        background: rgba(255, 184, 0, 0.08);
+        border: 1px solid rgba(255, 184, 0, 0.2);
+        padding: 4px 10px;
+        border-radius: 8px;
+        font-size: 11px;
+        color: #FFC72C;
+        margin-right: 5px;
+        margin-bottom: 6px;
         font-weight: 600;
     }
 
-    /* Status Badge Pulsant */
     .status-badge {
         display: inline-flex;
         align-items: center;
-        background: rgba(80, 200, 120, 0.1);
-        border: 1px solid rgba(80, 200, 120, 0.3);
-        padding: 4px 12px;
+        background: rgba(245, 158, 11, 0.1);
+        border: 1px solid rgba(245, 158, 11, 0.25);
+        padding: 5px 14px;
         border-radius: 20px;
-        color: #50C878;
-        font-size: 11px;
+        color: #FBBF24;
+        font-size: 12px;
         font-weight: 600;
-    }
-    .gpu-badge {
-        display: inline-flex;
-        align-items: center;
-        background: rgba(168, 85, 247, 0.1);
-        border: 1px solid rgba(168, 85, 247, 0.3);
-        padding: 4px 12px;
-        border-radius: 20px;
-        color: #A855F7;
-        font-size: 11px;
-        font-weight: 600;
-        margin-left: 8px;
     }
     .pulse-dot {
-        width: 7px;
-        height: 7px;
-        background-color: #50C878;
+        width: 8px;
+        height: 8px;
+        background-color: #F59E0B;
         border-radius: 50%;
-        margin-right: 6px;
-        box-shadow: 0 0 8px #50C878;
+        margin-right: 8px;
+        box-shadow: 0 0 10px #F59E0B;
     }
 
-    /* Carduri KPI Custom */
+    /* KPI CARDS WARM */
     .kpi-card {
-        background: rgba(18, 22, 33, 0.6);
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        border-radius: 12px;
-        padding: 16px;
+        background: #141722;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 14px;
+        padding: 18px;
         text-align: center;
-        backdrop-filter: blur(10px);
         transition: transform 0.2s ease, border-color 0.2s ease;
     }
     .kpi-card:hover {
-        transform: translateY(-2px);
-        border-color: rgba(0, 255, 255, 0.3);
+        transform: translateY(-3px);
+        border-color: rgba(255, 184, 0, 0.3);
     }
     .kpi-label {
-        color: #8A94A6;
+        color: #94A3B8;
         font-size: 11px;
         font-weight: 600;
         letter-spacing: 1px;
         text-transform: uppercase;
-        margin-bottom: 4px;
+        margin-bottom: 6px;
     }
     .kpi-value {
-        color: #FFFFFF;
-        font-size: 20px;
+        color: #FFB800;
+        font-size: 22px;
         font-weight: 700;
-        font-family: 'Orbitron', sans-serif;
+        font-family: 'Space Grotesk', sans-serif;
     }
     
-    /* Stilizare Buton Principal */
+    /* BUTOANE LUMINATE CU ACCENT CALD */
     div.stButton > button:first-child {
-        background: linear-gradient(135deg, #00E5FF 0%, #0088FF 100%);
-        color: #000000;
+        background: linear-gradient(135deg, #FFB800 0%, #D97706 100%);
+        color: #0C0E14;
         font-weight: 700;
         font-size: 15px;
         border: none;
-        border-radius: 8px;
-        padding: 12px 24px;
-        box-shadow: 0 4px 15px rgba(0, 229, 255, 0.25);
-        transition: all 0.2s ease;
+        border-radius: 10px;
+        padding: 14px 28px;
+        box-shadow: 0 4px 20px rgba(255, 184, 0, 0.25);
+        transition: all 0.25s ease;
+        letter-spacing: 0.2px;
     }
     div.stButton > button:first-child:hover {
-        box-shadow: 0 6px 22px rgba(0, 229, 255, 0.45);
-        transform: scale(1.01);
+        box-shadow: 0 6px 28px rgba(255, 184, 0, 0.45);
+        transform: translateY(-1px);
+        background: linear-gradient(135deg, #FFC72C 0%, #F59E0B 100%);
     }
 
-    /* Stilizare Tab-uri */
+    /* TAB-URI STILIZATE CLEAN */
     .stTabs [data-baseweb="tab-list"] {
-        gap: 8px;
-        background-color: #121621;
-        padding: 6px;
-        border-radius: 10px;
+        gap: 10px;
+        background-color: #141722;
+        padding: 8px;
+        border-radius: 12px;
         border: 1px solid rgba(255, 255, 255, 0.05);
     }
     .stTabs [data-baseweb="tab"] {
-        height: 40px;
-        border-radius: 6px;
-        color: #8A94A6;
+        height: 42px;
+        border-radius: 8px;
+        color: #94A3B8;
         font-weight: 600;
-        font-size: 13px;
+        font-size: 14px;
     }
     .stTabs [aria-selected="true"] {
-        background-color: #1A202C !important;
-        color: #00FFFF !important;
+        background-color: #1E2332 !important;
+        color: #FFB800 !important;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
     }
 
-    /* Carduri de Prețuri */
+    /* CARDURI PREȚURI */
     .price-card {
-        background: #121621;
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        border-radius: 12px;
-        padding: 20px;
+        background: #141722;
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        border-radius: 16px;
+        padding: 24px;
         text-align: center;
         height: 100%;
     }
     .price-card-pro {
-        border: 1.5px solid #00FFFF;
-        box-shadow: 0 0 15px rgba(0, 255, 255, 0.15);
-    }
-
-    /* FOOTER STYLING */
-    .footer-container {
-        background: #0E121B;
-        border-top: 1px solid rgba(255, 255, 255, 0.08);
-        padding: 30px 20px;
-        margin-top: 60px;
-        border-radius: 12px;
+        border: 1.5px solid #FFB800;
+        box-shadow: 0 0 25px rgba(255, 184, 0, 0.12);
     }
     </style>
 """,
@@ -476,23 +453,23 @@ Verificarea finală pe șantier revine inginerului autorizat de proiect.
 init_db()
 
 # -----------------------------------------------------------------------------
-# SCENARIUL A: UTILIZATORUL NU ESTE CONECTAT (FULL SCREEN LOGIN)
+# SCENARIUL A: UTILIZATORUL NU ESTE CONECTAT (ELEGANT WARM LOGIN)
 # -----------------------------------------------------------------------------
 if st.session_state.user_conectat is None:
 
     st.markdown(
         """
-        <div class='logo-container' style='margin-top: 50px;'>
-            <span class='logo-shazam' style='font-size: 45px;'>Shazam</span><span class='logo-bim' style='font-size: 45px;'>-BIM</span>
-            <p style='font-size: 13px; color: #00FF66; font-weight: 600; letter-spacing: 1px; margin-top: 10px;'>
-                PLATFORMĂ UNIVERSALĂ CLOUD PENTRU RELEVEE STRUCTURALE ȘI INSTALAȚII MEP
+        <div class='logo-container' style='margin-top: 60px; margin-bottom: 20px;'>
+            <span class='logo-shazam'>Shazam</span><span class='logo-bim'>-BIM</span>
+            <p style='font-size: 14px; color: #94A3B8; font-weight: 500; margin-top: 8px; letter-spacing: 0.5px;'>
+                Platformă Cloud AI pentru Relevee Structurale & Instalații MEP
             </p>
         </div>
     """,
         unsafe_allow_html=True,
     )
 
-    col_a, col_b, col_c = st.columns([1, 2, 1])
+    col_a, col_b, col_c = st.columns([1, 1.8, 1])
 
     with col_b:
         tab_login, tab_register = st.tabs(
@@ -511,18 +488,16 @@ if st.session_state.user_conectat is None:
             if st.button("🚀 Autentificare în Cloud", use_container_width=True):
                 if verifica_utilizator(email_in, pass_in):
                     st.session_state.user_conectat = email_in.lower().strip()
-                    st.success(
-                        "🎉 Conectat cu succes! Se încarcă spațiul de lucru..."
-                    )
+                    st.success("🎉 Conectat cu succes!")
                     st.rerun()
                 else:
-                    st.error("❌ Adresă de e-mail sau parolă incorectă!")
+                    st.error("❌ E-mail sau parolă incorectă!")
 
             # RESETARE PAROLĂ
             st.write("<br>", unsafe_allow_html=True)
             with st.expander("❓ Ai uitat parola?", expanded=False):
                 st.markdown(
-                    "<p style='font-size: 12px; color: #8A94A6;'>Introduceți e-mailul înregistrat. Un cod de verificare va fi transmis pentru confirmare.</p>",
+                    "<p style='font-size: 12px; color: #94A3B8;'>Introduceți e-mailul înregistrat. Un cod de verificare va fi transmis pentru reconfigurare.</p>",
                     unsafe_allow_html=True,
                 )
 
@@ -549,7 +524,7 @@ if st.session_state.user_conectat is None:
 
                             if trimis:
                                 st.info(
-                                    f"📩 Solicitarea ta a fost transmisă! Vei primi codul de verificare pe e-mail (**{rst_email_input}**). Introdu mai jos codul când îl primești:"
+                                    f"📩 Solicitarea a fost transmisă pentru **{rst_email_input}**! Introdu mai jos codul primit:"
                                 )
                             else:
                                 st.error("Eroare la transmiterea solicitării.")
@@ -587,7 +562,7 @@ if st.session_state.user_conectat is None:
                                 st.session_state.otp_reset = None
                                 st.session_state.email_reset_target = None
                                 st.success(
-                                    "🎉 Parola a fost schimbată cu succes! Vă puteți conecta acum."
+                                    "🎉 Parola a fost schimbată cu succes!"
                                 )
                             else:
                                 st.warning("Completați noua parolă!")
@@ -622,18 +597,18 @@ if st.session_state.user_conectat is None:
     st.stop()
 
 # -----------------------------------------------------------------------------
-# SCENARIUL B: UTILIZATORUL ESTE AUTENTIFICAT (SINGLE-PAGE APP)
+# SCENARIUL B: ECRANUL PRINCIPAL AUTENTIFICAT (SINGLE-PAGE APPLICATION)
 # -----------------------------------------------------------------------------
 
-# 1. HEADER SUS CU UTILIZATORUL SI DELOGARE
+# 1. BARĂ DE TITLU & HEADER UTILIZATOR
 col_head1, col_head2 = st.columns([3, 1])
 with col_head1:
     st.markdown(
         f"""
-        <div style='display: flex; align-items: center; gap: 15px;'>
-            <span class='logo-shazam' style='font-size: 24px;'>Shazam</span><span class='logo-bim' style='font-size: 24px;'>-BIM</span>
-            <span style='background: rgba(0, 255, 255, 0.08); padding: 5px 12px; border-radius: 8px; border: 1px solid #00FFFF; font-size: 12px; color: #00FFFF;'>
-                👤 Utilizator: <b>{st.session_state.user_conectat}</b>
+        <div style='display: flex; align-items: center; gap: 18px; margin-top: 5px;'>
+            <span class='logo-shazam' style='font-size: 26px;'>Shazam</span><span class='logo-bim' style='font-size: 26px;'>-BIM</span>
+            <span style='background: rgba(255, 184, 0, 0.08); padding: 6px 14px; border-radius: 20px; border: 1px solid rgba(255, 184, 0, 0.25); font-size: 12px; color: #FFB800;'>
+                👤 Cont Conectat: <b>{st.session_state.user_conectat}</b>
             </span>
         </div>
     """,
@@ -647,21 +622,18 @@ with col_head2:
 
 st.write("<br>", unsafe_allow_html=True)
 
-# 2. BANNER MAIN
+# 2. BANNER DE BINEAȚI VENIT & ENGINE STATUS
 st.markdown(
     """
-    <div style='background: linear-gradient(135deg, #121621 0%, #080B10 100%); padding: 25px; border-radius: 16px; border: 1px solid rgba(0, 255, 255, 0.12); box-shadow: 0 10px 30px rgba(0,0,0,0.4); margin-bottom: 20px;'>
+    <div style='background: linear-gradient(135deg, #181C28 0%, #10121A 100%); padding: 28px; border-radius: 20px; border: 1px solid rgba(255, 184, 0, 0.15); box-shadow: 0 10px 30px rgba(0,0,0,0.4); margin-bottom: 25px;'>
         <div style='display: flex; align-items: center;'>
             <div class='status-badge'><div class='pulse-dot'></div> UNIVERSAL CLOUD ENGINE ONLINE</div>
-            <div class='gpu-badge'>⚡ GPU ACCELERATED</div>
+            <span style='background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 5px 12px; border-radius: 20px; font-size: 11px; color: #CBD5E1; margin-left: 10px; font-weight: 600;'>⚡ GPU ACCELERATED</span>
         </div>
-        <h1 style='color: #FFFFFF; font-size: 28px; font-weight: 700; margin: 10px 0 6px 0; tracking-tight;'>
-            🤖 Shazam-BIM AI Engine
+        <h1 style='color: #FFFFFF; font-size: 28px; font-weight: 700; margin: 12px 0 6px 0;'>
+            🤖 Shazam-BIM AI Processing Engine
         </h1>
-        <p style='color: #00FF66; font-size: 12px; font-weight: 600; letter-spacing: 1px; margin: 0 0 10px 0;'>
-            PLATFORMĂ UNIVERSALĂ CLOUD PENTRU SCANERI SLAM, LIDAR TERESTRU ȘI DRONE
-        </p>
-        <p style='color: #8A94A6; font-size: 13px; max-width: 800px; margin: 0; line-height: 1.5;'>
+        <p style='color: #94A3B8; font-size: 13px; max-width: 850px; margin: 0; line-height: 1.6;'>
             Transformați norii de puncte brute 3D (.E57, .XYZ, .PTS, .PLY, .LAS, .LAZ) în modele geometrice solide CAD/BIM gata de importat direct în Revit sau AutoCAD.
         </p>
     </div>
@@ -669,15 +641,15 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-# 3. PANOU CONTROL MODUL DE LUCRU & INCĂRCARE FIȘIERE (MUTAT DIN SIDEBAR ÎN PAGINĂ)
+# 3. PANOU CONTROL MODUL DE LUCRU & ÎNCĂRCARE Date
 st.markdown(
-    "<h3 style='color: #00FFFF;'>📂 Modul de Lucru & Încărcare Date</h3>",
+    "<h3 style='color: #FFB800; font-family: Space Grotesk;'>📂 Panou de Încărcare & Sursă Date</h3>",
     unsafe_allow_html=True,
 )
 
 with st.container():
-    st.markdown("<div class='control-card'>", unsafe_allow_html=True)
-    c_mod1, c_mod2 = st.columns([1, 2])
+    st.markdown("<div class='warm-card'>", unsafe_allow_html=True)
+    c_mod1, c_mod2 = st.columns([1, 1.8])
 
     with c_mod1:
         sursa = st.radio(
@@ -703,7 +675,7 @@ with st.container():
 
             st.markdown(
                 """
-                <div>
+                <div style='margin-top: 5px;'>
                     <span class='format-badge'>.E57</span>
                     <span class='format-badge'>.XYZ</span>
                     <span class='format-badge'>.PTS</span>
@@ -712,7 +684,7 @@ with st.container():
                     <span class='format-badge'>.LAZ</span>
                     <span class='format-badge'>.TXT</span>
                 </div>
-                <p style='font-size: 11px; color: #6C7A9C; margin-top: 4px;'>
+                <p style='font-size: 11px; color: #64748B; margin-top: 6px;'>
                 Compatibil cu: <b>SLAM Mobil, Leica, Faro, GeoSLAM, Dronă, iPhone LiDAR</b>.
                 </p>
             """,
@@ -722,7 +694,6 @@ with st.container():
             if up is not None:
                 dimensiune_mb = up.size / (1024 * 1024)
                 puncte_estimate = int(dimensiune_mb * 250000)
-                ext = up.name.split(".")[-1].upper()
                 st.success(
                     f"✓ Fișier încărcat: **{up.name}** ({dimensiune_mb:.2f} MB | ~{puncte_estimate:,} Puncte)"
                 )
@@ -733,39 +704,39 @@ with st.container():
 
     st.markdown("</div>", unsafe_allow_html=True)
 
-# LANSAT PROCESARE
+# BUTTON PROCESARE PRINCIPAL
 lansa_btn = st.button(
     "🚀 Lansează Procesarea Cloud", use_container_width=True
 )
 
 st.write("<br>", unsafe_allow_html=True)
 
-# KPI Carduri
+# KPI METRICS
 k1, k2, k3, k4 = st.columns(4)
 with k1:
     st.markdown(
-        "<div class='kpi-card'><div class='kpi-label'>Acuratețe Digitală</div><div class='kpi-value' style='color:#00FFFF;'>&lt; 5 mm</div></div>",
+        "<div class='kpi-card'><div class='kpi-label'>Acuratețe Digitală</div><div class='kpi-value'>&lt; 5 mm</div></div>",
         unsafe_allow_html=True,
     )
 with k2:
     st.markdown(
-        "<div class='kpi-card'><div class='kpi-label'>Timp Procesare</div><div class='kpi-value' style='color:#50C878;'>~3 Secunde</div></div>",
+        "<div class='kpi-card'><div class='kpi-label'>Timp Procesare</div><div class='kpi-value' style='color:#F59E0B;'>~3 Secunde</div></div>",
         unsafe_allow_html=True,
     )
 with k3:
     st.markdown(
-        "<div class='kpi-card'><div class='kpi-label'>Format Export</div><div class='kpi-value' style='color:#FF3131;'>Solid .OBJ</div></div>",
+        "<div class='kpi-card'><div class='kpi-label'>Format Export</div><div class='kpi-value' style='color:#EF4444;'>Solid .OBJ</div></div>",
         unsafe_allow_html=True,
     )
 with k4:
     st.markdown(
-        "<div class='kpi-card'><div class='kpi-label'>Compatibilitate</div><div class='kpi-value' style='color:#FFFF00;'>Revit / CAD</div></div>",
+        "<div class='kpi-card'><div class='kpi-label'>Compatibilitate</div><div class='kpi-value' style='color:#10B981;'>Revit / CAD</div></div>",
         unsafe_allow_html=True,
     )
 
 st.write("<br>", unsafe_allow_html=True)
 
-# TAB-URILE PRINCIPALE DE REZULTATE, JURNAL ȘI PREȚURI
+# REZULTATE TAB-URI
 tab_main, tab_history, tab_pricing = st.tabs(
     [
         "📊 Vizualizator & Elemente 3D",
@@ -781,7 +752,7 @@ with tab_main:
         if utilizari_efectuate >= 1 and sursa != "Demo Interactiv":
             st.error("❌ Limita planului tău gratuit a fost atinsă!")
             st.markdown(
-                "<div style='background-color: #121621; padding: 30px; border-radius: 12px; border: 1.5px solid #50C878; text-align: center; margin-top: 10px;'><h3 style='color: #00FFFF; font-family: \"Orbitron\", sans-serif;'>🔒 Deblocați puterea maximă Shazam-BIM</h3><p style='color: #FFFFFF; font-size: 14px;'>Alegeți planul potrivit pentru a procesa scanări nelimitate:</p><hr style='border: 1px solid #333; margin: 15px 0;'><div style='display: flex; justify-content: space-around; flex-wrap: wrap;'><div style='background-color: #1E2330; padding: 20px; border-radius: 8px; width: 45%; border: 1px solid #50C878;'><h4 style='color: #50C878;'>Plan Lunar PRO</h4><h2>29.99 € <span style='font-size:12px; color:#AAA;'>/ lună</span></h2><br><a href='https://stripe.com' target='_blank'><button style='background-color:#50C878; color:black; font-weight:bold; padding:10px 15px; border:none; border-radius:6px; cursor:pointer; width:100%;'>Abonează-te Lunar</button></a></div><div style='background-color: #1E2330; padding: 20px; border-radius: 8px; width: 45%; border: 1px solid #00FFFF;'><h4 style='color: #00FFFF;'>Plan Anual BIZ</h4><h2>249.99 € <span style='font-size:12px; color:#AAA;'>/ an</span></h2><br><a href='https://stripe.com' target='_blank'><button style='background-color:#00FFFF; color:black; font-weight:bold; padding:10px 15px; border:none; border-radius:6px; cursor:pointer; width:100%;'>Abonează-te Anual</button></a></div></div></div>",
+                "<div style='background-color: #141722; padding: 30px; border-radius: 16px; border: 1.5px solid #FFB800; text-align: center; margin-top: 10px;'><h3 style='color: #FFB800;'>🔒 Deblocați puterea maximă Shazam-BIM</h3><p style='color: #E2E8F0; font-size: 14px;'>Alegeți planul potrivit pentru a procesa scanări nelimitate:</p><hr style='border: 1px solid #222; margin: 15px 0;'><div style='display: flex; justify-content: space-around; flex-wrap: wrap;'><div style='background-color: #1C2130; padding: 20px; border-radius: 12px; width: 45%; border: 1px solid #F59E0B;'><h4 style='color: #F59E0B;'>Plan Lunar PRO</h4><h2>29.99 € <span style='font-size:12px; color:#AAA;'>/ lună</span></h2><br><a href='https://stripe.com' target='_blank'><button style='background-color:#F59E0B; color:black; font-weight:bold; padding:10px 15px; border:none; border-radius:6px; cursor:pointer; width:100%;'>Abonează-te Lunar</button></a></div><div style='background-color: #1C2130; padding: 20px; border-radius: 12px; width: 45%; border: 1px solid #FFB800;'><h4 style='color: #FFB800;'>Plan Anual BIZ</h4><h2>249.99 € <span style='font-size:12px; color:#AAA;'>/ an</span></h2><br><a href='https://stripe.com' target='_blank'><button style='background-color:#FFB800; color:black; font-weight:bold; padding:10px 15px; border:none; border-radius:6px; cursor:pointer; width:100%;'>Abonează-te Anual</button></a></div></div></div>",
                 unsafe_allow_html=True,
             )
             st.stop()
@@ -915,7 +886,7 @@ with tab_main:
                     y=floor_y,
                     z=floor_z,
                     mode="markers",
-                    marker=dict(size=2, color="#00FF66", opacity=0.7),
+                    marker=dict(size=2, color="#10B981", opacity=0.7),
                     name="Podea / Sol",
                 )
             )
@@ -926,7 +897,7 @@ with tab_main:
                     y=wall_y,
                     z=wall_z,
                     mode="markers",
-                    marker=dict(size=2, color="#FF3131", opacity=0.7),
+                    marker=dict(size=2, color="#EF4444", opacity=0.7),
                     name="Pereți Structură (x4)",
                 )
             )
@@ -937,7 +908,7 @@ with tab_main:
                     y=ceiling_y,
                     z=ceiling_z,
                     mode="markers",
-                    marker=dict(size=2, color="#0088FF", opacity=0.7),
+                    marker=dict(size=2, color="#3B82F6", opacity=0.7),
                     name="Plafon / Tavan",
                 )
             )
@@ -948,7 +919,7 @@ with tab_main:
                     y=pipe_y,
                     z=pipe_z,
                     mode="markers",
-                    marker=dict(size=3, color="#FF9900", opacity=0.9),
+                    marker=dict(size=3, color="#FFB800", opacity=0.9),
                     name="Țeavă MEP Cilindrică (Solidă)",
                 )
             )
@@ -958,10 +929,10 @@ with tab_main:
                     xaxis_title="X (m)",
                     yaxis_title="Y (m)",
                     zaxis_title="Z (m)",
-                    bgcolor="#090C10",
+                    bgcolor="#0C0E14",
                 ),
-                paper_bgcolor="#121621",
-                font=dict(color="#FFFFFF"),
+                paper_bgcolor="#141722",
+                font=dict(color="#E2E8F0"),
                 margin=dict(l=0, r=0, b=0, t=30),
                 height=500,
             )
@@ -1032,9 +1003,9 @@ with tab_pricing:
         st.markdown(
             """
             <div class='price-card'>
-                <h4 style='color: #8A94A6; margin-top:0;'>TRIAL GRATUIT</h4>
+                <h4 style='color: #94A3B8; margin-top:0;'>TRIAL GRATUIT</h4>
                 <h2 style='color: #FFF;'>0 € <span style='font-size:12px; color:#AAA;'>/ gratuit</span></h2>
-                <p style='font-size:11px; color:#8A94A6; text-align:left;'>
+                <p style='font-size:12px; color:#94A3B8; text-align:left;'>
                 • 1 Scanare de test inclusă<br>
                 • Suport toate scanerele (E57, XYZ, PLY)<br>
                 • Export Solide .OBJ<br>
@@ -1049,9 +1020,9 @@ with tab_pricing:
         st.markdown(
             """
             <div class='price-card price-card-pro'>
-                <h4 style='color: #00FFFF; margin-top:0;'>PLAN PRO LUNAR</h4>
+                <h4 style='color: #FFB800; margin-top:0;'>PLAN PRO LUNAR</h4>
                 <h2 style='color: #FFF;'>29.99 € <span style='font-size:12px; color:#AAA;'>/ lună</span></h2>
-                <p style='font-size:11px; color:#AAA; text-align:left;'>
+                <p style='font-size:12px; color:#CBD5E1; text-align:left;'>
                 • <b>Scanări Nelimitate (E57, SLAM, LiDAR)</b><br>
                 • Extragere automată MEP & Structură<br>
                 • Rapoarte Tehnice PDF/TXT Ne-limitate<br>
@@ -1066,9 +1037,9 @@ with tab_pricing:
         st.markdown(
             """
             <div class='price-card'>
-                <h4 style='color: #50C878; margin-top:0;'>PLAN BIZ ANUAL</h4>
+                <h4 style='color: #F59E0B; margin-top:0;'>PLAN BIZ ANUAL</h4>
                 <h2 style='color: #FFF;'>249.99 € <span style='font-size:12px; color:#AAA;'>/ an</span></h2>
-                <p style='font-size:11px; color:#8A94A6; text-align:left;'>
+                <p style='font-size:12px; color:#94A3B8; text-align:left;'>
                 • Tot ce include Planul PRO<br>
                 • <b>Economisești peste 30% anual</b><br>
                 • Suport Tehnologic Dedicat 24/7<br>
@@ -1085,16 +1056,15 @@ with tab_pricing:
 st.write("<br><br>", unsafe_allow_html=True)
 st.markdown("---")
 
-st.subheader("🌐 Suport & Confidențialitate")
 f_col1, c_gap, f_col2 = st.columns([1, 0.1, 1])
 
 with f_col1:
     st.markdown("### 🛡️ Protecția Datelor & Legal")
     st.markdown(
         """
-        <div style='background: #121621; padding: 20px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.08); font-size: 13px; color: #8A94A6; line-height: 1.6;'>
-            <b style='color: #00FFFF;'>🔒 Confidențialitate GDPR:</b> Fișierele încărcate sunt procesate temporar în memorie securizată și sunt șterse automat de pe servere imediat după extragerea 3D.<br><br>
-            <b style='color: #50C878;'>⚖️ Disclaimer Tehnic:</b> Modelele oferă o estimare geometrică automată. Recomandăm verificarea pe șantier de către un inginer autorizat.
+        <div style='background: #141722; padding: 22px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.06); font-size: 13px; color: #94A3B8; line-height: 1.6;'>
+            <b style='color: #FFB800;'>🔒 Confidențialitate GDPR:</b> Fișierele încărcate sunt procesate temporar în memorie securizată și sunt șterse automat de pe servere imediat după extragerea 3D.<br><br>
+            <b style='color: #F59E0B;'>⚖️ Disclaimer Tehnic:</b> Modelele oferă o estimare geometrică automată. Recomandăm verificarea pe șantier de către un inginer autorizat.
         </div>
     """,
         unsafe_allow_html=True,
@@ -1119,8 +1089,8 @@ with f_col2:
 
 st.markdown(
     """
-    <div style='text-align: center; color: #6C7A9C; font-size: 11px; margin-top: 30px; margin-bottom: 20px;'>
-        © 2026 Shazam-BIM Cloud AI Processing Engine. toate drepturile rezervate.
+    <div style='text-align: center; color: #64748B; font-size: 12px; margin-top: 40px; margin-bottom: 25px;'>
+        © 2026 Shazam-BIM Cloud AI Processing Engine. Toate drepturile rezervate.
     </div>
 """,
     unsafe_allow_html=True,

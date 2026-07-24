@@ -70,7 +70,7 @@ if "otp_reset" not in st.session_state:
 if "email_reset_target" not in st.session_state:
     st.session_state.email_reset_target = None
 
-# 2. Injectare CSS Custom - ASCUNDERE BARA SHARE & ELIMINARE TĂIETURĂ HEADER
+# 2. Injectare CSS Custom - DEEP EMERALD & OCEAN BLUE THEME
 st.markdown(
     """
     <style>
@@ -85,19 +85,15 @@ st.markdown(
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
     
-    /* ASCUNDE BARA NATIVĂ STREAMLIT DIN TOP (SHARE, STAR, GITHUB) */
+    /* ASCUNDE DEFINITIV BARA HEADER NATIVĂ STREAMLIT, SIDEBAR ȘI SĂGEȚILE */
     header[data-testid="stHeader"],
-    [data-testid="stHeader"] {
-        display: none !important;
-        height: 0px !important;
-    }
-    
-    /* ASCUNDE DEFINITIV SIDEBAR-UL ȘI SĂGEȚILE */
+    [data-testid="stHeader"],
     [data-testid="stSidebar"],
     [data-testid="collapsedControl"],
     button[aria-label="Close sidebar"],
     button[aria-label="Open sidebar"] {
         display: none !important;
+        height: 0px !important;
     }
     
     .stMarkdown a.anchor-link, 
@@ -106,15 +102,15 @@ st.markdown(
         display: none !important;
     }
     
-    /* LIMITARE LĂȚIME & SPAȚIERE CORECTĂ ÎN SUS CA SĂ NU MAI FIE TĂIAT CÂMPUL */
+    /* LIMITARE LĂȚIME & SPAȚIERE CORECTĂ ÎN SUS */
     .block-container {
         max-width: 1150px !important;
-        padding-top: 2.5rem !important;
+        padding-top: 2rem !important;
         padding-bottom: 3rem !important;
         margin: 0 auto !important;
     }
 
-    /* LOGO GLOW EFFECTS */
+    /* LOGO MARE GLOW EFFECTS */
     .logo-container {
         text-align: center;
         padding: 10px 0;
@@ -122,17 +118,26 @@ st.markdown(
     }
     .logo-shazam {
         font-family: 'Orbitron', sans-serif;
-        font-size: 32px;
+        font-size: 38px;
         font-weight: 800;
         color: #00FFFF;
-        text-shadow: 0 0 10px rgba(0, 255, 255, 0.6);
+        text-shadow: 0 0 12px rgba(0, 255, 255, 0.7);
     }
     .logo-bim {
         font-family: 'Orbitron', sans-serif;
-        font-size: 32px;
+        font-size: 38px;
         font-weight: 800;
         color: #50C878;
-        text-shadow: 0 0 10px rgba(80, 200, 120, 0.6);
+        text-shadow: 0 0 12px rgba(80, 200, 120, 0.7);
+    }
+
+    /* USER BADGE & SMALL LOGOUT BUTTON IN RIGHT CORNER */
+    .user-badge-box {
+        text-align: right;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 6px;
     }
 
     /* CARDURI COMPACTE SMARALD */
@@ -202,7 +207,7 @@ st.markdown(
         font-family: 'Orbitron', sans-serif;
     }
     
-    /* BUTOANE LUMINATE */
+    /* BUTOANE LUMINATE GENERALE */
     div.stButton > button:first-child {
         background: linear-gradient(135deg, #00E5FF 0%, #10B981 100%);
         color: #061017;
@@ -217,6 +222,21 @@ st.markdown(
     div.stButton > button:first-child:hover {
         box-shadow: 0 6px 20px rgba(0, 229, 255, 0.4);
         transform: translateY(-1px);
+    }
+
+    /* STILIZARE SPECIALĂ COMPACTĂ PENTRU BUTONUL DE DELOGARE */
+    div[data-testid="stHorizontalBlock"] > div:last-child div.stButton > button:first-child {
+        padding: 5px 12px !important;
+        font-size: 11px !important;
+        border-radius: 6px !important;
+        background: rgba(239, 68, 68, 0.15) !important;
+        color: #F87171 !important;
+        border: 1px solid rgba(239, 68, 68, 0.3) !important;
+        box-shadow: none !important;
+    }
+    div[data-testid="stHorizontalBlock"] > div:last-child div.stButton > button:first-child:hover {
+        background: rgba(239, 68, 68, 0.3) !important;
+        color: #FFFFFF !important;
     }
 
     /* TAB-URI */
@@ -455,9 +475,9 @@ if st.session_state.user_conectat is None:
 
     st.markdown(
         """
-        <div class='logo-container' style='margin-top: 20px; margin-bottom: 10px;'>
-            <span class='logo-shazam'>Shazam</span><span class='logo-bim'>-BIM</span>
-            <p style='font-size: 12px; color: #50C878; font-weight: 600; margin-top: 6px; letter-spacing: 1px;'>
+        <div class='logo-container' style='margin-top: 30px; margin-bottom: 10px;'>
+            <span class='logo-shazam' style='font-size: 45px;'>Shazam</span><span class='logo-bim' style='font-size: 45px;'>-BIM</span>
+            <p style='font-size: 13px; color: #50C878; font-weight: 600; margin-top: 8px; letter-spacing: 1px;'>
                 PLATFORMĂ UNIVERSALĂ CLOUD PENTRU RELEVEE STRUCTURALE ȘI INSTALAȚII MEP
             </p>
         </div>
@@ -596,16 +616,24 @@ if st.session_state.user_conectat is None:
 # SCENARIUL B: ECRANUL PRINCIPAL AUTENTIFICAT (SINGLE-PAGE APPLICATION)
 # -----------------------------------------------------------------------------
 
-# 1. HEADER COMPACT (LOGO ÎN STÂNGA, USER ȘI DELOGARE ÎN DREAPTA)
-col_h1, col_h2 = st.columns([3, 1])
+# 1. HEADER CORECTAT: LOGO MARE ÎN STÂNGA | USER ȘI DELOGARE MICĂ ÎN DREAPTA SUS
+col_h1, col_h2 = st.columns([2.5, 1])
+
 with col_h1:
     st.markdown(
+        """
+        <div style='display: inline-flex; align-items: center; white-space: nowrap;'>
+            <span class='logo-shazam' style='font-size: 38px;'>Shazam</span><span class='logo-bim' style='font-size: 38px;'>-BIM</span>
+        </div>
+    """,
+        unsafe_allow_html=True,
+    )
+
+with col_h2:
+    st.markdown(
         f"""
-        <div style='display: flex; align-items: center; gap: 15px;'>
-            <div style='display: inline-flex; align-items: center; white-space: nowrap;'>
-                <span class='logo-shazam' style='font-size: 24px;'>Shazam</span><span class='logo-bim' style='font-size: 24px;'>-BIM</span>
-            </div>
-            <span style='background: rgba(0, 255, 255, 0.08); padding: 4px 12px; border-radius: 16px; border: 1px solid rgba(0, 255, 255, 0.2); font-size: 11px; color: #00FFFF;'>
+        <div class='user-badge-box'>
+            <span style='background: rgba(0, 255, 255, 0.08); padding: 5px 12px; border-radius: 16px; border: 1px solid rgba(0, 255, 255, 0.25); font-size: 11px; color: #00FFFF;'>
                 👤 Cont: <b>{st.session_state.user_conectat}</b>
             </span>
         </div>
@@ -613,8 +641,7 @@ with col_h1:
         unsafe_allow_html=True,
     )
 
-with col_h2:
-    if st.button("🚪 Delogare", use_container_width=True):
+    if st.button("🚪 Delogare", key="btn_logout_top"):
         st.session_state.user_conectat = None
         st.rerun()
 

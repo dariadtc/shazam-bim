@@ -3,7 +3,7 @@ from datetime import datetime
 
 st.set_page_config(page_title="Shazam-BIM Cloud", layout="wide")
 
-# --- LOGO-UL TĂU FUTURIST SF OPTIMIZAT ---
+# --- LOGO-UL TĂU FUTURIST GEOMETRIC BRANDING ---
 st.sidebar.markdown(
     "<!-- Importam fontul futurist geometric din Google Fonts -->"
     "<link href='https://googleapis.com' rel='stylesheet'>"
@@ -42,7 +42,7 @@ def numara_utilizari():
     conn = sqlite3.connect("proiecte_bim.db")
     cursor = conn.cursor()
     cursor.execute("SELECT COUNT(*) FROM scanari")
-    numar = cursor.fetchone()[0]
+    numar = cursor.fetchone()
     conn.close()
     return numar
 
@@ -83,45 +83,44 @@ vox = st.sidebar.slider("Voxel (m)", 0.01, 0.10, 0.04, 0.01)
 r_c = st.sidebar.slider("Rază țeavă (m)", 0.05, 0.50, 0.15, 0.01)
 op = st.sidebar.checkbox("🎯 Ghidaj manual prin Click", value=False)
 
-# Verificăm câte procesări s-au făcut deja pe acest server
 utilizari_efectuate = numara_utilizari()
 
-# Afișăm în bara laterală statusul contului
 if utilizari_efectuate == 0:
     st.sidebar.info("🎁 Cont: TRIAL GRATUIT (1 scanare rămasă)")
 else:
     st.sidebar.warning("🔒 Limită Trial Atinsă. Necesită Abonament Premium.")
 
 if st.sidebar.button("🚀 Procesează"):
-    # VERIFICARE GATEKEEPER: Dacă a consumat deja trialul gratuit, blocăm procesarea
     if utilizari_efectuate >= 1 and sursa != "Demo":
         st.error("❌ Limita planului tău gratuit a fost atinsă!")
         
-        # Generăm o casetă premium de ofertare comercială
         st.markdown("""
         <div style='background-color: #1E1E2E; padding: 30px; border-radius: 15px; border: 2px solid #50C878; text-align: center; margin-top: 20px;'>
             <h2 style='color: #00FFFF; font-family: "Orbitron", sans-serif;'>🔒 Deblocați puterea maximă Shazam-BIM</h2>
-            <p style='color: #FFFFFF; font-size: 16px;'>Ai testat cu succes motorul nostru geometric! Pentru a procesa scanări nelimitate și a descărca elemente CAD solide (.OBJ) pentru Revit, AutoCAD și ArchiCAD, alege planul care ți se potrivește:</p>
+            <p style='color: #FFFFFF; font-size: 16px;'>Ai testat cu succes motorul nostru geometric! Pentru a procesa scanări nelimitate și a descărca elemente CAD solide (.OBJ) pentru Revit, alege planul care ți se potrivește:</p>
             <hr style='border: 1px solid #333;'>
-            <div style='display: flex; justify-content: space-around; margin-top: 20px;'>
-                <div style='background-color: #2D2D44; padding: 20px; border-radius: 10px; width: 45%; border: 1px solid #50C878;'>
+            <div style='display: flex; justify-content: space-around; margin-top: 20px; flex-wrap: wrap;'>
+                <!-- CASETA LUNARĂ DE 29.99 € CU LINK-UL TĂU REAL -->
+                <div style='background-color: #2D2D44; padding: 20px; border-radius: 10px; width: 45%; min-width: 250px; border: 1px solid #50C878; margin-bottom: 15px;'>
                     <h3 style='color: #50C878;'>Plan Lunar PRO</h3>
-                    <h2 style='color: #FFFFFF;'>49 € <span style='font-size: 14px;'>/ lună</span></h2>
+                    <h2 style='color: #FFFFFF;'>29.99 € <span style='font-size: 14px;'>/ lună</span></h2>
                     <p style='font-size: 13px; color: #AAA;'>• Scanări nelimitate<br>• Suport fișiere mari .LAS / .PLY<br>• Descărcări rapide solide CAD</p>
+                    <br>
+                    <a href='https://stripe.com' target='_blank'><button style='background-color: #50C878; color: black; font-weight: bold; padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer; width: 100%; box-shadow: 0 0 10px rgba(80,200,120,0.3);'>Abonează-te Lunar</button></a>
                 </div>
-                <div style='background-color: #2D2D44; padding: 20px; border-radius: 10px; width: 45%; border: 1px solid #00FFFF;'>
+                <!-- CASETA ANUALĂ DE 249 € CU LINK-UL TĂU REAL -->
+                <div style='background-color: #2D2D44; padding: 20px; border-radius: 10px; width: 45%; min-width: 250px; border: 1px solid #00FFFF; margin-bottom: 15px;'>
                     <h3 style='color: #00FFFF;'>Plan Anual BIZ</h3>
-                    <h2 style='color: #FFFFFF;'>399 € <span style='font-size: 14px;'>/ an</span></h2>
-                    <p style='font-size: 13px; color: #AAA;'>• Economisești 35%<br>• Prioritate procesare în Cloud<br>• Suport tehnic 24/7 dedicat</p>
+                    <h2 style='color: #FFFFFF;'>249 € <span style='font-size: 14px;'>/ an</span></h2>
+                    <p style='font-size: 13px; color: #AAA;'>• Economisești peste 30%<br>• Prioritate procesare în Cloud<br>• Suport tehnic 24/7 dedicat</p>
+                    <br>
+                    <a href='https://buy.stripe.com/test_5kQ7sLb5r4ld9rJ4Tg1RC01' target='_blank'><button style='background-color: #00FFFF; color: black; font-weight: bold; padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer; width: 100%; box-shadow: 0 0 10px rgba(0,255,255,0.3);'>Abonează-te Anual</button></a>
                 </div>
             </div>
-            <br>
-            <a href='https://stripe.com' target='_blank'><button style='background-color: #50C878; color: black; font-weight: bold; padding: 12px 35px; border: none; border-radius: 8px; font-size: 16px; cursor: pointer; box-shadow: 0 0 15px #50C878;'>🚀 Activează Abonamentul Premium</button></a>
         </div>
         """, unsafe_allow_html=True)
         st.stop()
         
-    # Dacă utilizatorul este la prima scanare, codul rulează normal
     nume_proiect = "DEMO_ROOM" if sursa == "Demo" else (up.name if up else "UNKNOWN")
     
     with st.spinner("AI Cloud analizează și vectorizează elementele clădirii..."):

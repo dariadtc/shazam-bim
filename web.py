@@ -3,6 +3,28 @@ from datetime import datetime
 
 st.set_page_config(page_title="Shazam-BIM Cloud", layout="wide")
 
+# --- LOGO-UL TĂU FUTURIST SF OPTIMIZAT ---
+st.sidebar.markdown(
+    "<!-- Importam fontul futurist geometric din Google Fonts -->"
+    "<link href='https://googleapis.com' rel='stylesheet'>"
+    
+    "<div style='text-align: center; margin-bottom: 30px; padding-top: 15px; user-select: none;'>"
+    "<span style='font-family: \"Orbitron\", sans-serif; "
+    "font-size: 28px; font-weight: 500; font-style: italic; color: #00FFFF; "
+    "text-shadow: 0 0 5px #00FFFF, 0 0 15px rgba(0,255,255,0.6); letter-spacing: 1px;'>"
+    "Shazam</span>"
+    "<span style='font-family: \"Orbitron\", sans-serif; "
+    "font-size: 28px; font-weight: 500; font-style: italic; color: #50C878; margin: 0 4px; "
+    "text-shadow: 0 0 5px #50C878;'>"
+    "-</span>"
+    "<span style='font-family: \"Orbitron\", sans-serif; "
+    "font-size: 28px; font-weight: 500; font-style: italic; color: #50C878; "
+    "text-shadow: 0 0 5px #50C878, 0 0 15px rgba(80,200,120,0.6); letter-spacing: 1px;'>"
+    "BIM</span>"
+    "</div>", 
+    unsafe_allow_html=True
+)
+
 # --- CONFIGURARE BAZĂ DE DATE ---
 def initializeaza_baza_date():
     conn = sqlite3.connect("proiecte_bim.db")
@@ -15,6 +37,14 @@ def initializeaza_baza_date():
     """)
     conn.commit()
     conn.close()
+
+def numara_utilizari():
+    conn = sqlite3.connect("proiecte_bim.db")
+    cursor = conn.cursor()
+    cursor.execute("SELECT COUNT(*) FROM scanari")
+    numar = cursor.fetchone()[0]
+    conn.close()
+    return numar
 
 def salveaza_in_baza_date(nume, l_t, l_w, h_w, l_g, h_g):
     conn = sqlite3.connect("proiecte_bim.db")
@@ -38,37 +68,13 @@ def citeste_istoric():
 initializeaza_baza_date()
 
 def genereaza_cad_mesh_text(tip="perete"):
-    """Generează direct codul text în format .OBJ pentru fișiere solide fără librării grafice grele"""
     if tip == "teva":
         return "# Shazam-BIM Generated Cylinder MEP\nv 0 2.35 2\nv 5 2.35 2\nv 5 2.65 2\nv 0 2.65 2\nf 1 2 3 4\n"
     else:
         return "# Shazam-BIM Generated Wall Solid\nv 0 0 0\nv 5 0 0\nv 5 0.2 0\nv 0 0.2 0\nv 0 0 3\nv 5 0 3\nv 5 0.2 3\nv 0 0.2 3\nf 1 2 3 4\nf 5 6 7 8\nf 1 2 6 5\nf 2 3 7 6\nf 3 4 8 7\nf 4 1 5 8\n"
 
 # --- INTERFAȚA WEB ---
-st.title("🤖 Shazam-BIM AI Platform (Cloud Engine)")
-st.sidebar.markdown(
-    "<!-- Importam fontul futurist geometric din Google Fonts -->"
-    "<link href='https://googleapis.com' rel='stylesheet'>"
-    
-    "<div style='text-align: center; margin-bottom: 30px; padding-top: 15px; user-select: none;'>"
-    # SHAZAM in Turcoaz/Cyan Electric, Geometric, Stralucitor si ITALIC
-    "<span style='font-family: \"Orbitron\", sans-serif; "
-    "font-size: 28px; font-weight: 500; font-style: italic; color: #00FFFF; "
-    "text-shadow: 0 0 5px #00FFFF, 0 0 15px rgba(0,255,255,0.6); letter-spacing: 1px;'>"
-    "Shazam</span>"
-    # Linia - in Verde Smarald (Aceeasi nuanta ca BIM) si ITALIC
-    "<span style='font-family: \"Orbitron\", sans-serif; "
-    "font-size: 28px; font-weight: 500; font-style: italic; color: #50C878; margin: 0 4px; "
-    "text-shadow: 0 0 5px #50C878;'>"
-    "-</span>"
-    # BIM in Verde Smarald Vibrant, Geometric, Stralucitor si ITALIC
-    "<span style='font-family: \"Orbitron\", sans-serif; "
-    "font-size: 28px; font-weight: 500; font-style: italic; color: #50C878; "
-    "text-shadow: 0 0 5px #50C878, 0 0 15px rgba(80,200,120,0.6); letter-spacing: 1px;'>"
-    "BIM</span>"
-    "</div>", 
-    unsafe_allow_html=True
-)
+st.title("Shazam-BIM AI Platform (Cloud Engine)")
 st.write("Convertiți norii de puncte bruți din scanere SLAM direct în modele solide CAD/BIM.")
 
 sursa = st.sidebar.radio("Sursă:", ["Demo", "Fișier (.ply, .las)"])
@@ -77,17 +83,50 @@ vox = st.sidebar.slider("Voxel (m)", 0.01, 0.10, 0.04, 0.01)
 r_c = st.sidebar.slider("Rază țeavă (m)", 0.05, 0.50, 0.15, 0.01)
 op = st.sidebar.checkbox("🎯 Ghidaj manual prin Click", value=False)
 
+# Verificăm câte procesări s-au făcut deja pe acest server
+utilizari_efectuate = numara_utilizari()
+
+# Afișăm în bara laterală statusul contului
+if utilizari_efectuate == 0:
+    st.sidebar.info("🎁 Cont: TRIAL GRATUIT (1 scanare rămasă)")
+else:
+    st.sidebar.warning("🔒 Limită Trial Atinsă. Necesită Abonament Premium.")
+
 if st.sidebar.button("🚀 Procesează"):
+    # VERIFICARE GATEKEEPER: Dacă a consumat deja trialul gratuit, blocăm procesarea
+    if utilizari_efectuate >= 1 and sursa != "Demo":
+        st.error("❌ Limita planului tău gratuit a fost atinsă!")
+        
+        # Generăm o casetă premium de ofertare comercială
+        st.markdown("""
+        <div style='background-color: #1E1E2E; padding: 30px; border-radius: 15px; border: 2px solid #50C878; text-align: center; margin-top: 20px;'>
+            <h2 style='color: #00FFFF; font-family: "Orbitron", sans-serif;'>🔒 Deblocați puterea maximă Shazam-BIM</h2>
+            <p style='color: #FFFFFF; font-size: 16px;'>Ai testat cu succes motorul nostru geometric! Pentru a procesa scanări nelimitate și a descărca elemente CAD solide (.OBJ) pentru Revit, AutoCAD și ArchiCAD, alege planul care ți se potrivește:</p>
+            <hr style='border: 1px solid #333;'>
+            <div style='display: flex; justify-content: space-around; margin-top: 20px;'>
+                <div style='background-color: #2D2D44; padding: 20px; border-radius: 10px; width: 45%; border: 1px solid #50C878;'>
+                    <h3 style='color: #50C878;'>Plan Lunar PRO</h3>
+                    <h2 style='color: #FFFFFF;'>49 € <span style='font-size: 14px;'>/ lună</span></h2>
+                    <p style='font-size: 13px; color: #AAA;'>• Scanări nelimitate<br>• Suport fișiere mari .LAS / .PLY<br>• Descărcări rapide solide CAD</p>
+                </div>
+                <div style='background-color: #2D2D44; padding: 20px; border-radius: 10px; width: 45%; border: 1px solid #00FFFF;'>
+                    <h3 style='color: #00FFFF;'>Plan Anual BIZ</h3>
+                    <h2 style='color: #FFFFFF;'>399 € <span style='font-size: 14px;'>/ an</span></h2>
+                    <p style='font-size: 13px; color: #AAA;'>• Economisești 35%<br>• Prioritate procesare în Cloud<br>• Suport tehnic 24/7 dedicat</p>
+                </div>
+            </div>
+            <br>
+            <a href='https://stripe.com' target='_blank'><button style='background-color: #50C878; color: black; font-weight: bold; padding: 12px 35px; border: none; border-radius: 8px; font-size: 16px; cursor: pointer; box-shadow: 0 0 15px #50C878;'>🚀 Activează Abonamentul Premium</button></a>
+        </div>
+        """, unsafe_allow_html=True)
+        st.stop()
+        
+    # Dacă utilizatorul este la prima scanare, codul rulează normal
     nume_proiect = "DEMO_ROOM" if sursa == "Demo" else (up.name if up else "UNKNOWN")
     
     with st.spinner("AI Cloud analizează și vectorizează elementele clădirii..."):
-        # Calcule cloud ultra-rapide simulate stabil pentru platforma publică
         l_t, l_w, h_w, l_gol, h_gol = 5.02, 5.04, 3.03, 1.00, 2.10
-        
-        # Salvare istoric în baza de date SQL locală a serverului
         salveaza_in_baza_date(nume_proiect, l_t, l_w, h_w, l_gol, h_gol)
-        
-        # Generăm datele CAD direct în memorie sub formă de text .obj exportabil
         mep_data = genereaza_cad_mesh_text("teva")
         wall_data = genereaza_cad_mesh_text("perete")
         

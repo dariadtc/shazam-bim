@@ -4,7 +4,36 @@ import sqlite3
 from datetime import datetime
 import numpy as np
 import plotly.graph_objects as go
+import requests
 import streamlit as st
+
+# -----------------------------------------------------------------------------
+# 0. CONFIGURARE FORMSPREE PENTRU NOTIFICĂRI PE E-MAIL
+# -----------------------------------------------------------------------------
+# Înlocuiește ID-ul de mai jos cu ID-ul tău primit de la Formspree
+FORMSPREE_ID = "xeeyrbyb"  # ex: "xzyvqqla"
+
+
+def trimite_email_formspree(email, tip, mesaj):
+    """Trimite notificarea instant pe e-mail prin Formspree."""
+    if FORMSPREE_ID == "ID-UL_TAU_AICI":
+        # Dacă nu ai pus încă ID-ul, notificarea e-mail este ignorată temporar
+        return True
+
+    url = f"https://formspree.io/f/{FORMSPREE_ID}"
+    data = {
+        "email": email,
+        "subiect": tip,
+        "mesaj": mesaj,
+        "_subject": f"📬 Mesaj Nou Shazam-BIM: {tip}",
+    }
+    try:
+        response = requests.post(url, data=data)
+        return response.status_code == 200
+    except Exception as e:
+        print(f"Eroare la trimitere e-mail: {e}")
+        return False
+
 
 # 1. Configurare pagină cu titlu SEO
 st.set_page_config(
@@ -188,7 +217,7 @@ def salveaza_scanare(nume, l_t, l_w, h_w, l_g, h_g):
     c = conn.cursor()
     dt = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     c.execute(
-        "INSERT INTO scanari (nume_proiect, data_procesare, lungime_teva, lungime_perete, inaltime_perete, latime_gol, inaltime_gol) VALUES (?,?,?,?,?,?,?)"
+        "INSERT INTO scanari (nume_proiect, data_procesare, lungime_teva, lungime_perete, inaltime_perete, latime_gol, inaltime_gol) VALUES (?,?,?,?,?,?,?)",
         (
             str(nume),
             dt,
@@ -226,7 +255,6 @@ def citeste_istoric():
     return date
 
 
-# Funcție de generare Fișă Tehnică Releveu în format text/PDF structurat
 def genereaza_raport_tehnic(nume, l_t, l_w, h_w, l_g, h_g):
     dt = datetime.now().strftime("%d.%m.%Y %H:%M")
     suprafata_perete = l_w * h_w
@@ -300,7 +328,6 @@ if sursa != "Demo Interactiv":
         "Încarcă nor de puncte 3D:", type=["las", "ply"]
     )
 
-    # 1. OPTIMIZĂRI UX: METADATA DESPRE FIȘIERUL ÎNCĂRCAT
     if up is not None:
         dimensiune_mb = up.size / (1024 * 1024)
         puncte_estimate = int(dimensiune_mb * 250000)
@@ -330,7 +357,6 @@ if utilizari_efectuate == 0:
 else:
     st.sidebar.warning("🔒 **Plan Activ:** Limită Trial Atinsă. Necesită PRO.")
 
-# 4. SECȚIUNE LEGALE & GDPR ÎN SIDEBAR
 with st.sidebar.expander("🛡️ Protecția Datelor & Legal"):
     st.markdown(
         """
@@ -342,7 +368,7 @@ with st.sidebar.expander("🛡️ Protecția Datelor & Legal"):
         unsafe_allow_html=True,
     )
 
-# Formular contact
+# Formular contact conectat la E-MAIL + Bază de date
 with st.sidebar.expander("📬 Contact & Suport Tehnologic"):
     with st.form(key="form_c", clear_on_submit=True):
         em = st.text_input("E-mailul tău:", placeholder="nume@companie.ro")
@@ -356,7 +382,8 @@ with st.sidebar.expander("📬 Contact & Suport Tehnologic"):
         btn_c = st.form_submit_button("Trimite mesaj")
         if btn_c and em and ms:
             salveaza_contact(em, tp, ms)
-            st.sidebar.success("🎉 Trimis! Răspundem în max. 2 ore.")
+            trimite_email_formspree(em, tp, ms)
+            st.sidebar.success("🎉 Trimis! Mesajul a fost transmis pe e-mail.")
 
 # --- INTERFAȚA VIZUALĂ PRINCIPALĂ ---
 
@@ -380,7 +407,6 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-# 3. ONBOARDING WALKTHROUGH: GHID INFORMATIV „CUM FUNCȚIONEAZĂ”
 with st.expander("❓ Cum funcționează Shazam-BIM? (3 Pași Simpli)", expanded=False):
     st.markdown(
         """
@@ -404,7 +430,6 @@ with st.expander("❓ Cum funcționează Shazam-BIM? (3 Pași Simpli)", expanded
 
 st.write("<br>", unsafe_allow_html=True)
 
-# Row de KPI Carduri
 k1, k2, k3, k4 = st.columns(4)
 with k1:
     st.markdown(
@@ -429,7 +454,6 @@ with k4:
 
 st.write("<br>", unsafe_allow_html=True)
 
-# Buton principal
 if st.sidebar.button(
     "🚀 Lansează Procesarea Cloud", use_container_width=True
 ):
@@ -636,7 +660,6 @@ if st.sidebar.button(
             use_container_width=True,
         )
 
-        # 2. GENERARE SI DESCARCARE RAPORT TEHNIC PDF/TXT
         raport_text = genereaza_raport_tehnic(
             nume_proiect, l_t, l_w, h_w, l_gol, h_gol
         )
@@ -648,7 +671,6 @@ if st.sidebar.button(
             use_container_width=True,
         )
 
-# 4. TABEL DE PREȚURI SI PLANURI TARIFARE TRANSPARENT
 st.write("---")
 st.subheader("💳 Planuri de Abonament & Licențiere Cloud")
 p1, p2, p3 = st.columns(3)

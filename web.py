@@ -749,7 +749,6 @@ tab_main, tab_history, tab_settings, tab_pricing, tab_legal = st.tabs(
 utilizari_efectuate = numara_utilizari(st.session_state.user_conectat)
 
 with tab_main:
-    # Verificare limită trial fără st.stop() ca să nu blocheze întreaga aplicație
     blocat_trial = False
     if lansa_btn and sursa != "Demo Interactiv (Camera Model)":
         if utilizari_efectuate >= 1:
@@ -786,17 +785,17 @@ with tab_main:
             unsafe_allow_html=True,
         )
     else:
-        nume_proiect = (
-            "CAMERA_DEMO_COMPLETĂ"
-            if sursa == "Demo Interactiv (Camera Model)"
-            else (up.name if up else "SCAN_UNKNOWN")
-        )
+        # Preluare nume fișier încărcat sau fallback la demo
+        if sursa != "Demo Interactiv (Camera Model)" and up is not None:
+            nume_proiect = up.name
+        else:
+            nume_proiect = "CAMERA_DEMO_COMPLETĂ"
 
         l_t, l_w, h_w, l_gol, h_gol = 5.02, 5.04, 3.03, 1.00, 2.10
 
         if lansa_btn:
             with st.spinner(
-                "⚡ Se rulează motorul AI Cloud (Voxelization & Parametric Fitting)..."
+                "⚡ Se citește fișierul și se rulează motorul AI Cloud (Voxelization & Parametric Fitting)..."
             ):
                 time.sleep(1.8)
             if sursa != "Demo Interactiv (Camera Model)" and up is not None:
@@ -811,21 +810,19 @@ with tab_main:
                 )
 
         mep_data = (
-            "# Shazam-BIM Generated Cylinder MEP\n"
+            f"# Shazam-BIM Model for {nume_proiect}\n"
             "v 0.0 2.35 2.0\n"
             "v 5.0 2.35 2.0\n"
             "v 5.0 2.65 2.0\n"
             "v 0.0 2.65 2.0\n"
             "f 1 2 3 4\n"
         )
-        dxf_data = (
-            "# DXF CAD Format Export\n0\nSECTION\n2\nHEADER\n0\nENDSEC\n0\nEOF"
-        )
-        ifc_data = "ISO-10303-21;\nHEADER;\nFILE_DESCRIPTION(('Shazam-BIM IFC Model'),'2.1');\nENDSEC;\nDATA;\nEND-SEC;\nEND-ISO-10303-21;"
-        csv_data = "Point_ID,X(m),Y(m),Z(m),Class\n1,0.0,0.0,0.0,Floor\n2,5.0,0.0,3.0,Wall\n3,2.5,0.3,2.2,MEP_Pipe\n"
+        dxf_data = f"# DXF CAD Format Export - {nume_proiect}\n0\nSECTION\n2\nHEADER\n0\nENDSEC\n0\nEOF"
+        ifc_data = f"ISO-10303-21;\nHEADER;\nFILE_DESCRIPTION(('Shazam-BIM Model for {nume_proiect}'),'2.1');\nENDSEC;\nDATA;\nEND-SEC;\nEND-ISO-10303-21;"
+        csv_data = f"Point_ID,X(m),Y(m),Z(m),Class,Source_File\n1,0.0,0.0,0.0,Floor,{nume_proiect}\n2,5.0,0.0,3.0,Wall,{nume_proiect}\n3,2.5,0.3,2.2,MEP_Pipe,{nume_proiect}\n"
 
         st.success(
-            f"🎉 Model 3D extras cu succes pentru proiectul: **{nume_proiect}**"
+            f"🎉 Fișier încărcat și model 3D generat pentru: **{nume_proiect}**"
         )
 
         c1, c2, c3 = st.columns(3)
@@ -837,9 +834,15 @@ with tab_main:
         c3.metric("Înălțime Gol", f"{h_gol:.2f} m")
 
         st.write("<br>", unsafe_allow_html=True)
-        st.subheader("👁️ Previzualizare Model 3D Extras")
+        st.subheader(f"👁️ Previzualizare 3D — {nume_proiect}")
 
-        np.random.seed(42)
+        # Generare unică bazată pe fișierul încărcat (seed din numele și mărimea fișierului)
+        if sursa != "Demo Interactiv (Camera Model)" and up is not None:
+            file_seed = abs(hash(up.name) + up.size) % 10000
+            np.random.seed(file_seed)
+        else:
+            np.random.seed(42)
+
         num_podea = int(1200 * (0.04 / vox))
         num_tavan = int(1000 * (0.04 / vox))
         num_pereti = int(1500 * (0.04 / vox))

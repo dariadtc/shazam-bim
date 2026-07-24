@@ -131,21 +131,25 @@ st.markdown(
         text-shadow: 0 0 12px rgba(80, 200, 120, 0.7);
     }
 
-    /* USER BADGE BOX - ALINIAT DREAPTA */
+    /* FORȚARE ALINIERE LA DREAPTA PENTRU TOATĂ COLOANA DIN DREAPTA A HEADER-ULUI */
+    div[data-testid="stHorizontalBlock"]:first-of-type > div:last-child {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: flex-end !important;
+    }
+
     .user-badge-box {
-        text-align: right;
-        display: flex;
-        justify-content: flex-end;
         margin-bottom: 6px;
     }
 
-    /* FORCE ALIGNMENT LA DREAPTA PENTRU BUTONUL DE DELOGARE */
-    div[data-testid="stHorizontalBlock"] > div:last-child .stButton {
+    /* STILIZARE BUTON DELOGARE SIMPLU & ALINIAT PERFECT LA DREAPTA */
+    div[data-testid="stHorizontalBlock"]:first-of-type > div:last-child .stButton {
         display: flex !important;
         justify-content: flex-end !important;
+        width: auto !important;
     }
     
-    div[data-testid="stHorizontalBlock"] > div:last-child div.stButton > button:first-child {
+    div[data-testid="stHorizontalBlock"]:first-of-type > div:last-child div.stButton > button:first-child {
         padding: 4px 14px !important;
         font-size: 11px !important;
         border-radius: 12px !important;
@@ -154,9 +158,9 @@ st.markdown(
         border: 1px solid rgba(255, 255, 255, 0.15) !important;
         box-shadow: none !important;
         font-weight: 500 !important;
-        margin-left: auto !important;
+        margin: 0 !important;
     }
-    div[data-testid="stHorizontalBlock"] > div:last-child div.stButton > button:first-child:hover {
+    div[data-testid="stHorizontalBlock"]:first-of-type > div:last-child div.stButton > button:first-child:hover {
         background: rgba(255, 255, 255, 0.12) !important;
         color: #FFFFFF !important;
         border-color: rgba(0, 255, 255, 0.3) !important;

@@ -1043,7 +1043,7 @@ with tab_history:
             "Jurnalul dumneavoastră este gol. Rulați o procesare în tab-ul principal pentru a salva primul proiect!"
         )
 
-# SETĂRI CONT (DEDICAT PENTRU PROFIL ȘI SCHIMBARE PAROLĂ)
+# SETĂRI CONT
 with tab_settings:
     st.subheader("⚙️ Setări Cont & Securitate")
     st.markdown(
@@ -1140,16 +1140,17 @@ with tab_pricing:
 # TAB TERMENI & GDPR (CURĂȚAT COMPLET)
 with tab_legal:
     st.subheader("⚖️ Termeni și Condiții & Politică de Confidențialitate (GDPR)")
+    st.write("")
     st.markdown(
         """
         <div style='background: #0B1922; padding: 25px; border-radius: 12px; border: 1px solid rgba(80,200,120,0.2); font-size: 13px; color: #CBD5E1; line-height: 1.6;'>
-            <h4 style='color: #50C878; margin-top:0;'>1. Angajamentul privind Confidențialitatea Datelor (GDPR)</h4>
+            <h3 style='color: #50C878; margin-top:0; font-size: 16px;'>1. Angajamentul privind Confidențialitatea Datelor (GDPR)</h3>
             <p>Platforma <b>Shazam-BIM</b> respectă Regulamentul General privind Protecția Datelor (GDPR). Toate fișierele cu nori de puncte încărcate (format .LAS, .E57, etc.) sunt procesate strict în memorie volatilă securizată și sunt <b>șterse automat de pe servere</b> imediat după generarea modelului 3D și livrarea exportului către utilizator.</p>
             
-            <h4 style='color: #50C878;'>2. Securitatea Plăților prin Stripe</h4>
+            <h3 style='color: #50C878; font-size: 16px;'>2. Securitatea Plăților prin Stripe</h3>
             <p>Tranzacțiile financiare pentru abonamentele Lunar și Anual sunt procesate în siguranță prin intermediul platformei externe <b>Stripe</b>. Shazam-BIM nu stochează pe serverele proprii date sensibile legate de cardurile bancare ale clienților.</p>
 
-            <h4 style='color: #50C878;'>3. Limitarea Răspunderii Tehnice</h4>
+            <h3 style='color: #50C878; font-size: 16px;'>3. Limitarea Răspunderii Tehnice</h3>
             <p>Modelele 3D, fișierele CAD (DXF/IFC) și rapoartele tehnice generate automat de algoritmul AI au rol de estimare și asistență inginerească. Verificarea finală a cotelor pe șantier revine inginerului geodez sau proiectantului autorizat.</p>
         </div>
         """,

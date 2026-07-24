@@ -56,7 +56,7 @@ def trimite_email_formspree(email, tip, mesaj):
 # 1. Configurare pagină fără sidebar
 st.set_page_config(
     page_title="Shazam-BIM Cloud - Relevee 3D Universal LiDAR & SLAM AI",
-    page_icon="⚡",
+    page_icon="🤖",
     layout="wide",
     initial_sidebar_state="collapsed",
 )
@@ -70,15 +70,15 @@ if "otp_reset" not in st.session_state:
 if "email_reset_target" not in st.session_state:
     st.session_state.email_reset_target = None
 
-# 2. Injectare CSS Custom - ELEGANT WARM DARK THEME (CUIURI CALDE & MINIMALIST)
+# 2. Injectare CSS Custom - DEEP EMERALD & OCEAN BLUE THEME
 st.markdown(
     """
     <style>
-    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@600;700;800;900&display=swap');
     
     .stApp {
-        background-color: #0C0E14;
-        font-family: 'Plus Jakarta Sans', sans-serif;
+        background-color: #061017;
+        font-family: 'Inter', sans-serif;
         color: #E2E8F0;
     }
     
@@ -100,56 +100,61 @@ st.markdown(
         display: none !important;
     }
     
-    /* LOGO ELEGANT WARM GOLD */
+    /* LOGO ORIGINAL GLOW EFFECTS (CYAN & SMARALD) */
     .logo-container {
         text-align: center;
         padding: 20px 0 10px 0;
         user-select: none;
     }
     .logo-shazam {
-        font-family: 'Space Grotesk', sans-serif;
-        font-size: 38px;
-        font-weight: 700;
-        color: #FFB800;
-        text-shadow: 0 0 20px rgba(255, 184, 0, 0.35);
-        letter-spacing: -0.5px;
+        font-family: 'Orbitron', sans-serif;
+        font-size: 36px;
+        font-weight: 800;
+        color: #00FFFF;
+        text-shadow: 
+            0 0 8px #00FFFF,
+            0 0 20px rgba(0, 255, 255, 0.7);
+        animation: glowCyan 2.5s infinite alternate;
     }
     .logo-bim {
-        font-family: 'Space Grotesk', sans-serif;
-        font-size: 38px;
-        font-weight: 700;
-        color: #F59E0B;
-        text-shadow: 0 0 20px rgba(245, 158, 11, 0.35);
-        letter-spacing: -0.5px;
+        font-family: 'Orbitron', sans-serif;
+        font-size: 36px;
+        font-weight: 800;
+        color: #50C878;
+        text-shadow: 
+            0 0 8px #50C878,
+            0 0 20px rgba(80, 200, 120, 0.7);
+        animation: glowGreen 2.5s infinite alternate;
     }
 
-    /* CARDURI MINIMALISTE CALDE */
-    .warm-card {
-        background: #141722;
-        border: 1px solid rgba(255, 184, 0, 0.12);
+    @keyframes glowCyan {
+        0% { text-shadow: 0 0 5px #00FFFF, 0 0 12px rgba(0, 255, 255, 0.5); }
+        100% { text-shadow: 0 0 10px #00FFFF, 0 0 24px rgba(0, 255, 255, 0.9); }
+    }
+    @keyframes glowGreen {
+        0% { text-shadow: 0 0 5px #50C878, 0 0 12px rgba(80, 200, 120, 0.5); }
+        100% { text-shadow: 0 0 10px #50C878, 0 0 24px rgba(80, 200, 120, 0.9); }
+    }
+
+    /* CARDURI ELEGANTE SMARALD / OCEAN BLUE */
+    .emerald-card {
+        background: linear-gradient(145deg, #0F2229 0%, #0B1924 100%);
+        border: 1px solid rgba(80, 200, 120, 0.2);
         border-radius: 16px;
-        padding: 28px;
-        box-shadow: 0 12px 35px rgba(0, 0, 0, 0.4);
+        padding: 26px;
+        box-shadow: 0 12px 35px rgba(0, 0, 0, 0.45);
         margin-bottom: 25px;
-    }
-
-    .auth-box {
-        background: #141722;
-        border: 1px solid rgba(255, 184, 0, 0.2);
-        border-radius: 20px;
-        padding: 35px;
-        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
     }
 
     /* BADGES & CHIPS */
     .format-badge {
         display: inline-block;
-        background: rgba(255, 184, 0, 0.08);
-        border: 1px solid rgba(255, 184, 0, 0.2);
+        background: rgba(0, 255, 255, 0.08);
+        border: 1px solid rgba(0, 255, 255, 0.25);
         padding: 4px 10px;
         border-radius: 8px;
         font-size: 11px;
-        color: #FFC72C;
+        color: #00FFFF;
         margin-right: 5px;
         margin-bottom: 6px;
         font-weight: 600;
@@ -158,27 +163,27 @@ st.markdown(
     .status-badge {
         display: inline-flex;
         align-items: center;
-        background: rgba(245, 158, 11, 0.1);
-        border: 1px solid rgba(245, 158, 11, 0.25);
+        background: rgba(80, 200, 120, 0.12);
+        border: 1px solid rgba(80, 200, 120, 0.35);
         padding: 5px 14px;
         border-radius: 20px;
-        color: #FBBF24;
+        color: #50C878;
         font-size: 12px;
         font-weight: 600;
     }
     .pulse-dot {
         width: 8px;
         height: 8px;
-        background-color: #F59E0B;
+        background-color: #50C878;
         border-radius: 50%;
         margin-right: 8px;
-        box-shadow: 0 0 10px #F59E0B;
+        box-shadow: 0 0 10px #50C878;
     }
 
-    /* KPI CARDS WARM */
+    /* KPI CARDS SMARALD */
     .kpi-card {
-        background: #141722;
-        border: 1px solid rgba(255, 255, 255, 0.05);
+        background: #0D1C24;
+        border: 1px solid rgba(80, 200, 120, 0.15);
         border-radius: 14px;
         padding: 18px;
         text-align: center;
@@ -186,7 +191,7 @@ st.markdown(
     }
     .kpi-card:hover {
         transform: translateY(-3px);
-        border-color: rgba(255, 184, 0, 0.3);
+        border-color: rgba(0, 255, 255, 0.4);
     }
     .kpi-label {
         color: #94A3B8;
@@ -197,38 +202,38 @@ st.markdown(
         margin-bottom: 6px;
     }
     .kpi-value {
-        color: #FFB800;
+        color: #00FFFF;
         font-size: 22px;
         font-weight: 700;
-        font-family: 'Space Grotesk', sans-serif;
+        font-family: 'Orbitron', sans-serif;
     }
     
-    /* BUTOANE LUMINATE CU ACCENT CALD */
+    /* BUTOANE LUMINATE CYAN-SMARALD */
     div.stButton > button:first-child {
-        background: linear-gradient(135deg, #FFB800 0%, #D97706 100%);
-        color: #0C0E14;
+        background: linear-gradient(135deg, #00E5FF 0%, #10B981 100%);
+        color: #061017;
         font-weight: 700;
         font-size: 15px;
         border: none;
         border-radius: 10px;
         padding: 14px 28px;
-        box-shadow: 0 4px 20px rgba(255, 184, 0, 0.25);
+        box-shadow: 0 4px 20px rgba(0, 229, 255, 0.25);
         transition: all 0.25s ease;
         letter-spacing: 0.2px;
     }
     div.stButton > button:first-child:hover {
-        box-shadow: 0 6px 28px rgba(255, 184, 0, 0.45);
+        box-shadow: 0 6px 28px rgba(0, 229, 255, 0.5);
         transform: translateY(-1px);
-        background: linear-gradient(135deg, #FFC72C 0%, #F59E0B 100%);
+        background: linear-gradient(135deg, #33ECC8 0%, #059669 100%);
     }
 
-    /* TAB-URI STILIZATE CLEAN */
+    /* TAB-URI STILIZATE OCEAN & SMARALD */
     .stTabs [data-baseweb="tab-list"] {
         gap: 10px;
-        background-color: #141722;
+        background-color: #0A1721;
         padding: 8px;
         border-radius: 12px;
-        border: 1px solid rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(80, 200, 120, 0.15);
     }
     .stTabs [data-baseweb="tab"] {
         height: 42px;
@@ -238,23 +243,23 @@ st.markdown(
         font-size: 14px;
     }
     .stTabs [aria-selected="true"] {
-        background-color: #1E2332 !important;
-        color: #FFB800 !important;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        background-color: #0F2830 !important;
+        color: #00FFFF !important;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
     }
 
     /* CARDURI PREȚURI */
     .price-card {
-        background: #141722;
-        border: 1px solid rgba(255, 255, 255, 0.06);
+        background: #0D1C24;
+        border: 1px solid rgba(255, 255, 255, 0.08);
         border-radius: 16px;
         padding: 24px;
         text-align: center;
         height: 100%;
     }
     .price-card-pro {
-        border: 1.5px solid #FFB800;
-        box-shadow: 0 0 25px rgba(255, 184, 0, 0.12);
+        border: 1.5px solid #00FFFF;
+        box-shadow: 0 0 25px rgba(0, 255, 255, 0.15);
     }
     </style>
 """,
@@ -453,16 +458,16 @@ Verificarea finală pe șantier revine inginerului autorizat de proiect.
 init_db()
 
 # -----------------------------------------------------------------------------
-# SCENARIUL A: UTILIZATORUL NU ESTE CONECTAT (ELEGANT WARM LOGIN)
+# SCENARIUL A: UTILIZATORUL NU ESTE CONECTAT (ELEGANT SMARALD / OCEAN LOGIN)
 # -----------------------------------------------------------------------------
 if st.session_state.user_conectat is None:
 
     st.markdown(
         """
-        <div class='logo-container' style='margin-top: 60px; margin-bottom: 20px;'>
+        <div class='logo-container' style='margin-top: 50px; margin-bottom: 20px;'>
             <span class='logo-shazam'>Shazam</span><span class='logo-bim'>-BIM</span>
-            <p style='font-size: 14px; color: #94A3B8; font-weight: 500; margin-top: 8px; letter-spacing: 0.5px;'>
-                Platformă Cloud AI pentru Relevee Structurale & Instalații MEP
+            <p style='font-size: 13px; color: #50C878; font-weight: 600; margin-top: 8px; letter-spacing: 1px;'>
+                PLATFORMĂ UNIVERSALĂ CLOUD PENTRU RELEVEE STRUCTURALE ȘI INSTALAȚII MEP
             </p>
         </div>
     """,
@@ -607,7 +612,7 @@ with col_head1:
         f"""
         <div style='display: flex; align-items: center; gap: 18px; margin-top: 5px;'>
             <span class='logo-shazam' style='font-size: 26px;'>Shazam</span><span class='logo-bim' style='font-size: 26px;'>-BIM</span>
-            <span style='background: rgba(255, 184, 0, 0.08); padding: 6px 14px; border-radius: 20px; border: 1px solid rgba(255, 184, 0, 0.25); font-size: 12px; color: #FFB800;'>
+            <span style='background: rgba(0, 255, 255, 0.08); padding: 6px 14px; border-radius: 20px; border: 1px solid rgba(0, 255, 255, 0.25); font-size: 12px; color: #00FFFF;'>
                 👤 Cont Conectat: <b>{st.session_state.user_conectat}</b>
             </span>
         </div>
@@ -625,10 +630,10 @@ st.write("<br>", unsafe_allow_html=True)
 # 2. BANNER DE BINEAȚI VENIT & ENGINE STATUS
 st.markdown(
     """
-    <div style='background: linear-gradient(135deg, #181C28 0%, #10121A 100%); padding: 28px; border-radius: 20px; border: 1px solid rgba(255, 184, 0, 0.15); box-shadow: 0 10px 30px rgba(0,0,0,0.4); margin-bottom: 25px;'>
+    <div style='background: linear-gradient(135deg, #0F2229 0%, #0B1924 100%); padding: 28px; border-radius: 20px; border: 1px solid rgba(80, 200, 120, 0.2); box-shadow: 0 10px 30px rgba(0,0,0,0.45); margin-bottom: 25px;'>
         <div style='display: flex; align-items: center;'>
             <div class='status-badge'><div class='pulse-dot'></div> UNIVERSAL CLOUD ENGINE ONLINE</div>
-            <span style='background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 5px 12px; border-radius: 20px; font-size: 11px; color: #CBD5E1; margin-left: 10px; font-weight: 600;'>⚡ GPU ACCELERATED</span>
+            <span style='background: rgba(0,255,255,0.08); border: 1px solid rgba(0,255,255,0.2); padding: 5px 12px; border-radius: 20px; font-size: 11px; color: #00FFFF; margin-left: 10px; font-weight: 600;'>⚡ GPU ACCELERATED</span>
         </div>
         <h1 style='color: #FFFFFF; font-size: 28px; font-weight: 700; margin: 12px 0 6px 0;'>
             🤖 Shazam-BIM AI Processing Engine
@@ -641,14 +646,14 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-# 3. PANOU CONTROL MODUL DE LUCRU & ÎNCĂRCARE Date
+# 3. PANOU CONTROL MODUL DE LUCRU & ÎNCĂRCARE DATE
 st.markdown(
-    "<h3 style='color: #FFB800; font-family: Space Grotesk;'>📂 Panou de Încărcare & Sursă Date</h3>",
+    "<h3 style='color: #00FFFF; font-family: Orbitron, sans-serif;'>📂 Panou de Încărcare & Sursă Date</h3>",
     unsafe_allow_html=True,
 )
 
 with st.container():
-    st.markdown("<div class='warm-card'>", unsafe_allow_html=True)
+    st.markdown("<div class='emerald-card'>", unsafe_allow_html=True)
     c_mod1, c_mod2 = st.columns([1, 1.8])
 
     with c_mod1:
@@ -720,17 +725,17 @@ with k1:
     )
 with k2:
     st.markdown(
-        "<div class='kpi-card'><div class='kpi-label'>Timp Procesare</div><div class='kpi-value' style='color:#F59E0B;'>~3 Secunde</div></div>",
+        "<div class='kpi-card'><div class='kpi-label'>Timp Procesare</div><div class='kpi-value' style='color:#50C878;'>~3 Secunde</div></div>",
         unsafe_allow_html=True,
     )
 with k3:
     st.markdown(
-        "<div class='kpi-card'><div class='kpi-label'>Format Export</div><div class='kpi-value' style='color:#EF4444;'>Solid .OBJ</div></div>",
+        "<div class='kpi-card'><div class='kpi-label'>Format Export</div><div class='kpi-value' style='color:#FF3131;'>Solid .OBJ</div></div>",
         unsafe_allow_html=True,
     )
 with k4:
     st.markdown(
-        "<div class='kpi-card'><div class='kpi-label'>Compatibilitate</div><div class='kpi-value' style='color:#10B981;'>Revit / CAD</div></div>",
+        "<div class='kpi-card'><div class='kpi-label'>Compatibilitate</div><div class='kpi-value' style='color:#00FFFF;'>Revit / CAD</div></div>",
         unsafe_allow_html=True,
     )
 
@@ -752,7 +757,7 @@ with tab_main:
         if utilizari_efectuate >= 1 and sursa != "Demo Interactiv":
             st.error("❌ Limita planului tău gratuit a fost atinsă!")
             st.markdown(
-                "<div style='background-color: #141722; padding: 30px; border-radius: 16px; border: 1.5px solid #FFB800; text-align: center; margin-top: 10px;'><h3 style='color: #FFB800;'>🔒 Deblocați puterea maximă Shazam-BIM</h3><p style='color: #E2E8F0; font-size: 14px;'>Alegeți planul potrivit pentru a procesa scanări nelimitate:</p><hr style='border: 1px solid #222; margin: 15px 0;'><div style='display: flex; justify-content: space-around; flex-wrap: wrap;'><div style='background-color: #1C2130; padding: 20px; border-radius: 12px; width: 45%; border: 1px solid #F59E0B;'><h4 style='color: #F59E0B;'>Plan Lunar PRO</h4><h2>29.99 € <span style='font-size:12px; color:#AAA;'>/ lună</span></h2><br><a href='https://stripe.com' target='_blank'><button style='background-color:#F59E0B; color:black; font-weight:bold; padding:10px 15px; border:none; border-radius:6px; cursor:pointer; width:100%;'>Abonează-te Lunar</button></a></div><div style='background-color: #1C2130; padding: 20px; border-radius: 12px; width: 45%; border: 1px solid #FFB800;'><h4 style='color: #FFB800;'>Plan Anual BIZ</h4><h2>249.99 € <span style='font-size:12px; color:#AAA;'>/ an</span></h2><br><a href='https://stripe.com' target='_blank'><button style='background-color:#FFB800; color:black; font-weight:bold; padding:10px 15px; border:none; border-radius:6px; cursor:pointer; width:100%;'>Abonează-te Anual</button></a></div></div></div>",
+                "<div style='background-color: #0F2229; padding: 30px; border-radius: 16px; border: 1.5px solid #50C878; text-align: center; margin-top: 10px;'><h3 style='color: #00FFFF;'>🔒 Deblocați puterea maximă Shazam-BIM</h3><p style='color: #E2E8F0; font-size: 14px;'>Alegeți planul potrivit pentru a procesa scanări nelimitate:</p><hr style='border: 1px solid #1E3A40; margin: 15px 0;'><div style='display: flex; justify-content: space-around; flex-wrap: wrap;'><div style='background-color: #0B1924; padding: 20px; border-radius: 12px; width: 45%; border: 1px solid #50C878;'><h4 style='color: #50C878;'>Plan Lunar PRO</h4><h2>29.99 € <span style='font-size:12px; color:#AAA;'>/ lună</span></h2><br><a href='https://stripe.com' target='_blank'><button style='background-color:#50C878; color:black; font-weight:bold; padding:10px 15px; border:none; border-radius:6px; cursor:pointer; width:100%;'>Abonează-te Lunar</button></a></div><div style='background-color: #0B1924; padding: 20px; border-radius: 12px; width: 45%; border: 1px solid #00FFFF;'><h4 style='color: #00FFFF;'>Plan Anual BIZ</h4><h2>249.99 € <span style='font-size:12px; color:#AAA;'>/ an</span></h2><br><a href='https://stripe.com' target='_blank'><button style='background-color:#00FFFF; color:black; font-weight:bold; padding:10px 15px; border:none; border-radius:6px; cursor:pointer; width:100%;'>Abonează-te Anual</button></a></div></div></div>",
                 unsafe_allow_html=True,
             )
             st.stop()
@@ -886,7 +891,7 @@ with tab_main:
                     y=floor_y,
                     z=floor_z,
                     mode="markers",
-                    marker=dict(size=2, color="#10B981", opacity=0.7),
+                    marker=dict(size=2, color="#50C878", opacity=0.75),
                     name="Podea / Sol",
                 )
             )
@@ -897,7 +902,7 @@ with tab_main:
                     y=wall_y,
                     z=wall_z,
                     mode="markers",
-                    marker=dict(size=2, color="#EF4444", opacity=0.7),
+                    marker=dict(size=2, color="#FF4D4D", opacity=0.75),
                     name="Pereți Structură (x4)",
                 )
             )
@@ -908,7 +913,7 @@ with tab_main:
                     y=ceiling_y,
                     z=ceiling_z,
                     mode="markers",
-                    marker=dict(size=2, color="#3B82F6", opacity=0.7),
+                    marker=dict(size=2, color="#00E5FF", opacity=0.75),
                     name="Plafon / Tavan",
                 )
             )
@@ -919,7 +924,7 @@ with tab_main:
                     y=pipe_y,
                     z=pipe_z,
                     mode="markers",
-                    marker=dict(size=3, color="#FFB800", opacity=0.9),
+                    marker=dict(size=3, color="#FFC72C", opacity=0.9),
                     name="Țeavă MEP Cilindrică (Solidă)",
                 )
             )
@@ -929,9 +934,9 @@ with tab_main:
                     xaxis_title="X (m)",
                     yaxis_title="Y (m)",
                     zaxis_title="Z (m)",
-                    bgcolor="#0C0E14",
+                    bgcolor="#061017",
                 ),
-                paper_bgcolor="#141722",
+                paper_bgcolor="#0F2229",
                 font=dict(color="#E2E8F0"),
                 margin=dict(l=0, r=0, b=0, t=30),
                 height=500,
@@ -1020,7 +1025,7 @@ with tab_pricing:
         st.markdown(
             """
             <div class='price-card price-card-pro'>
-                <h4 style='color: #FFB800; margin-top:0;'>PLAN PRO LUNAR</h4>
+                <h4 style='color: #00FFFF; margin-top:0;'>PLAN PRO LUNAR</h4>
                 <h2 style='color: #FFF;'>29.99 € <span style='font-size:12px; color:#AAA;'>/ lună</span></h2>
                 <p style='font-size:12px; color:#CBD5E1; text-align:left;'>
                 • <b>Scanări Nelimitate (E57, SLAM, LiDAR)</b><br>
@@ -1037,7 +1042,7 @@ with tab_pricing:
         st.markdown(
             """
             <div class='price-card'>
-                <h4 style='color: #F59E0B; margin-top:0;'>PLAN BIZ ANUAL</h4>
+                <h4 style='color: #50C878; margin-top:0;'>PLAN BIZ ANUAL</h4>
                 <h2 style='color: #FFF;'>249.99 € <span style='font-size:12px; color:#AAA;'>/ an</span></h2>
                 <p style='font-size:12px; color:#94A3B8; text-align:left;'>
                 • Tot ce include Planul PRO<br>
@@ -1062,9 +1067,9 @@ with f_col1:
     st.markdown("### 🛡️ Protecția Datelor & Legal")
     st.markdown(
         """
-        <div style='background: #141722; padding: 22px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.06); font-size: 13px; color: #94A3B8; line-height: 1.6;'>
-            <b style='color: #FFB800;'>🔒 Confidențialitate GDPR:</b> Fișierele încărcate sunt procesate temporar în memorie securizată și sunt șterse automat de pe servere imediat după extragerea 3D.<br><br>
-            <b style='color: #F59E0B;'>⚖️ Disclaimer Tehnic:</b> Modelele oferă o estimare geometrică automată. Recomandăm verificarea pe șantier de către un inginer autorizat.
+        <div style='background: #0D1C24; padding: 22px; border-radius: 14px; border: 1px solid rgba(80,200,120,0.15); font-size: 13px; color: #94A3B8; line-height: 1.6;'>
+            <b style='color: #00FFFF;'>🔒 Confidențialitate GDPR:</b> Fișierele încărcate sunt procesate temporar în memorie securizată și sunt șterse automat de pe servere imediat după extragerea 3D.<br><br>
+            <b style='color: #50C878;'>⚖️ Disclaimer Tehnic:</b> Modelele oferă o estimare geometrică automată. Recomandăm verificarea pe șantier de către un inginer autorizat.
         </div>
     """,
         unsafe_allow_html=True,

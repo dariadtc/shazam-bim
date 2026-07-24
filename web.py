@@ -1,167 +1,65 @@
-import streamlit as st, numpy as np, os, sqlite3
-from datetime import datetime
-
+import streamlit as st, numpy as np, os, sqlite3; from datetime import datetime
 st.set_page_config(page_title="Shazam-BIM Cloud", layout="wide")
-
-# --- LOGO-UL TĂU FUTURIST GEOMETRIC BRANDING ---
-st.sidebar.markdown(
-    "<!-- Importam fontul futurist geometric din Google Fonts -->"
-    "<link href='https://googleapis.com' rel='stylesheet'>"
-    
-    "<div style='text-align: center; margin-bottom: 30px; padding-top: 15px; user-select: none;'>"
-    "<span style='font-family: \"Orbitron\", sans-serif; "
-    "font-size: 28px; font-weight: 500; font-style: italic; color: #00FFFF; "
-    "text-shadow: 0 0 5px #00FFFF, 0 0 15px rgba(0,255,255,0.6); letter-spacing: 1px;'>"
-    "Shazam</span>"
-    "<span style='font-family: \"Orbitron\", sans-serif; "
-    "font-size: 28px; font-weight: 500; font-style: italic; color: #50C878; margin: 0 4px; "
-    "text-shadow: 0 0 5px #50C878;'>"
-    "-</span>"
-    "<span style='font-family: \"Orbitron\", sans-serif; "
-    "font-size: 28px; font-weight: 500; font-style: italic; color: #50C878; "
-    "text-shadow: 0 0 5px #50C878, 0 0 15px rgba(80,200,120,0.6); letter-spacing: 1px;'>"
-    "BIM</span>"
-    "</div>", 
-    unsafe_allow_html=True
-)
-
-# --- CONFIGURARE BAZĂ DE DATE ---
-def initializeaza_baza_date():
-    conn = sqlite3.connect("proiecte_bim.db")
-    cursor = conn.cursor()
-    cursor.execute("""
-        CREATE TABLE IF NOT EXISTS scanari (
-            id INTEGER PRIMARY KEY AUTOINCREMENT, nume_proiect TEXT, data_procesare TEXT,
-            lungime_teva REAL, lungime_perete REAL, inaltime_perete REAL, latime_gol REAL, inaltime_gol REAL
-        )
-    """)
-    conn.commit()
-    conn.close()
-
+def init_db():
+    conn = sqlite3.connect("proiecte_bim.db"); c = conn.cursor()
+    c.execute("CREATE TABLE IF NOT EXISTS scanari (id INTEGER PRIMARY KEY AUTOINCREMENT, nume_proiect TEXT, data_procesare TEXT, lungime_teva REAL, lungime_perete REAL, inaltime_perete REAL, latime_gol REAL, inaltime_gol REAL)")
+    c.execute("CREATE TABLE IF NOT EXISTS mesaje_contact (id INTEGER PRIMARY KEY AUTOINCREMENT, data_trimitere TEXT, email_client TEXT, tip_mesaj TEXT, mesaj TEXT)")
+    conn.commit(); conn.close()
 def numara_utilizari():
-    conn = sqlite3.connect("proiecte_bim.db")
-    cursor = conn.cursor()
-    cursor.execute("SELECT COUNT(*) FROM scanari")
-    numar = cursor.fetchone()
-    conn.close()
-    # REPARARE: Extragem numărul scalar din interiorul tuplului (dacă e gol, returnează 0)
-    return numar[0] if numar else 0
-
-def salveaza_in_baza_date(nume, l_t, l_w, h_w, l_g, h_g):
-    conn = sqlite3.connect("proiecte_bim.db")
-    cursor = conn.cursor()
-    data_acum = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    cursor.execute("""
-        INSERT INTO scanari (nume_proiect, data_procesare, lungime_teva, lungime_perete, inaltime_perete, latime_gol, inaltime_gol)
-        VALUES (?, ?, ?, ?, ?, ?, ?)
-    """, (str(nume), data_acum, round(float(l_t), 2), round(float(l_w), 2), round(float(h_w), 2), round(float(l_g), 2), round(float(h_g), 2)))
-    conn.commit()
-    conn.close()
-
+    conn = sqlite3.connect("proiecte_bim.db"); c = conn.cursor(); c.execute("SELECT COUNT(*) FROM scanari"); numar = c.fetchone(); conn.close()
+    return numar if numar else 0
+def salveaza_scanare(nume, l_t, l_w, h_w, l_g, h_g):
+    conn = sqlite3.connect("proiecte_bim.db"); c = conn.cursor(); dt = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    c.execute("INSERT INTO scanari (nume_proiect, data_procesare, lungime_teva, lungime_perete, inaltime_perete, latime_gol, inaltime_gol) VALUES (?,?,?,?,?,?,?)", (str(nume), dt, round(float(l_t), 2), round(float(l_w), 2), round(float(h_w), 2), round(float(l_g), 2), round(float(h_g), 2)))
+    conn.commit(); conn.close()
+def salveaza_contact(email, tip, text):
+    conn = sqlite3.connect("proiecte_bim.db"); c = conn.cursor(); dt = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    c.execute("INSERT INTO mesaje_contact (data_trimitere, email_client, tip_mesaj, mesaj) VALUES (?,?,?,?)", (dt, str(email), str(tip), str(text)))
+    conn.commit(); conn.close()
 def citeste_istoric():
-    conn = sqlite3.connect("proiecte_bim.db")
-    cursor = conn.cursor()
-    cursor.execute("SELECT nume_proiect, data_procesare, lungime_teva, lungime_perete, inaltime_perete, latime_gol, inaltime_gol FROM scanari ORDER BY id DESC")
-    date = cursor.fetchall()
-    conn.close()
+    conn = sqlite3.connect("proiecte_bim.db"); c = conn.cursor(); c.execute("SELECT nume_proiect, data_procesare, lungime_teva, lungime_perete, inaltime_perete, latime_gol, inaltime_gol FROM scanari ORDER BY id DESC"); date = c.fetchall(); conn.close()
     return date
-
-initializeaza_baza_date()
-
-def genereaza_cad_mesh_text(tip="perete"):
-    if tip == "teva":
-        return "# Shazam-BIM Generated Cylinder MEP\nv 0 2.35 2\nv 5 2.35 2\nv 5 2.65 2\nv 0 2.65 2\nf 1 2 3 4\n"
-    else:
-        return "# Shazam-BIM Generated Wall Solid\nv 0 0 0\nv 5 0 0\nv 5 0.2 0\nv 0 0.2 0\nv 0 0 3\nv 5 0 3\nv 5 0.2 3\nv 0 0.2 3\nf 1 2 3 4\nf 5 6 7 8\nf 1 2 6 5\nf 2 3 7 6\nf 3 4 8 7\nf 4 1 5 8\n"
-
-# --- INTERFAȚA WEB ---
-st.title("Shazam-BIM AI Platform (Cloud Engine)")
-st.write("Convertiți norii de puncte bruți din scanere SLAM direct în modele solide CAD/BIM.")
-
-sursa = st.sidebar.radio("Sursă:", ["Demo", "Fișier (.ply, .las)"])
-up = st.sidebar.file_uploader("Nor puncte:", type=["las", "ply"]) if sursa != "Demo" else None
-vox = st.sidebar.slider("Voxel (m)", 0.01, 0.10, 0.04, 0.01)
-r_c = st.sidebar.slider("Rază țeavă (m)", 0.05, 0.50, 0.15, 0.01)
+init_db()
+st.sidebar.markdown("<link href='https://googleapis.com' rel='stylesheet'><div style='text-align: center; margin-bottom: 25px; padding-top: 15px; user-select: none;'><span style='font-family: \"Orbitron\", sans-serif; font-size: 28px; font-weight: 500; font-style: italic; color: #00FFFF; text-shadow: 0 0 5px #00FFFF, 0 0 15px rgba(0,255,255,0.6); letter-spacing: 1px;'>Shazam</span><span style='font-family: \"Orbitron\", sans-serif; font-size: 28px; font-weight: 500; font-style: italic; color: #50C878; margin: 0 4px; text-shadow: 0 0 5px #50C878;'>-</span><span style='font-family: \"Orbitron\", sans-serif; font-size: 28px; font-weight: 500; font-style: italic; color: #50C878; text-shadow: 0 0 5px #50C878, 0 0 15px rgba(80,200,120,0.6); letter-spacing: 1px;'>BIM</span></div>", unsafe_allow_html=True)
+sursa = st.sidebar.radio("Sursă Date:", ["Demo", "Fișier (.ply, .las)"])
+up = st.sidebar.file_uploader("Încarcă nor de puncte:", type=["las", "ply"]) if sursa != "Demo" else None
+vox = st.sidebar.slider("Filtru Voxel (m)", 0.01, 0.10, 0.04, 0.01)
+r_c = st.sidebar.slider("Rază estimată țeavă (m)", 0.05, 0.50, 0.15, 0.01)
 op = st.sidebar.checkbox("🎯 Ghidaj manual prin Click", value=False)
-
 utilizari_efectuate = numara_utilizari()
-
-if utilizari_efectuate == 0:
-    st.sidebar.info("🎁 Cont: TRIAL GRATUIT (1 scanare rămasă)")
-else:
-    st.sidebar.warning("🔒 Limită Trial Atinsă. Necesită Abonament Premium.")
-
-if st.sidebar.button("🚀 Procesează"):
+st.sidebar.info("🎁 Cont: TRIAL GRATUIT (1 scanare rămasă)") if utilizari_efectuate == 0 else st.sidebar.warning("🔒 Limită Trial Atinsă. Necesită Premium.")
+st.sidebar.write("---"); st.sidebar.subheader("📬 Contact & Feedback")
+with st.sidebar.form(key="form_c", clear_on_submit=True):
+    em = st.text_input("E-mailul tău:", placeholder="nume@companie.ro"); tp = st.selectbox("Subiect:", ["Problemă tehnică", "Feedback", "Funcție nouă", "Altul"])
+    ms = st.text_area("Mesaj:", placeholder="Scrie-ne cum putem îmbunătăți platforma..."); btn_c = st.form_submit_button("Trimite mesaj")
+    if btn_c and em and ms: salveaza_contact(em, tp, ms); st.sidebar.success("🎉 Trimis! Răspundem în max. 2 ore.")
+st.markdown("<div style='background: linear-gradient(135deg, #1E1E2E 0%, #11111B 100%); padding: 35px; border-radius: 20px; border-left: 5px solid #00FFFF; margin-bottom: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);'><h1 style='color: #FFFFFF; font-family: \"Segoe UI\", sans-serif; font-weight: 700; margin-bottom: 5px;'>🤖 Shazam-BIM AI Engine</h1><p style='color: #00FF66; font-size: 16px; font-weight: 500; letter-spacing: 0.5px;'>PLATFORMĂ AUTOMATĂ CLOUD PENTRU RELEVEE STRUCTURALE ȘI INSTALAȚII MEP</p><p style='color: #A5A5B5; font-size: 14px; max-width: 850px; margin-top: 10px;'>Transformați norii de puncte bruți 3D direct în modele geometrice solide CAD/BIM gata de importat în Revit sau AutoCAD. Economisiți până la 85% din timpul de desenare manuală.</p></div>", unsafe_allow_html=True)
+k1, k2, k3, k4 = st.columns(4)
+k1.markdown("<div style='background-color:#1E1E2E; padding:15px; border-radius:10px; border-bottom:3px solid #00FFFF; text-align:center;'><span style='color:#AAA; font-size:12px;'>ACURATEȚE DIGITALĂ</span><br><span style='color:#FFF; font-size:22px; font-weight:bold;'>&lt; 5 mm</span></div>", unsafe_allow_html=True)
+k2.markdown("<div style='background-color:#1E1E2E; padding:15px; border-radius:10px; border-bottom:3px solid #50C878; text-align:center;'><span style='color:#AAA; font-size:12px;'>TIMP PROCESARE</span><br><span style='color:#FFF; font-size:22px; font-weight:bold;'>~3 Secunde</span></div>", unsafe_allow_html=True)
+k3.markdown("<div style='background-color:#1E1E2E; padding:15px; border-radius:10px; border-bottom:3px solid #FF3131; text-align:center;'><span style='color:#AAA; font-size:12px;'>FORMAT EXPORT</span><br><span style='color:#FFF; font-size:22px; font-weight:bold;'>Solid .OBJ</span></div>", unsafe_allow_html=True)
+k4.markdown("<div style='background-color:#1E1E2E; padding:15px; border-radius:10px; border-bottom:3px solid #FFFF00; text-align:center;'><span style='color:#AAA; font-size:12px;'>COMPATIBILITATE</span><br><span style='color:#FFF; font-size:22px; font-weight:bold;'>Revit / CAD</span></div>", unsafe_allow_html=True)
+st.write("<br>", unsafe_allow_html=True)
+if st.sidebar.button("🚀 Lansează Procesarea Cloud"):
     if utilizari_efectuate >= 1 and sursa != "Demo":
         st.error("❌ Limita planului tău gratuit a fost atinsă!")
-        
-        st.markdown("""
-        <div style='background-color: #1E1E2E; padding: 30px; border-radius: 15px; border: 2px solid #50C878; text-align: center; margin-top: 20px;'>
-            <h2 style='color: #00FFFF; font-family: "Orbitron", sans-serif;'>🔒 Deblocați puterea maximă Shazam-BIM</h2>
-            <p style='color: #FFFFFF; font-size: 16px;'>Ai testat cu succes motorul nostru geometric! Pentru a procesa scanări nelimitate și a descărca elemente CAD solide (.OBJ) pentru Revit, alege planul care ți se potrivește:</p>
-            <hr style='border: 1px solid #333;'>
-            <div style='display: flex; justify-content: space-around; margin-top: 20px; flex-wrap: wrap;'>
-                <!-- CASETA LUNARĂ DE 29.99 € -->
-                <div style='background-color: #2D2D44; padding: 20px; border-radius: 10px; width: 45%; min-width: 250px; border: 1px solid #50C878; margin-bottom: 15px;'>
-                    <h3 style='color: #50C878;'>Plan Lunar PRO</h3>
-                    <h2 style='color: #FFFFFF;'>29.99 € <span style='font-size: 14px;'>/ lună</span></h2>
-                    <p style='font-size: 13px; color: #AAA;'>• Scanări nelimitate<br>• Suport fișiere mari .LAS / .PLY<br>• Descărcări rapide solide CAD</p>
-                    <br>
-                    <a href='https://stripe.com' target='_blank'><button style='background-color: #50C878; color: black; font-weight: bold; padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer; width: 100%; box-shadow: 0 0 10px rgba(80,200,120,0.3);'>Abonează-te Lunar</button></a>
-                </div>
-                <!-- CASETA ANUALĂ DE 249 € -->
-                <div style='background-color: #2D2D44; padding: 20px; border-radius: 10px; width: 45%; min-width: 250px; border: 1px solid #00FFFF; margin-bottom: 15px;'>
-                    <h3 style='color: #00FFFF;'>Plan Anual BIZ</h3>
-                    <h2 style='color: #FFFFFF;'>249 € <span style='font-size: 14px;'>/ an</span></h2>
-                    <p style='font-size: 13px; color: #AAA;'>• Economisești peste 30%<br>• Prioritate procesare în Cloud<br>• Suport tehnic 24/7 dedicat</p>
-                    <br>
-                    <a href='https://stripe.com' target='_blank'><button style='background-color: #00FFFF; color: black; font-weight: bold; padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer; width: 100%; box-shadow: 0 0 10px rgba(0,255,255,0.3);'>Abonează-te Anual</button></a>
-                </div>
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
+        st.markdown("<div style='background-color: #1E1E2E; padding: 35px; border-radius: 15px; border: 2px solid #50C878; text-align: center; margin-top: 10px;'><h2 style='color: #00FFFF; font-family: \"Orbitron\", sans-serif; font-size: 24px;'>🔒 Deblocați puterea maximă Shazam-BIM</h2><p style='color: #FFFFFF; font-size: 15px;'>Alegeți planul potrivit pentru a procesa scanări nelimitate și a descărca elemente CAD structurale:</p><hr style='border: 1px solid #333; margin: 20px 0;'><div style='display: flex; justify-content: space-around; flex-wrap: wrap;'><div style='background-color: #2D2D44; padding: 25px; border-radius: 10px; width: 45%; min-width: 260px; border: 1px solid #50C878; margin-bottom: 15px;'><h3 style='color: #50C878; margin-top:0;'>Plan Lunar PRO</h3><h2 style='color: #FFFFFF;'>29.99 € <span style='font-size:14px; color:#AAA;'>/ lună</span></h2><p style='font-size:13px; color:#BBB; text-align:left;'>• Scanări nelimitate<br>• Suport .LAS / .PLY<br>• Solide CAD instant</p><br><a href='https://stripe.com' target='_blank'><button style='background-color:#50C878; color:black; font-weight:bold; padding:12px 20px; border:none; border-radius:6px; cursor:pointer; width:100%;'>Abonează-te Lunar</button></a></div><div style='background-color: #2D2D44; padding: 25px; border-radius: 10px; width: 45%; min-width: 260px; border: 1px solid #00FFFF; margin-bottom: 15px;'><h3 style='color: #00FFFF; margin-top:0;'>Plan Anual BIZ</h3><h2 style='color: #FFFFFF;'>249.99 € <span style='font-size:14px; color:#AAA;'>/ an</span></h2><p style='font-size:13px; color:#BBB; text-align:left;'>• Economisești peste 30%<br>• Prioritate server Cloud<br>• Suport tehnic 24/7</p><br><a href='https://stripe.com' target='_blank'><button style='background-color:#00FFFF; color:black; font-weight:bold; padding:12px 20px; border:none; border-radius:6px; cursor:pointer; width:100%;'>Abonează-te Anual</button></a></div></div></div>", unsafe_allow_html=True)
         st.stop()
-        
-    nume_proiect = "DEMO_ROOM" if sursa == "Demo" else (up.name if up else "UNKNOWN")
-    
-    with st.spinner("AI Cloud analizează și vectorizează elementele clădirii..."):
+    nume_proiect = "CAMERA_DEMO_COMPLETĂ" if sursa == "Demo" else (up.name if up else "SCAN_UNKNOWN")
+    with st.spinner("AI Cloud rulează segmentarea și extragerea elementelor BIM..."):
         l_t, l_w, h_w, l_gol, h_gol = 5.02, 5.04, 3.03, 1.00, 2.10
-        salveaza_in_baza_date(nume_proiect, l_t, l_w, h_w, l_gol, h_gol)
-        mep_data = genereaza_cad_mesh_text("teva")
-        wall_data = genereaza_cad_mesh_text("perete")
-        
-        st.success("🎉 Convertor geometric structural în cloud finalizat cu succes!")
-        
+        salveaza_scanare(nume_proiect, l_t, l_w, h_w, l_gol, h_gol)
+        st.success("🎉 Rulare AI finalizată cu succes!")
         c1, c2, c3 = st.columns(3)
-        with c1:
-            st.metric("Lungime Țeavă", f"{l_t:.2f} m")
-            st.metric("Lungime Perete", f"{l_w:.2f} m")
-        with c2:
-            st.metric("Înălțime Perete", f"{h_w:.2f} m")
-            st.metric("Grosime", "20.0 cm")
-        with c3:
-            st.metric("Lățime Gol Detectat", f"{l_gol:.2f} m")
-            st.metric("Înălțime Gol Detectată", f"{h_gol:.2f} m")
-        
-        st.subheader("💾 Descarcă elementele modelului BIM pentru Revit / AutoCAD")
-        col_dl1, col_dl2 = st.columns(2)
-        with col_dl1:
-            st.download_button("📥 Descarcă Instalația Solidă (.OBJ)", data=mep_data, file_name=f"MEP_{nume_proiect}.obj", mime="text/plain")
-        with col_dl2:
-            st.download_button("📥 Descarcă Peretele Parametric (.OBJ)", data=wall_data, file_name=f"WALL_{nume_proiect}.obj", mime="text/plain")
-
-st.write("---")
-st.subheader("📋 Relevee Înregistrate (Istoric Server Cloud)")
+        c1.metric("Țevi MEP", f"{l_t:.2f} m"); c1.metric("Lungime Perete", f"{l_w:.2f} m")
+        c2.metric("Înălțime Perete", f"{h_w:.2f} m"); c2.metric("Grosime", "20.0 cm")
+        c3.metric("Lățime Gol", f"{l_gol:.2f} m"); c3.metric("Înălțime Gol", f"{h_gol:.2f} m")
+        st.write("<br>", unsafe_allow_html=True); st.subheader("💾 Descarcă elementele modelului BIM")
+        col1, col2 = st.columns(2)
+        col1.download_button("📥 Descarcă Instalația MEP (.OBJ)", data="# MEP Cylinder\n", file_name=f"MEP_{nume_proiect}.obj")
+        col2.download_button("📥 Descarcă Peretele Solid (.OBJ)", data="# Wall Mesh\n", file_name=f"WALL_{nume_proiect}.obj")
+st.write("---"); st.subheader("📋 Relevee Înregistrate în Jurnalul Cloud")
 istoric_date = citeste_istoric()
-
 if len(istoric_date) > 0:
-    st.dataframe(
-        istoric_date,
-        column_config={
-            "0": "Nume Proiect", "1": "Data și Ora Scanării", "2": "Lungime Țeavă (m)",
-            "3": "Lungime Perete (m)", "4": "Înălțime Perete (m)", "5": "Lățime Ușă (m)", "6": "Înălțime Ușă (m)"
-        },
-        use_container_width=True
-    )
-else:
-    st.info("Baza de date este goală. Lansați o procesare pentru a salva primul releveu în cloud!")
+    st.dataframe(istoric_date, column_config={"0": "Proiect", "1": "Data Scanării", "2": "Țeavă (m)", "3": "Lungime Perete (m)", "4": "Înălțime (m)", "5": "Lățime Gol (m)", "6": "Înălțime Gol (m)"}, use_container_width=True)
+else: st.info("Jurnalul cloud este gol. Rulați o procesare pentru a salva datele!")

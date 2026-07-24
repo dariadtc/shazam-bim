@@ -234,18 +234,15 @@ st.markdown(
         color: #00FFFF !important;
     }
 
-    /* CARDURI PREȚURI */
+    /* CARDURI PREȚURI - AMBELE CU VERDE SMARALD */
     .price-card {
         background: #0B1922;
-        border: 1px solid rgba(255, 255, 255, 0.08);
+        border: 1.5px solid #50C878;
         border-radius: 12px;
         padding: 20px;
         text-align: center;
         height: 100%;
-    }
-    .price-card-pro {
-        border: 1.5px solid #00FFFF;
-        box-shadow: 0 0 20px rgba(0, 255, 255, 0.12);
+        box-shadow: 0 0 20px rgba(80, 200, 120, 0.12);
     }
     </style>
 """,
@@ -753,12 +750,12 @@ with tab_main:
             st.error("❌ Limita planului tău gratuit a fost atinsă!")
             st.markdown(
                 f"""
-                <div style='background-color: #0D1E26; padding: 25px; border-radius: 14px; border: 1.5px solid #00FFFF; text-align: center; margin-top: 15px;'>
-                    <h3 style='color: #00FFFF; margin-bottom: 10px;'>🔒 Deblocați puterea maximă Shazam-BIM</h3>
+                <div style='background-color: #0D1E26; padding: 25px; border-radius: 14px; border: 1.5px solid #50C878; text-align: center; margin-top: 15px;'>
+                    <h3 style='color: #50C878; margin-bottom: 10px;'>🔒 Deblocați puterea maximă Shazam-BIM</h3>
                     <p style='color: #E2E8F0; font-size: 13px;'>Alegeți planul potrivit pentru a procesa scanări nelimitate:</p>
                     <hr style='border: 1px solid #162C38; margin: 15px 0;'>
                     <div style='display: flex; justify-content: space-around; flex-wrap: wrap; gap: 15px;'>
-                        <div style='background-color: #061017; padding: 20px; border-radius: 10px; width: 45%; border: 1px solid #50C878;'>
+                        <div style='background-color: #061017; padding: 20px; border-radius: 10px; width: 45%; border: 1.5px solid #50C878;'>
                             <h4 style='color: #50C878; margin-top:0;'>Plan Lunar PRO</h4>
                             <h2 style='color:#FFF; margin: 5px 0;'>29.99 € <span style='font-size:12px; color:#AAA;'>/ lună</span></h2>
                             <br>
@@ -766,8 +763,8 @@ with tab_main:
                                 <button style='background: linear-gradient(135deg, #00E5FF 0%, #10B981 100%); color:#061017; font-weight:bold; padding:10px 15px; border:none; border-radius:6px; cursor:pointer; width:100%;'>Abonează-te Lunar</button>
                             </a>
                         </div>
-                        <div style='background-color: #061017; padding: 20px; border-radius: 10px; width: 45%; border: 1px solid #00FFFF;'>
-                            <h4 style='color: #00FFFF; margin-top:0;'>Plan Anual BIZ</h4>
+                        <div style='background-color: #061017; padding: 20px; border-radius: 10px; width: 45%; border: 1.5px solid #50C878;'>
+                            <h4 style='color: #50C878; margin-top:0;'>Plan Anual BIZ</h4>
                             <h2 style='color:#FFF; margin: 5px 0;'>249.99 € <span style='font-size:12px; color:#AAA;'>/ an</span></h2>
                             <br>
                             <a href='https://buy.stripe.com/8x23cvcat9DVgQIgNIbAs01' target='_blank'>
@@ -1044,8 +1041,8 @@ with tab_pricing:
     with p2:
         st.markdown(
             """
-            <div class='price-card price-card-pro'>
-                <h4 style='color: #00FFFF; margin-top:0;'>PLAN PRO LUNAR</h4>
+            <div class='price-card'>
+                <h4 style='color: #50C878; margin-top:0;'>PLAN PRO LUNAR</h4>
                 <h2 style='color: #FFF;'>29.99 € <span style='font-size:12px; color:#AAA;'>/ lună</span></h2>
                 <p style='font-size:12px; color:#CBD5E1; text-align:left;'>
                 • <b>Scanări Nelimitate (E57, SLAM, LiDAR)</b><br>

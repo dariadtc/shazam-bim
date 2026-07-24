@@ -1137,24 +1137,37 @@ with tab_pricing:
             use_container_width=True,
         )
 
-# TAB TERMENI & GDPR (CURĂȚAT COMPLET)
+# TAB TERMENI & GDPR (CURĂȚAT COMPLET - FOLOSEȘTE MARKDOWN PUR)
 with tab_legal:
     st.subheader("⚖️ Termeni și Condiții & Politică de Confidențialitate (GDPR)")
     st.write("")
-    st.markdown(
-        """
-        <div style='background: #0B1922; padding: 25px; border-radius: 12px; border: 1px solid rgba(80,200,120,0.2); font-size: 13px; color: #CBD5E1; line-height: 1.6;'>
-            <h3 style='color: #50C878; margin-top:0; font-size: 16px;'>1. Angajamentul privind Confidențialitatea Datelor (GDPR)</h3>
-            <p>Platforma <b>Shazam-BIM</b> respectă Regulamentul General privind Protecția Datelor (GDPR). Toate fișierele cu nori de puncte încărcate (format .LAS, .E57, etc.) sunt procesate strict în memorie volatilă securizată și sunt <b>șterse automat de pe servere</b> imediat după generarea modelului 3D și livrarea exportului către utilizator.</p>
-            
-            <h3 style='color: #50C878; font-size: 16px;'>2. Securitatea Plăților prin Stripe</h3>
-            <p>Tranzacțiile financiare pentru abonamentele Lunar și Anual sunt procesate în siguranță prin intermediul platformei externe <b>Stripe</b>. Shazam-BIM nu stochează pe serverele proprii date sensibile legate de cardurile bancare ale clienților.</p>
 
-            <h3 style='color: #50C878; font-size: 16px;'>3. Limitarea Răspunderii Tehnice</h3>
-            <p>Modelele 3D, fișierele CAD (DXF/IFC) și rapoartele tehnice generate automat de algoritmul AI au rol de estimare și asistență inginerească. Verificarea finală a cotelor pe șantier revine inginerului geodez sau proiectantului autorizat.</p>
-        </div>
-        """,
-        unsafe_allow_html=True,
+    st.markdown(
+        "### 1. Angajamentul privind Confidențialitatea Datelor (GDPR)"
+    )
+    st.markdown(
+        "Platforma **Shazam-BIM** respectă Regulamentul General privind"
+        " Protecția Datelor (GDPR). Toate fișierele cu nori de puncte"
+        " încărcate (format .LAS, .E57, etc.) sunt procesate strict în memorie"
+        " volatilă securizată și sunt **șterse automat de pe servere** imediat"
+        " după generarea modelului 3D și livrarea exportului către"
+        " utilizator."
+    )
+
+    st.markdown("### 2. Securitatea Plăților prin Stripe")
+    st.markdown(
+        "Tranzacțiile financiare pentru abonamentele Lunar și Anual sunt"
+        " procesate în siguranță prin intermediul platformei externe"
+        " **Stripe**. Shazam-BIM nu stochează pe serverele proprii date"
+        " sensibile legate de cardurile bancare ale clienților."
+    )
+
+    st.markdown("### 3. Limitarea Răspunderii Tehnice")
+    st.markdown(
+        "Modelele 3D, fișierele CAD (DXF/IFC) și rapoartele tehnice generate"
+        " automat de algoritmul AI au rol de estimare și asistență"
+        " inginerească. Verificarea finală a cotelor pe șantier revine"
+        " inginerului geodez sau proiectantului autorizat."
     )
 
 # -----------------------------------------------------------------------------

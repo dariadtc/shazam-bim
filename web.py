@@ -47,15 +47,24 @@ def genereaza_cad_mesh_text(tip="perete"):
 # --- INTERFAȚA WEB ---
 st.title("🤖 Shazam-BIM AI Platform (Cloud Engine)")
 st.sidebar.markdown(
-    "<div style='text-align: center; margin-bottom: 25px; padding-top: 10px;'>"
-    "<span style='font-family: \"Courier New\", Courier, \"Segoe UI\", sans-serif; "
-    "font-size: 26px; font-weight: 200; font-style: italic; letter-spacing: 2px; "
-    "color: #00FF66; text-shadow: 0 0 4px rgba(0,255,102,0.4);'>"
+    "<!-- Importam fontul caligrafic cursiv din Google Fonts -->"
+    "<link href='https://googleapis.com' rel='stylesheet'>"
+    
+    "<div style='text-align: center; margin-bottom: 30px; padding-top: 15px; user-select: none;'>"
+    # SHAZAM in Verde Smarald
+    "<span style='font-family: \"Caveat\", cursive, sans-serif; "
+    "font-size: 38px; font-weight: 600; color: #097969; "
+    "text-shadow: 0 0 2px rgba(9,121,105,0.2); letter-spacing: 1px;'>"
     "shazam</span>"
-    "<span style='font-family: \"Courier New\", Courier, \"Segoe UI\", sans-serif; "
-    "font-size: 26px; font-weight: 400; font-style: italic; letter-spacing: 2px; "
-    "color: #00FFFF; text-shadow: 0 0 4px rgba(0,255,255,0.4);'>"
-    ".bim</span>"
+    # Linia - in Rosu aprins
+    "<span style='font-family: \"Caveat\", cursive, sans-serif; "
+    "font-size: 38px; font-weight: 600; color: #FF0000; margin: 0 2px;'>"
+    "-</span>"
+    # BIM in Turcoaz inchis
+    "<span style='font-family: \"Caveat\", cursive, sans-serif; "
+    "font-size: 38px; font-weight: 600; color: #005F73; "
+    "text-shadow: 0 0 2px rgba(0,95,115,0.2); letter-spacing: 1px;'>"
+    "bim</span>"
     "</div>", 
     unsafe_allow_html=True
 )

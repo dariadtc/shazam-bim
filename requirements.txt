@@ -4,3 +4,4 @@ plotly
 numpy>=1.22.0
 scipy>=1.8.0
 laspy>=2.5.0
+lazrs

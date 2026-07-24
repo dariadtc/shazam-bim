@@ -207,39 +207,74 @@ if st.sidebar.button("🚀 Lansează Procesarea Cloud"):
 
         st.write("<br>", unsafe_allow_html=True)
 
-        # --- GENERARE STRUCTURĂ EXACTĂ (PERETE, PODEA, TAVAN, ȚEAVĂ) ---
+        # --- GENERARE CAMERĂ COMPLETĂ (4 PEREȚI, TAVAN, PODEA, ȚEAVĂ CILINDRICĂ PLINĂ) ---
         st.subheader("👁️ Previzualizare Model 3D Extras (Vizualizator Interactiv)")
 
         np.random.seed(42)
 
-        # 1. PODEA (Puncte Verzi)
-        floor_x = np.random.uniform(0, 5.0, 1500)
-        floor_y = np.random.uniform(0, 3.0, 1500)
-        floor_z = np.zeros(1500) + np.random.normal(0, 0.01, 1500)
+        # 1. PODEA (Puncte Verzi - Plan Z=0)
+        floor_x = np.random.uniform(0, 5.0, 1200)
+        floor_y = np.random.uniform(0, 3.0, 1200)
+        floor_z = np.zeros(1200) + np.random.normal(0, 0.01, 1200)
 
-        # 2. PERETE CU GOL DE UȘĂ (Puncte Roșii)
-        wall_x_list, wall_z_list = [], []
-        for _ in range(3000):
+        # 2. PLAFON (Puncte Albastre - Plan Z=3.0)
+        ceiling_x = np.random.uniform(0, 5.0, 1000)
+        ceiling_y = np.random.uniform(0, 3.0, 1000)
+        ceiling_z = np.full(1000, 3.0) + np.random.normal(0, 0.01, 1000)
+
+        # 3. PEREȚI STRUCTURĂ (TOȚI 4 PEREȚII - Roșu)
+        wall_x_list, wall_y_list, wall_z_list = [], [], []
+
+        # Perete Frontal (Y=0, cu gol de ușă)
+        for _ in range(2000):
             x = np.random.uniform(0, 5.0)
             z = np.random.uniform(0, 3.0)
             if not (0.2 <= x <= 1.2 and z <= 2.1):
                 wall_x_list.append(x)
+                wall_y_list.append(0.0 + np.random.normal(0, 0.01))
                 wall_z_list.append(z)
 
+        # Perete Spate (Y=3.0)
+        for _ in range(1500):
+            wall_x_list.append(np.random.uniform(0, 5.0))
+            wall_y_list.append(3.0 + np.random.normal(0, 0.01))
+            wall_z_list.append(np.random.uniform(0, 3.0))
+
+        # Perete Stânga (X=0)
+        for _ in range(1200):
+            wall_x_list.append(0.0 + np.random.normal(0, 0.01))
+            wall_y_list.append(np.random.uniform(0, 3.0))
+            wall_z_list.append(np.random.uniform(0, 3.0))
+
+        # Perete Dreapta (X=5.0)
+        for _ in range(1200):
+            wall_x_list.append(5.0 + np.random.normal(0, 0.01))
+            wall_y_list.append(np.random.uniform(0, 3.0))
+            wall_z_list.append(np.random.uniform(0, 3.0))
+
         wall_x = np.array(wall_x_list)
+        wall_y = np.array(wall_y_list)
         wall_z = np.array(wall_z_list)
-        wall_y = np.zeros(len(wall_x)) + np.random.normal(0, 0.01, len(wall_x))
 
-        # 3. PLAFON (Puncte Albastre)
-        ceiling_x = np.random.uniform(0, 5.0, 800)
-        ceiling_y = np.random.uniform(0, 3.0, 800)
-        ceiling_z = np.full(800, 3.0) + np.random.normal(0, 0.01, 800)
+        # 4. ȚEAVĂ MEP CILINDRICĂ PLINĂ (3D Volumic - Portocaliu)
+        pipe_x_list, pipe_y_list, pipe_z_list = [], [], []
+        radius = 0.08  # Rază țeavă 8 cm
+        length_x = np.linspace(0.5, 4.5, 100)
 
-        # 4. ȚEAVĂ MEP (Puncte Portocalii)
-        pipe_x = np.random.uniform(0.5, 4.2, 800)
-        pipe_y = np.full(800, 0.15) + np.random.normal(0, 0.02, 800)
-        pipe_z = np.full(800, 2.10) + np.random.normal(0, 0.02, 800)
+        for x in length_x:
+            # Generăm puncte cilindrice solide în jurul axei țevii
+            angles = np.random.uniform(0, 2 * np.pi, 20)
+            r_vals = np.random.uniform(0, radius, 20)
+            for angle, r in zip(angles, r_vals):
+                pipe_x_list.append(x)
+                pipe_y_list.append(0.15 + r * np.cos(angle))
+                pipe_z_list.append(2.20 + r * np.sin(angle))
 
+        pipe_x = np.array(pipe_x_list)
+        pipe_y = np.array(pipe_y_list)
+        pipe_z = np.array(pipe_z_list)
+
+        # --- FIGURĂ PLOTLY ---
         fig = go.Figure()
 
         # Adăugăm Podeaua
@@ -249,20 +284,20 @@ if st.sidebar.button("🚀 Lansează Procesarea Cloud"):
                 y=floor_y,
                 z=floor_z,
                 mode="markers",
-                marker=dict(size=2, color="#00FF66", opacity=0.8),
+                marker=dict(size=2, color="#00FF66", opacity=0.7),
                 name="Podea / Sol",
             )
         )
 
-        # Adăugăm Peretele
+        # Adăugăm Toți Cei 4 Pereți
         fig.add_trace(
             go.Scatter3d(
                 x=wall_x,
                 y=wall_y,
                 z=wall_z,
                 mode="markers",
-                marker=dict(size=2, color="#FF3131", opacity=0.8),
-                name="Perete Structură",
+                marker=dict(size=2, color="#FF3131", opacity=0.7),
+                name="Pereți Structură (x4)",
             )
         )
 
@@ -273,12 +308,12 @@ if st.sidebar.button("🚀 Lansează Procesarea Cloud"):
                 y=ceiling_y,
                 z=ceiling_z,
                 mode="markers",
-                marker=dict(size=2, color="#0088FF", opacity=0.8),
-                name="Plafon",
+                marker=dict(size=2, color="#0088FF", opacity=0.7),
+                name="Plafon / Tavan",
             )
         )
 
-        # Adăugăm Instalația MEP
+        # Adăugăm Țeava Plină Volumică
         fig.add_trace(
             go.Scatter3d(
                 x=pipe_x,
@@ -286,7 +321,7 @@ if st.sidebar.button("🚀 Lansează Procesarea Cloud"):
                 z=pipe_z,
                 mode="markers",
                 marker=dict(size=3, color="#FF9900", opacity=0.9),
-                name="Țeavă MEP",
+                name="Țeavă MEP Cilindrică (Solidă)",
             )
         )
 

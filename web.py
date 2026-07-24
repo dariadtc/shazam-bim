@@ -196,7 +196,7 @@ st.markdown(
         font-family: 'Orbitron', sans-serif;
     }
     
-    /* BUTOANE LUMINATE GENERALE (FIJATE LA 44PX PENTRU ALINIERE PERFECTĂ) */
+    /* BUTOANE LUMINATE GENERALE */
     div.stButton > button:first-child {
         background: linear-gradient(135deg, #00E5FF 0%, #10B981 100%);
         color: #061017;
@@ -793,19 +793,27 @@ with tab_main:
     st.write("<br>", unsafe_allow_html=True)
     st.subheader("👁️ Previzualizare Model 3D Extras")
 
+    # -------------------------------------------------------------------------
+    # GENERARE DINAMICĂ BAZATĂ PE SLIDERE (DENSITATE VOXEL + RAZĂ ȚEAVĂ)
+    # -------------------------------------------------------------------------
     np.random.seed(42)
 
-    floor_x = np.random.uniform(0, 5.0, 1200)
-    floor_y = np.random.uniform(0, 3.0, 1200)
-    floor_z = np.zeros(1200) + np.random.normal(0, 0.01, 1200)
+    # Densitatea este controlată de vox (număr mai mare de puncte dacă vox e mic)
+    num_podea = int(1200 * (0.04 / vox))
+    num_tavan = int(1000 * (0.04 / vox))
+    num_pereti = int(1500 * (0.04 / vox))
 
-    ceiling_x = np.random.uniform(0, 5.0, 1000)
-    ceiling_y = np.random.uniform(0, 3.0, 1000)
-    ceiling_z = np.full(1000, 3.0) + np.random.normal(0, 0.01, 1000)
+    floor_x = np.random.uniform(0, 5.0, num_podea)
+    floor_y = np.random.uniform(0, 3.0, num_podea)
+    floor_z = np.zeros(num_podea) + np.random.normal(0, 0.01, num_podea)
+
+    ceiling_x = np.random.uniform(0, 5.0, num_tavan)
+    ceiling_y = np.random.uniform(0, 3.0, num_tavan)
+    ceiling_z = np.full(num_tavan, 3.0) + np.random.normal(0, 0.01, num_tavan)
 
     wall_x_list, wall_y_list, wall_z_list = [], [], []
 
-    for _ in range(2000):
+    for _ in range(num_pereti):
         x = np.random.uniform(0, 5.0)
         z = np.random.uniform(0, 3.0)
         if not (0.2 <= x <= 1.2 and z <= 2.1):
@@ -813,35 +821,26 @@ with tab_main:
             wall_y_list.append(0.0 + np.random.normal(0, 0.01))
             wall_z_list.append(z)
 
-    for _ in range(1500):
+    for _ in range(num_pereti):
         wall_x_list.append(np.random.uniform(0, 5.0))
         wall_y_list.append(3.0 + np.random.normal(0, 0.01))
-        wall_z_list.append(np.random.uniform(0, 3.0))
-
-    for _ in range(1200):
-        wall_x_list.append(0.0 + np.random.normal(0, 0.01))
-        wall_y_list.append(np.random.uniform(0, 3.0))
-        wall_z_list.append(np.random.uniform(0, 3.0))
-
-    for _ in range(1200):
-        wall_x_list.append(5.0 + np.random.normal(0, 0.01))
-        wall_y_list.append(np.random.uniform(0, 3.0))
         wall_z_list.append(np.random.uniform(0, 3.0))
 
     wall_x = np.array(wall_x_list)
     wall_y = np.array(wall_y_list)
     wall_z = np.array(wall_z_list)
 
+    # ȚEAVA MEP ÎȘI SCHIMBĂ DIAMETRUL DINAMIC BAZAT PE r_c
     pipe_x_list, pipe_y_list, pipe_z_list = [], [], []
-    radius = 0.08
+    radius = r_c  # Folosește valoarea aleasă pe slider!
     length_x = np.linspace(0.5, 4.5, 100)
 
     for x in length_x:
         angles = np.random.uniform(0, 2 * np.pi, 20)
-        r_vals = np.random.uniform(0, radius, 20)
+        r_vals = np.random.uniform(radius * 0.8, radius, 20)
         for angle, r in zip(angles, r_vals):
             pipe_x_list.append(x)
-            pipe_y_list.append(0.15 + r * np.cos(angle))
+            pipe_y_list.append(0.30 + r * np.cos(angle))
             pipe_z_list.append(2.20 + r * np.sin(angle))
 
     pipe_x = np.array(pipe_x_list)
@@ -890,9 +889,22 @@ with tab_main:
             z=pipe_z,
             mode="markers",
             marker=dict(size=3, color="#FFC72C", opacity=0.9),
-            name="Țeavă MEP Cilindrică (Solidă)",
+            name=f"Țeavă MEP (Rază: {r_c:.2f}m)",
         )
     )
+
+    # Dacă este bifat Ghidajul Manual prin Click, afișăm un Marker Roșu de Seed Point
+    if op:
+        fig.add_trace(
+            go.Scatter3d(
+                x=[2.5],
+                y=[0.30],
+                z=[2.20],
+                mode="markers",
+                marker=dict(size=10, color="#FF0000", symbol="diamond"),
+                name="🎯 Seed Point (Ghidaj Click)",
+            )
+        )
 
     fig.update_layout(
         scene=dict(

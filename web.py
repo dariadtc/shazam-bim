@@ -131,13 +131,35 @@ st.markdown(
         text-shadow: 0 0 12px rgba(80, 200, 120, 0.7);
     }
 
-    /* USER BADGE & SMALL LOGOUT BUTTON IN RIGHT CORNER */
+    /* USER BADGE BOX */
     .user-badge-box {
         text-align: right;
         display: flex;
-        flex-direction: column;
-        align-items: flex-end;
-        gap: 6px;
+        justify-content: flex-end;
+        margin-bottom: 4px;
+    }
+
+    /* ALINIERE SI STILIZARE SIMPLĂ PENTRU BUTONUL DE DELOGARE */
+    div[data-testid="stHorizontalBlock"] > div:last-child .stButton {
+        display: flex !important;
+        justify-content: flex-end !important;
+        margin-top: 2px !important;
+    }
+    
+    div[data-testid="stHorizontalBlock"] > div:last-child div.stButton > button:first-child {
+        padding: 4px 12px !important;
+        font-size: 11px !important;
+        border-radius: 12px !important;
+        background: rgba(255, 255, 255, 0.05) !important;
+        color: #94A3B8 !important;
+        border: 1px solid rgba(255, 255, 255, 0.15) !important;
+        box-shadow: none !important;
+        font-weight: 500 !important;
+    }
+    div[data-testid="stHorizontalBlock"] > div:last-child div.stButton > button:first-child:hover {
+        background: rgba(255, 255, 255, 0.1) !important;
+        color: #FFFFFF !important;
+        border-color: rgba(0, 255, 255, 0.3) !important;
     }
 
     /* CARDURI COMPACTE SMARALD */
@@ -222,21 +244,6 @@ st.markdown(
     div.stButton > button:first-child:hover {
         box-shadow: 0 6px 20px rgba(0, 229, 255, 0.4);
         transform: translateY(-1px);
-    }
-
-    /* STILIZARE SPECIALĂ COMPACTĂ PENTRU BUTONUL DE DELOGARE */
-    div[data-testid="stHorizontalBlock"] > div:last-child div.stButton > button:first-child {
-        padding: 5px 12px !important;
-        font-size: 11px !important;
-        border-radius: 6px !important;
-        background: rgba(239, 68, 68, 0.15) !important;
-        color: #F87171 !important;
-        border: 1px solid rgba(239, 68, 68, 0.3) !important;
-        box-shadow: none !important;
-    }
-    div[data-testid="stHorizontalBlock"] > div:last-child div.stButton > button:first-child:hover {
-        background: rgba(239, 68, 68, 0.3) !important;
-        color: #FFFFFF !important;
     }
 
     /* TAB-URI */
@@ -616,8 +623,8 @@ if st.session_state.user_conectat is None:
 # SCENARIUL B: ECRANUL PRINCIPAL AUTENTIFICAT (SINGLE-PAGE APPLICATION)
 # -----------------------------------------------------------------------------
 
-# 1. HEADER CORECTAT: LOGO MARE ÎN STÂNGA | USER ȘI DELOGARE MICĂ ÎN DREAPTA SUS
-col_h1, col_h2 = st.columns([2.5, 1])
+# 1. HEADER ALINIAT PERFECT: LOGO MARE ÎN STÂNGA | USER & DELOGARE SIMPLĂ ÎN DREAPTA
+col_h1, col_h2 = st.columns([2.5, 1.2])
 
 with col_h1:
     st.markdown(

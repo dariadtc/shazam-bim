@@ -1,3 +1,4 @@
+import hashlib
 import io
 import os
 import sqlite3
@@ -40,7 +41,7 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-# 2. Injectare CSS Custom pentru Design SaaS Premium, Clean & Modern
+# 2. Injectare CSS Custom pentru Design SaaS Premium
 st.markdown(
     """
     <style>
@@ -234,13 +235,27 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
+# -----------------------------------------------------------------------------
+# 3. GESTIONARE BAZĂ DE DATE (UTILIZATORI & SCANĂRI PRIVATED)
+# -----------------------------------------------------------------------------
+
+
+def hash_password(password):
+    return hashlib.sha256(str(password).encode()).hexdigest()
+
 
 def init_db():
     conn = sqlite3.connect("proiecte_bim.db")
     c = conn.cursor()
+    # Tabela utilizatori
     c.execute(
-        "CREATE TABLE IF NOT EXISTS scanari (id INTEGER PRIMARY KEY AUTOINCREMENT, nume_proiect TEXT, data_procesare TEXT, lungime_teva REAL, lungime_perete REAL, inaltime_perete REAL, latime_gol REAL, inaltime_gol REAL)"
+        "CREATE TABLE IF NOT EXISTS utilizatori (id INTEGER PRIMARY KEY AUTOINCREMENT, email TEXT UNIQUE, parola TEXT, data_inregistrare TEXT)"
     )
+    # Tabela scanari cu legatura la user_email
+    c.execute(
+        "CREATE TABLE IF NOT EXISTS scanari (id INTEGER PRIMARY KEY AUTOINCREMENT, user_email TEXT, nume_proiect TEXT, data_procesare TEXT, lungime_teva REAL, lungime_perete REAL, inaltime_perete REAL, latime_gol REAL, inaltime_gol REAL)"
+    )
+    # Tabela contact
     c.execute(
         "CREATE TABLE IF NOT EXISTS mesaje_contact (id INTEGER PRIMARY KEY AUTOINCREMENT, data_trimitere TEXT, email_client TEXT, tip_mesaj TEXT, mesaj TEXT)"
     )
@@ -248,22 +263,54 @@ def init_db():
     conn.close()
 
 
-def numara_utilizari():
+def creeaza_utilizator(email, parola):
     conn = sqlite3.connect("proiecte_bim.db")
     c = conn.cursor()
-    c.execute("SELECT COUNT(*) FROM scanari")
+    dt = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    try:
+        c.execute(
+            "INSERT INTO utilizatori (email, parola, data_inregistrare) VALUES (?,?,?)",
+            (str(email).lower().strip(), hash_password(parola), dt),
+        )
+        conn.commit()
+        conn.close()
+        return True
+    except sqlite3.IntegrityError:
+        conn.close()
+        return False
+
+
+def verifica_utilizator(email, parola):
+    conn = sqlite3.connect("proiecte_bim.db")
+    c = conn.cursor()
+    c.execute(
+        "SELECT * FROM utilizatori WHERE email = ? AND parola = ?",
+        (str(email).lower().strip(), hash_password(parola)),
+    )
+    user = c.fetchone()
+    conn.close()
+    return user is not None
+
+
+def numara_utilizari(email):
+    if not email:
+        return 0
+    conn = sqlite3.connect("proiecte_bim.db")
+    c = conn.cursor()
+    c.execute("SELECT COUNT(*) FROM scanari WHERE user_email = ?", (str(email),))
     numar = c.fetchone()
     conn.close()
     return numar[0] if numar else 0
 
 
-def salveaza_scanare(nume, l_t, l_w, h_w, l_g, h_g):
+def salveaza_scanare(email, nume, l_t, l_w, h_w, l_g, h_g):
     conn = sqlite3.connect("proiecte_bim.db")
     c = conn.cursor()
     dt = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     c.execute(
-        "INSERT INTO scanari (nume_proiect, data_procesare, lungime_teva, lungime_perete, inaltime_perete, latime_gol, inaltime_gol) VALUES (?,?,?,?,?,?,?)",
+        "INSERT INTO scanari (user_email, nume_proiect, data_procesare, lungime_teva, lungime_perete, inaltime_perete, latime_gol, inaltime_gol) VALUES (?,?,?,?,?,?,?,?)",
         (
+            str(email),
             str(nume),
             dt,
             round(float(l_t), 2),
@@ -289,11 +336,14 @@ def salveaza_contact(email, tip, text):
     conn.close()
 
 
-def citeste_istoric():
+def citeste_istoric_privat(email):
+    if not email:
+        return []
     conn = sqlite3.connect("proiecte_bim.db")
     c = conn.cursor()
     c.execute(
-        "SELECT nume_proiect, data_procesare, lungime_teva, lungime_perete, inaltime_perete, latime_gol, inaltime_gol FROM scanari ORDER BY id DESC"
+        "SELECT nume_proiect, data_procesare, lungime_teva, lungime_perete, inaltime_perete, latime_gol, inaltime_gol FROM scanari WHERE user_email = ? ORDER BY id DESC",
+        (str(email),),
     )
     date = c.fetchall()
     conn.close()
@@ -348,7 +398,11 @@ Verificarea finală pe șantier revine inginerului autorizat de proiect.
 
 init_db()
 
-# --- SIDEBAR BRANDING & CONTROLS ---
+# Stocare stare sesiune autentificare
+if "user_conectat" not in st.session_state:
+    st.session_state.user_conectat = None
+
+# --- SIDEBAR BRANDING & AUTHENTICATION ---
 st.sidebar.markdown(
     """
     <div class='logo-container'>
@@ -358,6 +412,51 @@ st.sidebar.markdown(
 """,
     unsafe_allow_html=True,
 )
+
+st.sidebar.markdown("---")
+
+# Meniu Autentificare / Înregistrare
+if st.session_state.user_conectat is None:
+    st.sidebar.subheader("🔐 Cont Utilizator")
+    tab_login, tab_register = st.sidebar.tabs(["Conectare", "Înregistrare"])
+
+    with tab_login:
+        email_in = st.text_input("E-mail:", key="l_email")
+        pass_in = st.text_input("Parolă:", type="password", key="l_pass")
+        if st.button("🔑 Autentificare", use_container_width=True):
+            if verifica_utilizator(email_in, pass_in):
+                st.session_state.user_conectat = email_in.lower().strip()
+                st.sidebar.success("Conectat cu succes!")
+                st.rerun()
+            else:
+                st.sidebar.error("E-mail sau parolă incorectă!")
+
+    with tab_register:
+        reg_email = st.text_input("E-mail nou:", key="r_email")
+        reg_pass = st.text_input("Parolă nouă:", type="password", key="r_pass")
+        if st.button("📝 Creează Cont", use_container_width=True):
+            if reg_email and reg_pass:
+                if creeaza_utilizator(reg_email, reg_pass):
+                    st.sidebar.success(
+                        "Cont creat cu succes! Vă puteți conecta."
+                    )
+                else:
+                    st.sidebar.error("Acest e-mail există deja!")
+            else:
+                st.sidebar.warning("Completați toate câmpurile!")
+else:
+    st.sidebar.markdown(
+        f"""
+        <div style='background: rgba(0, 255, 255, 0.08); padding: 10px; border-radius: 8px; border: 1px solid #00FFFF; text-align: center; margin-bottom: 10px;'>
+            <span style='font-size: 11px; color: #8A94A6;'>UTILIZATOR CONECTAT:</span><br>
+            <b style='color: #00FFFF; font-size: 13px;'>{st.session_state.user_conectat}</b>
+        </div>
+    """,
+        unsafe_allow_html=True,
+    )
+    if st.sidebar.button("🚪 Delogare", use_container_width=True):
+        st.session_state.user_conectat = None
+        st.rerun()
 
 st.sidebar.markdown("---")
 st.sidebar.subheader("📂 Modul de Lucru")
@@ -417,7 +516,7 @@ with st.sidebar.expander("⚙️ Parametri Ajustare Algoritm", expanded=False):
 
 st.sidebar.markdown("---")
 
-utilizari_efectuate = numara_utilizari()
+utilizari_efectuate = numara_utilizari(st.session_state.user_conectat)
 if utilizari_efectuate == 0:
     st.sidebar.info("🎁 **Plan Activ:** TRIAL GRATUIT (1 scanare rămasă)")
 else:
@@ -523,7 +622,7 @@ st.write("<br>", unsafe_allow_html=True)
 tab_main, tab_history, tab_pricing = st.tabs(
     [
         "📊 Vizualizator & Elemente 3D",
-        "📂 Jurnal Scanări Cloud",
+        "📂 Jurnalul Meu Privat de Scanări",
         "💳 Planuri & Licențiere",
     ]
 )
@@ -532,6 +631,10 @@ with tab_main:
     if st.sidebar.button(
         "🚀 Lansează Procesarea Cloud", use_container_width=True
     ):
+        if st.session_state.user_conectat is None and sursa != "Demo Interactiv":
+            st.error("⚠️ Vă rugăm să vă autentificați în bara laterală înainte de a procesa fișiere reale!")
+            st.stop()
+
         if (
             utilizari_efectuate >= 1
             and sursa != "Demo Interactiv"
@@ -555,7 +658,15 @@ with tab_main:
             l_t, l_w, h_w, l_gol, h_gol = 5.02, 5.04, 3.03, 1.00, 2.10
 
             if sursa != "Demo Interactiv":
-                salveaza_scanare(nume_proiect, l_t, l_w, h_w, l_gol, h_gol)
+                salveaza_scanare(
+                    st.session_state.user_conectat,
+                    nume_proiect,
+                    l_t,
+                    l_w,
+                    h_w,
+                    l_gol,
+                    h_gol,
+                )
 
             mep_data = (
                 "# Shazam-BIM Generated Cylinder MEP\n"
@@ -750,27 +861,35 @@ with tab_main:
             "👈 Selectați modul de lucru din bara laterală și apăsați butonul **🚀 Lansează Procesarea Cloud**."
         )
 
+# JURNAL PRIVAT PER UTILIZATOR CONECTAT
 with tab_history:
-    st.subheader("📋 Relevee Înregistrate în Jurnalul Cloud")
-    istoric_date = citeste_istoric()
-    if len(istoric_date) > 0:
-        st.dataframe(
-            istoric_date,
-            column_config={
-                "0": "Nume Proiect",
-                "1": "Data Scanării",
-                "2": "Țeavă (m)",
-                "3": "Lungime Perete (m)",
-                "4": "Înălțime (m)",
-                "5": "Lățime Gol (m)",
-                "6": "Înălțime Gol (m)",
-            },
-            use_container_width=True,
+    if st.session_state.user_conectat is None:
+        st.info(
+            "🔒 Conectați-vă în bara laterală pentru a accesa jurnalul dumneavoastră privat de proiecte."
         )
     else:
-        st.info(
-            "Jurnalul cloud este gol. Rulați o procesare pentru a salva datele!"
+        st.subheader(
+            f"📋 Jurnal Privat Scanări ({st.session_state.user_conectat})"
         )
+        istoric_privat = citeste_istoric_privat(st.session_state.user_conectat)
+        if len(istoric_privat) > 0:
+            st.dataframe(
+                istoric_privat,
+                column_config={
+                    "0": "Nume Proiect",
+                    "1": "Data Scanării",
+                    "2": "Țeavă (m)",
+                    "3": "Lungime Perete (m)",
+                    "4": "Înălțime (m)",
+                    "5": "Lățime Gol (m)",
+                    "6": "Înălțime Gol (m)",
+                },
+                use_container_width=True,
+            )
+        else:
+            st.info(
+                "Jurnalul dumneavoastră este gol. Rulați o procesare pentru a salva primul proiect!"
+            )
 
 with tab_pricing:
     st.subheader("💳 Planuri de Abonament & Licențiere Cloud")

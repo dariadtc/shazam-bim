@@ -16,7 +16,6 @@ FORMSPREE_ID = "xeeyrbyb"
 
 
 def trimite_solicitare_resetare_catre_admin(email_client, cod_otp):
-    """Trimite e-mail pe adresa ta (prin Formspree) cu e-mailul clientului și codul generat."""
     if FORMSPREE_ID == "ID-UL_TAU_AICI":
         return True
 
@@ -24,7 +23,7 @@ def trimite_solicitare_resetare_catre_admin(email_client, cod_otp):
     data = {
         "email_client": email_client,
         "cod_verificare": cod_otp,
-        "mesaj": f"SOLICITARE RESETARE PAROLĂ\n\n• E-mail Client: {email_client}\n• Cod de Verificare (OTP): {cod_otp}\n\nTrimite acest cod de 6 cifre clientului pentru a-și reconfigura parola în aplicație.",
+        "mesaj": f"SOLICITARE RESETARE PAROLĂ\n\n• E-mail Client: {email_client}\n• Cod de Verificare (OTP): {cod_otp}\n\nTrimite acest cod clientului pentru a-și reconfigura parola.",
         "_subject": f"🔑 Solicitare Resetare Parolă pentru: {email_client}",
     }
     try:
@@ -36,7 +35,6 @@ def trimite_solicitare_resetare_catre_admin(email_client, cod_otp):
 
 
 def trimite_email_formspree(email, tip, mesaj):
-    """Folosit pentru formularul general de contact/feedback din sidebar."""
     if FORMSPREE_ID == "ID-UL_TAU_AICI":
         return True
 
@@ -55,7 +53,7 @@ def trimite_email_formspree(email, tip, mesaj):
         return False
 
 
-# 1. Configurare pagină
+# 1. Configurare pagină fără sidebar
 st.set_page_config(
     page_title="Shazam-BIM Cloud - Relevee 3D Universal LiDAR & SLAM AI",
     page_icon="🤖",
@@ -72,45 +70,42 @@ if "otp_reset" not in st.session_state:
 if "email_reset_target" not in st.session_state:
     st.session_state.email_reset_target = None
 
-# CSS dinamic în funcție de stare
-css_hide_sidebar = ""
-if st.session_state.user_conectat is None:
-    css_hide_sidebar = """
-        [data-testid="stSidebar"] {
-            display: none !important;
-        }
-    """
-
-# 2. Injectare CSS Custom
+# 2. Injectare CSS Custom - ASCUNDEREA DEFINITIVĂ A SIDEBAR-ULUI ȘI A SĂGEȚILOR
 st.markdown(
-    f"""
+    """
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@600;800;900&display=swap');
     
-    .stApp {{
+    .stApp {
         background-color: #090C10;
         font-family: 'Inter', sans-serif;
-    }}
+    }
     
-    #MainMenu {{visibility: hidden;}}
-    footer {{visibility: hidden;}}
+    #MainMenu {visibility: hidden;}
+    footer {visibility: hidden;}
     
-    {css_hide_sidebar}
+    /* ASCUNDE BARA LATERALĂ ȘI SĂGEȚICA STREAMLIT PE TOT SITE-UL */
+    [data-testid="stSidebar"],
+    [data-testid="collapsedControl"],
+    button[aria-label="Close sidebar"],
+    button[aria-label="Open sidebar"] {
+        display: none !important;
+    }
     
     /* ASCUNDE ICONIȚA NATIVĂ DE LINK / ANCHOR DIN STREAMLIT */
     .stMarkdown a.anchor-link, 
     [data-testid="stHeaderActionElements"],
-    a.header-anchor {{
+    a.header-anchor {
         display: none !important;
-    }}
+    }
     
     /* LOGO NEON GLOW EFFECTS */
-    .logo-container {{
+    .logo-container {
         text-align: center;
         padding: 15px 0 10px 0;
         user-select: none;
-    }}
-    .logo-shazam {{
+    }
+    .logo-shazam {
         font-family: 'Orbitron', sans-serif;
         font-size: 32px;
         font-weight: 800;
@@ -119,8 +114,8 @@ st.markdown(
             0 0 5px #00FFFF,
             0 0 15px rgba(0, 255, 255, 0.7);
         animation: glowCyan 2.5s infinite alternate;
-    }}
-    .logo-bim {{
+    }
+    .logo-bim {
         font-family: 'Orbitron', sans-serif;
         font-size: 32px;
         font-weight: 800;
@@ -129,19 +124,28 @@ st.markdown(
             0 0 5px #50C878,
             0 0 15px rgba(80, 200, 120, 0.7);
         animation: glowGreen 2.5s infinite alternate;
-    }}
+    }
 
-    @keyframes glowCyan {{
-        0% {{ text-shadow: 0 0 5px #00FFFF, 0 0 10px rgba(0, 255, 255, 0.5); }}
-        100% {{ text-shadow: 0 0 8px #00FFFF, 0 0 20px rgba(0, 255, 255, 0.9); }}
-    }}
-    @keyframes glowGreen {{
-        0% {{ text-shadow: 0 0 5px #50C878, 0 0 10px rgba(80, 200, 120, 0.5); }}
-        100% {{ text-shadow: 0 0 8px #50C878, 0 0 20px rgba(80, 200, 120, 0.9); }}
-    }}
+    @keyframes glowCyan {
+        0% { text-shadow: 0 0 5px #00FFFF, 0 0 10px rgba(0, 255, 255, 0.5); }
+        100% { text-shadow: 0 0 8px #00FFFF, 0 0 20px rgba(0, 255, 255, 0.9); }
+    }
+    @keyframes glowGreen {
+        0% { text-shadow: 0 0 5px #50C878, 0 0 10px rgba(80, 200, 120, 0.5); }
+        100% { text-shadow: 0 0 8px #50C878, 0 0 20px rgba(80, 200, 120, 0.9); }
+    }
+
+    /* CARD CONTROL PRINCIPAL */
+    .control-card {
+        background: #121621;
+        border: 1px solid rgba(0, 255, 255, 0.15);
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 25px;
+    }
 
     /* BADGES DE FORMAT EXTINSE */
-    .format-badge {{
+    .format-badge {
         display: inline-block;
         background: rgba(0, 255, 255, 0.08);
         border: 1px solid rgba(0, 255, 255, 0.25);
@@ -152,10 +156,10 @@ st.markdown(
         margin-right: 3px;
         margin-bottom: 4px;
         font-weight: 600;
-    }}
+    }
 
     /* Status Badge Pulsant */
-    .status-badge {{
+    .status-badge {
         display: inline-flex;
         align-items: center;
         background: rgba(80, 200, 120, 0.1);
@@ -165,8 +169,8 @@ st.markdown(
         color: #50C878;
         font-size: 11px;
         font-weight: 600;
-    }}
-    .gpu-badge {{
+    }
+    .gpu-badge {
         display: inline-flex;
         align-items: center;
         background: rgba(168, 85, 247, 0.1);
@@ -177,18 +181,18 @@ st.markdown(
         font-size: 11px;
         font-weight: 600;
         margin-left: 8px;
-    }}
-    .pulse-dot {{
+    }
+    .pulse-dot {
         width: 7px;
         height: 7px;
         background-color: #50C878;
         border-radius: 50%;
         margin-right: 6px;
         box-shadow: 0 0 8px #50C878;
-    }}
+    }
 
     /* Carduri KPI Custom */
-    .kpi-card {{
+    .kpi-card {
         background: rgba(18, 22, 33, 0.6);
         border: 1px solid rgba(255, 255, 255, 0.08);
         border-radius: 12px;
@@ -196,34 +200,28 @@ st.markdown(
         text-align: center;
         backdrop-filter: blur(10px);
         transition: transform 0.2s ease, border-color 0.2s ease;
-    }}
-    .kpi-card:hover {{
+    }
+    .kpi-card:hover {
         transform: translateY(-2px);
         border-color: rgba(0, 255, 255, 0.3);
-    }}
-    .kpi-label {{
+    }
+    .kpi-label {
         color: #8A94A6;
         font-size: 11px;
         font-weight: 600;
         letter-spacing: 1px;
         text-transform: uppercase;
         margin-bottom: 4px;
-    }}
-    .kpi-value {{
+    }
+    .kpi-value {
         color: #FFFFFF;
         font-size: 20px;
         font-weight: 700;
         font-family: 'Orbitron', sans-serif;
-    }}
-
-    /* Stilizare Panou Lateral */
-    [data-testid="stSidebar"] {{
-        background-color: #0E121B;
-        border-right: 1px solid rgba(255, 255, 255, 0.05);
-    }}
+    }
     
     /* Stilizare Buton Principal */
-    div.stButton > button:first-child {{
+    div.stButton > button:first-child {
         background: linear-gradient(135deg, #00E5FF 0%, #0088FF 100%);
         color: #000000;
         font-weight: 700;
@@ -233,52 +231,61 @@ st.markdown(
         padding: 12px 24px;
         box-shadow: 0 4px 15px rgba(0, 229, 255, 0.25);
         transition: all 0.2s ease;
-    }}
-    div.stButton > button:first-child:hover {{
+    }
+    div.stButton > button:first-child:hover {
         box-shadow: 0 6px 22px rgba(0, 229, 255, 0.45);
         transform: scale(1.01);
-    }}
+    }
 
     /* Stilizare Tab-uri */
-    .stTabs [data-baseweb="tab-list"] {{
+    .stTabs [data-baseweb="tab-list"] {
         gap: 8px;
         background-color: #121621;
         padding: 6px;
         border-radius: 10px;
         border: 1px solid rgba(255, 255, 255, 0.05);
-    }}
-    .stTabs [data-baseweb="tab"] {{
+    }
+    .stTabs [data-baseweb="tab"] {
         height: 40px;
         border-radius: 6px;
         color: #8A94A6;
         font-weight: 600;
         font-size: 13px;
-    }}
-    .stTabs [aria-selected="true"] {{
+    }
+    .stTabs [aria-selected="true"] {
         background-color: #1A202C !important;
         color: #00FFFF !important;
-    }}
+    }
 
     /* Carduri de Prețuri */
-    .price-card {{
+    .price-card {
         background: #121621;
         border: 1px solid rgba(255, 255, 255, 0.08);
         border-radius: 12px;
         padding: 20px;
         text-align: center;
         height: 100%;
-    }}
-    .price-card-pro {{
+    }
+    .price-card-pro {
         border: 1.5px solid #00FFFF;
         box-shadow: 0 0 15px rgba(0, 255, 255, 0.15);
-    }}
+    }
+
+    /* FOOTER STYLING */
+    .footer-container {
+        background: #0E121B;
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+        padding: 30px 20px;
+        margin-top: 60px;
+        border-radius: 12px;
+    }
     </style>
 """,
     unsafe_allow_html=True,
 )
 
 # -----------------------------------------------------------------------------
-# 3. BAZĂ DE DATE (CU MIGRARE AUTOMATĂ PENTRU COLOANE NOI)
+# 3. BAZĂ DE DATE
 # -----------------------------------------------------------------------------
 
 
@@ -299,11 +306,10 @@ def init_db():
         "CREATE TABLE IF NOT EXISTS mesaje_contact (id INTEGER PRIMARY KEY AUTOINCREMENT, data_trimitere TEXT, email_client TEXT, tip_mesaj TEXT, mesaj TEXT)"
     )
 
-    # Migrare automată: adăugăm user_email dacă baza de date a fost creată pe o versiune mai veche
     try:
         c.execute("ALTER TABLE scanari ADD COLUMN user_email TEXT")
     except sqlite3.OperationalError:
-        pass  # Coloana există deja
+        pass
 
     conn.commit()
     conn.close()
@@ -512,11 +518,11 @@ if st.session_state.user_conectat is None:
                 else:
                     st.error("❌ Adresă de e-mail sau parolă incorectă!")
 
-            # 🔐 RESETARE PAROLĂ VIA FORMSPREE CĂTRE ADMIN (TU ÎI TRIMIȚI CODUL)
+            # RESETARE PAROLĂ
             st.write("<br>", unsafe_allow_html=True)
             with st.expander("❓ Ai uitat parola?", expanded=False):
                 st.markdown(
-                    "<p style='font-size: 12px; color: #8A94A6;'>Introduceți e-mailul înregistrat. Un cod de verificare va fi transmis către echipa de suport pentru confirmare.</p>",
+                    "<p style='font-size: 12px; color: #8A94A6;'>Introduceți e-mailul înregistrat. Un cod de verificare va fi transmis pentru confirmare.</p>",
                     unsafe_allow_html=True,
                 )
 
@@ -554,7 +560,6 @@ if st.session_state.user_conectat is None:
                     else:
                         st.warning("Introduceți e-mailul mai întâi!")
 
-                # Pasul 2: Introducerea codului primit de la tine
                 if st.session_state.otp_reset is not None:
                     st.write("---")
                     st.markdown(
@@ -582,7 +587,7 @@ if st.session_state.user_conectat is None:
                                 st.session_state.otp_reset = None
                                 st.session_state.email_reset_target = None
                                 st.success(
-                                    "🎉 Parola a fost schimbată cu succes! Vă puteți conecta acum folosind noua parolă."
+                                    "🎉 Parola a fost schimbată cu succes! Vă puteți conecta acum."
                                 )
                             else:
                                 st.warning("Completați noua parolă!")
@@ -617,116 +622,32 @@ if st.session_state.user_conectat is None:
     st.stop()
 
 # -----------------------------------------------------------------------------
-# SCENARIUL B: UTILIZATORUL ESTE AUTENTIFICAT (DASHBOARD)
+# SCENARIUL B: UTILIZATORUL ESTE AUTENTIFICAT (SINGLE-PAGE APP)
 # -----------------------------------------------------------------------------
 
-st.sidebar.markdown(
-    f"""
-    <div style='background: rgba(0, 255, 255, 0.08); padding: 10px; border-radius: 8px; border: 1px solid #00FFFF; text-align: center; margin-bottom: 10px;'>
-        <span style='font-size: 11px; color: #8A94A6;'>UTILIZATOR CONECTAT:</span><br>
-        <b style='color: #00FFFF; font-size: 13px;'>{st.session_state.user_conectat}</b>
-    </div>
-""",
-    unsafe_allow_html=True,
-)
-
-if st.sidebar.button("🚪 Delogare", use_container_width=True):
-    st.session_state.user_conectat = None
-    st.rerun()
-
-st.sidebar.markdown("---")
-st.sidebar.subheader("📂 Modul de Lucru")
-sursa = st.sidebar.radio(
-    "Sursă Date:",
-    ["Demo Interactiv", "Fișier Scanare Brută (SLAM/LiDAR)"],
-    help="Selectați Demo pentru testare rapidă sau încărcați fișierul brut din scanner.",
-)
-
-up = None
-if sursa != "Demo Interactiv":
-    up = st.sidebar.file_uploader(
-        "Încarcă nor de puncte (orice scanner):",
-        type=["las", "laz", "ply", "e57", "xyz", "txt", "pts"],
-    )
-
-    st.sidebar.markdown(
-        """
-        <div style='margin-top: 4px; margin-bottom: 10px;'>
-            <span class='format-badge'>.E57</span>
-            <span class='format-badge'>.XYZ</span>
-            <span class='format-badge'>.PTS</span>
-            <span class='format-badge'>.PLY</span>
-            <span class='format-badge'>.LAS</span>
-            <span class='format-badge'>.LAZ</span>
-            <span class='format-badge'>.TXT</span>
-        </div>
-        <p style='font-size: 10px; color: #6C7A9C; margin-top: 2px;'>
-        Compatibil cu: <b>SLAM Mobil, Leica, Faro, GeoSLAM, Dronă, iPhone LiDAR</b>.
-        </p>
-    """,
-        unsafe_allow_html=True,
-    )
-
-    if up is not None:
-        dimensiune_mb = up.size / (1024 * 1024)
-        puncte_estimate = int(dimensiune_mb * 250000)
-        ext = up.name.split(".")[-1].upper()
-        st.sidebar.markdown(
-            f"""
-            <div style='background-color: #151A24; padding: 10px; border-radius: 8px; border: 1px solid #00FFFF; margin-top: 6px; font-size: 11px;'>
-                <span style='color: #00FFFF; font-weight: bold;'>ℹ️ Detalii Fișier Detectat:</span><br>
-                • <b>Nume:</b> {up.name}<br>
-                • <b>Mărime:</b> {dimensiune_mb:.2f} MB<br>
-                • <b>Format Detectat:</b> {ext}<br>
-                • <b>Puncte XYZ (Estimat):</b> ~{puncte_estimate:,}<br>
-                • <b>Integritate Format:</b> <span style='color: #50C878;'>VALID ✓</span>
-            </div>
-        """,
-            unsafe_allow_html=True,
-        )
-
-with st.sidebar.expander("⚙️ Parametri Ajustare Algoritm", expanded=False):
-    vox = st.slider("Filtru Densitate Voxel (m)", 0.01, 0.10, 0.04, 0.01)
-    r_c = st.slider("Rază estimată țeavă MEP (m)", 0.05, 0.50, 0.15, 0.01)
-    op = st.checkbox("🎯 Ghidaj manual prin Click", value=False)
-
-st.sidebar.markdown("---")
-
-utilizari_efectuate = numara_utilizari(st.session_state.user_conectat)
-if utilizari_efectuate == 0:
-    st.sidebar.info("🎁 **Plan Activ:** TRIAL GRATUIT (1 scanare rămasă)")
-else:
-    st.sidebar.warning("🔒 **Plan Activ:** Limită Trial Atinsă. Necesită PRO.")
-
-with st.sidebar.expander("🛡️ Protecția Datelor & Legal"):
+# 1. HEADER SUS CU UTILIZATORUL SI DELOGARE
+col_head1, col_head2 = st.columns([3, 1])
+with col_head1:
     st.markdown(
-        """
-        <div style='font-size: 11px; color: #8A94A6; line-height: 1.4;'>
-            <b>🔒 Confidențialitate GDPR:</b> Fișierele încărcate sunt procesate temporar în memorie securizată și sunt șterse automat de pe servere imediat după extragerea 3D.<br><br>
-            <b>⚖️ Disclaimer Tehnic:</b> Modelele oferă o estimare geometrică automată. Recomandăm verificarea pe șantier de către un inginer autorizat.
+        f"""
+        <div style='display: flex; align-items: center; gap: 15px;'>
+            <span class='logo-shazam' style='font-size: 24px;'>Shazam</span><span class='logo-bim' style='font-size: 24px;'>-BIM</span>
+            <span style='background: rgba(0, 255, 255, 0.08); padding: 5px 12px; border-radius: 8px; border: 1px solid #00FFFF; font-size: 12px; color: #00FFFF;'>
+                👤 Utilizator: <b>{st.session_state.user_conectat}</b>
+            </span>
         </div>
     """,
         unsafe_allow_html=True,
     )
 
-with st.sidebar.expander("📬 Contact & Suport Tehnologic"):
-    with st.form(key="form_c", clear_on_submit=True):
-        em = st.text_input("E-mailul tău:", placeholder="nume@companie.ro")
-        tp = st.selectbox(
-            "Subiect:",
-            ["Problemă tehnică", "Feedback", "Solicitare Funcție", "Altul"],
-        )
-        ms = st.text_area(
-            "Mesaj:", placeholder="Scrie-ne cum putem îmbunătăți platforma..."
-        )
-        btn_c = st.form_submit_button("Trimite mesaj")
-        if btn_c and em and ms:
-            salveaza_contact(em, tp, ms)
-            trimite_email_formspree(em, tp, ms)
-            st.sidebar.success("🎉 Trimis! Mesajul a fost transmis pe e-mail.")
+with col_head2:
+    if st.button("🚪 Delogare", use_container_width=True):
+        st.session_state.user_conectat = None
+        st.rerun()
 
-# --- DASHBOARD VIZUAL PRINCIPAL ---
+st.write("<br>", unsafe_allow_html=True)
 
+# 2. BANNER MAIN
 st.markdown(
     """
     <div style='background: linear-gradient(135deg, #121621 0%, #080B10 100%); padding: 25px; border-radius: 16px; border: 1px solid rgba(0, 255, 255, 0.12); box-shadow: 0 10px 30px rgba(0,0,0,0.4); margin-bottom: 20px;'>
@@ -748,29 +669,78 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-with st.expander("❓ Cum funcționează Shazam-BIM? (3 Pași Simpli)", expanded=False):
-    st.markdown(
-        """
-        <div style='display: flex; justify-content: space-between; gap: 15px; flex-wrap: wrap; margin-top: 8px;'>
-            <div style='background: #121621; padding: 15px; border-radius: 8px; flex: 1; min-width: 200px; border-left: 3px solid #00FFFF;'>
-                <h5 style='color: #00FFFF; margin-top: 0;'>1. Încărcare Date</h5>
-                <p style='font-size: 11px; color: #8A94A6; margin-bottom: 0;'>Alegeți modul <b>Demo</b> sau încărcați fișierul brut din orice scanner (<b>.E57, .XYZ, .PTS, .LAS, .PLY</b>).</p>
-            </div>
-            <div style='background: #121621; padding: 15px; border-radius: 8px; flex: 1; min-width: 200px; border-left: 3px solid #50C878;'>
-                <h5 style='color: #50C878; margin-top: 0;'>2. Segmentare AI</h5>
-                <p style='font-size: 11px; color: #8A94A6; margin-bottom: 0;'>Sistemul detectează automat pereții, tavanul, podeaua și traseele cilindrice MEP.</p>
-            </div>
-            <div style='background: #121621; padding: 15px; border-radius: 8px; flex: 1; min-width: 200px; border-left: 3px solid #FF3131;'>
-                <h5 style='color: #FF3131; margin-top: 0;'>3. Export & Raport</h5>
-                <p style='font-size: 11px; color: #8A94A6; margin-bottom: 0;'>Inspectați modelul 3D, descărcați fișierele solide <b>.OBJ</b> și fișa tehnică PDF.</p>
-            </div>
-        </div>
-    """,
-        unsafe_allow_html=True,
-    )
+# 3. PANOU CONTROL MODUL DE LUCRU & INCĂRCARE FIȘIERE (MUTAT DIN SIDEBAR ÎN PAGINĂ)
+st.markdown(
+    "<h3 style='color: #00FFFF;'>📂 Modul de Lucru & Încărcare Date</h3>",
+    unsafe_allow_html=True,
+)
+
+with st.container():
+    st.markdown("<div class='control-card'>", unsafe_allow_html=True)
+    c_mod1, c_mod2 = st.columns([1, 2])
+
+    with c_mod1:
+        sursa = st.radio(
+            "Selectați Sursa de Date:",
+            ["Demo Interactiv", "Fișier Scanare Brută (SLAM/LiDAR)"],
+            help="Selectați Demo pentru testare rapidă sau încărcați fișierul brut din scanner.",
+        )
+
+        with st.expander("⚙️ Parametri Ajustare Algoritm", expanded=False):
+            vox = st.slider("Filtru Densitate Voxel (m)", 0.01, 0.10, 0.04, 0.01)
+            r_c = st.slider(
+                "Rază estimată țeavă MEP (m)", 0.05, 0.50, 0.15, 0.01
+            )
+            op = st.checkbox("🎯 Ghidaj manual prin Click", value=False)
+
+    up = None
+    with c_mod2:
+        if sursa != "Demo Interactiv":
+            up = st.file_uploader(
+                "Încarcă nor de puncte 3D (orice scanner):",
+                type=["las", "laz", "ply", "e57", "xyz", "txt", "pts"],
+            )
+
+            st.markdown(
+                """
+                <div>
+                    <span class='format-badge'>.E57</span>
+                    <span class='format-badge'>.XYZ</span>
+                    <span class='format-badge'>.PTS</span>
+                    <span class='format-badge'>.PLY</span>
+                    <span class='format-badge'>.LAS</span>
+                    <span class='format-badge'>.LAZ</span>
+                    <span class='format-badge'>.TXT</span>
+                </div>
+                <p style='font-size: 11px; color: #6C7A9C; margin-top: 4px;'>
+                Compatibil cu: <b>SLAM Mobil, Leica, Faro, GeoSLAM, Dronă, iPhone LiDAR</b>.
+                </p>
+            """,
+                unsafe_allow_html=True,
+            )
+
+            if up is not None:
+                dimensiune_mb = up.size / (1024 * 1024)
+                puncte_estimate = int(dimensiune_mb * 250000)
+                ext = up.name.split(".")[-1].upper()
+                st.success(
+                    f"✓ Fișier încărcat: **{up.name}** ({dimensiune_mb:.2f} MB | ~{puncte_estimate:,} Puncte)"
+                )
+        else:
+            st.info(
+                "ℹ️ Modul Demo este selectat. Se va procesa camera demonstrativă presetată."
+            )
+
+    st.markdown("</div>", unsafe_allow_html=True)
+
+# LANSAT PROCESARE
+lansa_btn = st.button(
+    "🚀 Lansează Procesarea Cloud", use_container_width=True
+)
 
 st.write("<br>", unsafe_allow_html=True)
 
+# KPI Carduri
 k1, k2, k3, k4 = st.columns(4)
 with k1:
     st.markdown(
@@ -795,6 +765,7 @@ with k4:
 
 st.write("<br>", unsafe_allow_html=True)
 
+# TAB-URILE PRINCIPALE DE REZULTATE, JURNAL ȘI PREȚURI
 tab_main, tab_history, tab_pricing = st.tabs(
     [
         "📊 Vizualizator & Elemente 3D",
@@ -803,10 +774,10 @@ tab_main, tab_history, tab_pricing = st.tabs(
     ]
 )
 
+utilizari_efectuate = numara_utilizari(st.session_state.user_conectat)
+
 with tab_main:
-    if st.sidebar.button(
-        "🚀 Lansează Procesarea Cloud", use_container_width=True
-    ):
+    if lansa_btn:
         if utilizari_efectuate >= 1 and sursa != "Demo Interactiv":
             st.error("❌ Limita planului tău gratuit a fost atinsă!")
             st.markdown(
@@ -1027,7 +998,7 @@ with tab_main:
             )
     else:
         st.info(
-            "👈 Selectați modul de lucru din bara laterală și apăsați butonul **🚀 Lansează Procesarea Cloud**."
+            "👈 Selectați sursa de date de mai sus și apăsați butonul **🚀 Lansează Procesarea Cloud**."
         )
 
 # JURNAL PRIVAT PER UTILIZATOR CONECTAT
@@ -1107,3 +1078,50 @@ with tab_pricing:
         """,
             unsafe_allow_html=True,
         )
+
+# -----------------------------------------------------------------------------
+# 4. FOOTER (MUTAT ÎN JOSUL PAGINII DE DERULARE)
+# -----------------------------------------------------------------------------
+st.write("<br><br>", unsafe_allow_html=True)
+st.markdown("---")
+
+st.subheader("🌐 Suport & Confidențialitate")
+f_col1, c_gap, f_col2 = st.columns([1, 0.1, 1])
+
+with f_col1:
+    st.markdown("### 🛡️ Protecția Datelor & Legal")
+    st.markdown(
+        """
+        <div style='background: #121621; padding: 20px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.08); font-size: 13px; color: #8A94A6; line-height: 1.6;'>
+            <b style='color: #00FFFF;'>🔒 Confidențialitate GDPR:</b> Fișierele încărcate sunt procesate temporar în memorie securizată și sunt șterse automat de pe servere imediat după extragerea 3D.<br><br>
+            <b style='color: #50C878;'>⚖️ Disclaimer Tehnic:</b> Modelele oferă o estimare geometrică automată. Recomandăm verificarea pe șantier de către un inginer autorizat.
+        </div>
+    """,
+        unsafe_allow_html=True,
+    )
+
+with f_col2:
+    st.markdown("### 📬 Contact & Suport Tehnologic")
+    with st.form(key="form_c_footer", clear_on_submit=True):
+        em = st.text_input("E-mailul tău:", placeholder="nume@companie.ro")
+        tp = st.selectbox(
+            "Subiect:",
+            ["Problemă tehnică", "Feedback", "Solicitare Funcție", "Altul"],
+        )
+        ms = st.text_area(
+            "Mesaj:", placeholder="Scrie-ne cum putem îmbunătăți platforma..."
+        )
+        btn_c = st.form_submit_button("Trimite mesaj direct")
+        if btn_c and em and ms:
+            salveaza_contact(em, tp, ms)
+            trimite_email_formspree(em, tp, ms)
+            st.success("🎉 Trimis! Mesajul a fost transmis pe e-mail.")
+
+st.markdown(
+    """
+    <div style='text-align: center; color: #6C7A9C; font-size: 11px; margin-top: 30px; margin-bottom: 20px;'>
+        © 2026 Shazam-BIM Cloud AI Processing Engine. toate drepturile rezervate.
+    </div>
+""",
+    unsafe_allow_html=True,
+)

@@ -47,25 +47,25 @@ def genereaza_cad_mesh_text(tip="perete"):
 # --- INTERFAȚA WEB ---
 st.title("🤖 Shazam-BIM AI Platform (Cloud Engine)")
 st.sidebar.markdown(
-    "<!-- Importam fontul caligrafic cursiv din Google Fonts -->"
+    "<!-- Importam fontul futurist geometric din Google Fonts -->"
     "<link href='https://googleapis.com' rel='stylesheet'>"
     
     "<div style='text-align: center; margin-bottom: 30px; padding-top: 15px; user-select: none;'>"
-    # SHAZAM in Verde Smarald Neon, Stralucitor si ITALIC
-    "<span style='font-family: \"Caveat\", cursive, sans-serif; "
-    "font-size: 42px; font-weight: 700; font-style: italic; color: #50C878; "
-    "text-shadow: 0 0 5px #50C878, 0 0 15px #50C878, 0 0 25px #50C878; letter-spacing: 1px;'>"
-    "shazam</span>"
+    # SHAZAM in Turcoaz/Cyan Electric, Geometric, Stralucitor si ITALIC
+    "<span style='font-family: \"Orbitron\", sans-serif; "
+    "font-size: 28px; font-weight: 500; font-style: italic; color: #00FFFF; "
+    "text-shadow: 0 0 5px #00FFFF, 0 0 15px rgba(0,255,255,0.6); letter-spacing: 1px;'>"
+    "Shazam</span>"
     # Linia - in Rosu Laser, Stralucitoare si ITALIC
-    "<span style='font-family: \"Caveat\", cursive, sans-serif; "
-    "font-size: 42px; font-weight: 700; font-style: italic; color: #FF3131; margin: 0 4px; "
-    "text-shadow: 0 0 5px #FF3131, 0 0 15px #FF3131;'>"
+    "<span style='font-family: \"Orbitron\", sans-serif; "
+    "font-size: 28px; font-weight: 500; font-style: italic; color: #FF3131; margin: 0 4px; "
+    "text-shadow: 0 0 5px #FF3131;'>"
     "-</span>"
-    # BIM in Turcoaz Electric, Stralucitor si ITALIC
-    "<span style='font-family: \"Caveat\", cursive, sans-serif; "
-    "font-size: 42px; font-weight: 700; font-style: italic; color: #008B8B; "
-    "text-shadow: 0 0 5px #00FFFF, 0 0 15px #008B8B, 0 0 25px #008B8B; letter-spacing: 1px;'>"
-    "bim</span>"
+    # BIM in Verde Smarald Vibrant, Geometric, Stralucitor si ITALIC
+    "<span style='font-family: \"Orbitron\", sans-serif; "
+    "font-size: 28px; font-weight: 500; font-style: italic; color: #50C878; "
+    "text-shadow: 0 0 5px #50C878, 0 0 15px rgba(80,200,120,0.6); letter-spacing: 1px;'>"
+    "BIM</span>"
     "</div>", 
     unsafe_allow_html=True
 )

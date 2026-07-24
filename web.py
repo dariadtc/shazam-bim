@@ -599,7 +599,7 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-# 2. BARĂ DE NAVIGARE SUS (E-MAILUL CA BUTON / BADGE CURAT + DELOGARE)
+# 2. BARĂ DE NAVIGARE SUS (E-MAILUL CA BADGE + DELOGARE)
 col_u1, col_u2 = st.columns([5, 1])
 
 with col_u1:
@@ -1137,7 +1137,7 @@ with tab_pricing:
             use_container_width=True,
         )
 
-# TAB TERMENI & GDPR
+# TAB TERMENI & GDPR (CURĂȚAT COMPLET)
 with tab_legal:
     st.subheader("⚖️ Termeni și Condiții & Politică de Confidențialitate (GDPR)")
     st.markdown(
@@ -1152,7 +1152,7 @@ with tab_legal:
             <h4 style='color: #50C878;'>3. Limitarea Răspunderii Tehnice</h4>
             <p>Modelele 3D, fișierele CAD (DXF/IFC) și rapoartele tehnice generate automat de algoritmul AI au rol de estimare și asistență inginerească. Verificarea finală a cotelor pe șantier revine inginerului geodez sau proiectantului autorizat.</p>
         </div>
-    """,
+        """,
         unsafe_allow_html=True,
     )
 

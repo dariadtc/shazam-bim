@@ -46,6 +46,7 @@ def genereaza_cad_mesh_text(tip="perete"):
 
 # --- INTERFAȚA WEB ---
 st.title("🤖 Shazam-BIM AI Platform (Cloud Engine)")
+st.sidebar.image("logo.png", use_container_width=True)
 st.write("Convertiți norii de puncte bruți din scanere SLAM direct în modele solide CAD/BIM.")
 
 sursa = st.sidebar.radio("Sursă:", ["Demo", "Fișier (.ply, .las)"])

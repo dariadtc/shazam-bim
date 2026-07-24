@@ -131,23 +131,22 @@ st.markdown(
         text-shadow: 0 0 12px rgba(80, 200, 120, 0.7);
     }
 
-    /* USER BADGE BOX */
+    /* USER BADGE BOX - ALINIAT DREAPTA */
     .user-badge-box {
         text-align: right;
         display: flex;
         justify-content: flex-end;
-        margin-bottom: 4px;
+        margin-bottom: 6px;
     }
 
-    /* ALINIERE SI STILIZARE SIMPLĂ PENTRU BUTONUL DE DELOGARE */
+    /* FORCE ALIGNMENT LA DREAPTA PENTRU BUTONUL DE DELOGARE */
     div[data-testid="stHorizontalBlock"] > div:last-child .stButton {
         display: flex !important;
         justify-content: flex-end !important;
-        margin-top: 2px !important;
     }
     
     div[data-testid="stHorizontalBlock"] > div:last-child div.stButton > button:first-child {
-        padding: 4px 12px !important;
+        padding: 4px 14px !important;
         font-size: 11px !important;
         border-radius: 12px !important;
         background: rgba(255, 255, 255, 0.05) !important;
@@ -155,9 +154,10 @@ st.markdown(
         border: 1px solid rgba(255, 255, 255, 0.15) !important;
         box-shadow: none !important;
         font-weight: 500 !important;
+        margin-left: auto !important;
     }
     div[data-testid="stHorizontalBlock"] > div:last-child div.stButton > button:first-child:hover {
-        background: rgba(255, 255, 255, 0.1) !important;
+        background: rgba(255, 255, 255, 0.12) !important;
         color: #FFFFFF !important;
         border-color: rgba(0, 255, 255, 0.3) !important;
     }
@@ -623,8 +623,8 @@ if st.session_state.user_conectat is None:
 # SCENARIUL B: ECRANUL PRINCIPAL AUTENTIFICAT (SINGLE-PAGE APPLICATION)
 # -----------------------------------------------------------------------------
 
-# 1. HEADER ALINIAT PERFECT: LOGO MARE ÎN STÂNGA | USER & DELOGARE SIMPLĂ ÎN DREAPTA
-col_h1, col_h2 = st.columns([2.5, 1.2])
+# 1. HEADER ALINIAT PERFECT LA DREAPTA
+col_h1, col_h2 = st.columns([2.3, 1.2])
 
 with col_h1:
     st.markdown(

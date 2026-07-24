@@ -5,7 +5,7 @@ import numpy as np
 import plotly.graph_objects as go
 import streamlit as st
 
-# 1. Configurare pagină cu titlu SEO îmbunătățit
+# 1. Configurare pagină cu titlu SEO
 st.set_page_config(
     page_title="Shazam-BIM Cloud - Relevee 3D & Instalații MEP AI",
     page_icon="🤖",
@@ -13,11 +13,11 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-# 2. Injectare CSS Custom pentru Design SaaS Premium (Dark Theme Pro)
+# 2. Injectare CSS Custom pentru Design SaaS Premium & Logo Neon Luminos
 st.markdown(
     """
     <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Orbitron:wght@500;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Orbitron:wght@600;800;900&display=swap');
     
     /* Background global */
     .stApp {
@@ -29,6 +29,47 @@ st.markdown(
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
     
+    /* LOGO NEON GLOW EFFECTS */
+    .logo-container {
+        text-align: center;
+        padding: 20px 0 10px 0;
+        user-select: none;
+    }
+    .logo-shazam {
+        font-family: 'Orbitron', sans-serif;
+        font-size: 28px;
+        font-weight: 800;
+        color: #00FFFF;
+        text-shadow: 
+            0 0 5px #00FFFF,
+            0 0 10px #00FFFF,
+            0 0 20px rgba(0, 255, 255, 0.8),
+            0 0 40px rgba(0, 255, 255, 0.6);
+        animation: glowCyan 2.5s infinite alternate;
+    }
+    .logo-bim {
+        font-family: 'Orbitron', sans-serif;
+        font-size: 28px;
+        font-weight: 800;
+        color: #50C878;
+        text-shadow: 
+            0 0 5px #50C878,
+            0 0 10px #50C878,
+            0 0 20px rgba(80, 200, 120, 0.8),
+            0 0 40px rgba(80, 200, 120, 0.6);
+        animation: glowGreen 2.5s infinite alternate;
+    }
+
+    /* Animații discrete de pulsație luminoasă */
+    @keyframes glowCyan {
+        0% { text-shadow: 0 0 5px #00FFFF, 0 0 12px rgba(0, 255, 255, 0.6); }
+        100% { text-shadow: 0 0 10px #00FFFF, 0 0 25px #00FFFF, 0 0 45px rgba(0, 255, 255, 0.9); }
+    }
+    @keyframes glowGreen {
+        0% { text-shadow: 0 0 5px #50C878, 0 0 12px rgba(80, 200, 120, 0.6); }
+        100% { text-shadow: 0 0 10px #50C878, 0 0 25px #50C878, 0 0 45px rgba(80, 200, 120, 0.9); }
+    }
+
     /* Status Badge Pulsant */
     .status-badge {
         display: inline-flex;
@@ -175,14 +216,14 @@ def citeste_istoric():
 
 init_db()
 
-# --- SIDEBAR BRANDING & CONTROLS ---
+# --- SIDEBAR BRANDING LUMINOUS LOGO & CONTROLS ---
 st.sidebar.markdown(
-    "<link href='https://fonts.googleapis.com/css2?family=Orbitron:wght@600&display=swap' rel='stylesheet'>"
-    "<div style='text-align: center; padding: 20px 0 10px 0; user-select: none;'>"
-    "<span style='font-family: \"Orbitron\", sans-serif; font-size: 26px; font-weight: 600; color: #00FFFF; text-shadow: 0 0 10px rgba(0,255,255,0.4);'>Shazam</span>"
-    "<span style='font-family: \"Orbitron\", sans-serif; font-size: 26px; font-weight: 600; color: #50C878;'>-BIM</span>"
-    "<p style='font-size: 10px; color: #6C7A9C; letter-spacing: 2px; margin-top: 4px; font-weight: 600;'>AI CLOUD ENGINE v2.4</p>"
-    "</div>",
+    """
+    <div class='logo-container'>
+        <span class='logo-shazam'>Shazam</span><span class='logo-bim'>-BIM</span>
+        <p style='font-size: 10px; color: #6C7A9C; letter-spacing: 2px; margin-top: 6px; font-weight: 600;'>AI CLOUD ENGINE v2.4</p>
+    </div>
+""",
     unsafe_allow_html=True,
 )
 
@@ -207,7 +248,6 @@ with st.sidebar.expander("⚙️ Parametri Ajustare Algoritm", expanded=False):
 
 st.sidebar.markdown("---")
 
-# STATUS CONT - REZOLVAT (Fără inline expression)
 utilizari_efectuate = numara_utilizari()
 if utilizari_efectuate == 0:
     st.sidebar.info("🎁 **Plan Activ:** TRIAL GRATUIT (1 scanare rămasă)")
@@ -282,7 +322,6 @@ st.write("<br>", unsafe_allow_html=True)
 if st.sidebar.button(
     "🚀 Lansează Procesarea Cloud", use_container_width=True
 ):
-    # Verificare limită doar pentru Fișiere Reale
     if (
         utilizari_efectuate >= 1
         and sursa == "Fișier Proiect (.ply, .las)"
@@ -336,7 +375,6 @@ if st.sidebar.button(
 
         st.success("🎉 Segmentare AI & Extragere Geometrie finalizată cu succes!")
 
-        # Metrici afișate curat
         c1, c2, c3 = st.columns(3)
         c1.metric("Țevi MEP (Lungime)", f"{l_t:.2f} m")
         c1.metric("Lungime Perete", f"{l_w:.2f} m")
@@ -347,7 +385,6 @@ if st.sidebar.button(
 
         st.write("<br>", unsafe_allow_html=True)
 
-        # --- CAMERĂ COMPLETĂ 3D (4 PEREȚI, TAVAN, PODEA, ȚEAVĂ CILINDRICĂ) ---
         st.subheader("👁️ Previzualizare Model 3D Extras (Vizualizator Interactiv)")
 
         np.random.seed(42)
@@ -470,7 +507,6 @@ if st.sidebar.button(
 
         st.plotly_chart(fig, use_container_width=True)
 
-        # --- SECTIUNEA DESCARCARE ---
         st.subheader("💾 Descarcă Elemente BIM Extrase")
         col1, col2 = st.columns(2)
         col1.download_button(

@@ -118,7 +118,7 @@ with st.sidebar.form(key="form_c", clear_on_submit=True):
         salveaza_contact(em, tp, ms)
         st.sidebar.success("🎉 Trimis! Răspundem în max. 2 ore.")
 
-# --- INTERFAȚA VIZUALĂ PRINCIPALA ---
+# --- INTERFAȚA VIZUALĂ PRINCIPALĂ ---
 st.markdown(
     "<div style='background: linear-gradient(135deg, #1E1E2E 0%, #11111B 100%); padding: 35px; border-radius: 20px; border-left: 5px solid #00FFFF; margin-bottom: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);'><h1 style='color: #FFFFFF; font-family: \"Segoe UI\", sans-serif; font-weight: 700; margin-bottom: 5px;'>🤖 Shazam-BIM AI Engine</h1><p style='color: #00FF66; font-size: 16px; font-weight: 500; letter-spacing: 0.5px;'>PLATFORMĂ AUTOMATĂ CLOUD PENTRU RELEVEE STRUCTURALE ȘI INSTALAȚII MEP</p><p style='color: #A5A5B5; font-size: 14px; max-width: 850px; margin-top: 10px;'>Transformați norii de puncte bruți 3D direct în modele geometrice solide CAD/BIM gata de importat în Revit sau AutoCAD. Economisiți până la 85% din timpul de desenare manuală.</p></div>",
     unsafe_allow_html=True,
@@ -207,57 +207,100 @@ if st.sidebar.button("🚀 Lansează Procesarea Cloud"):
 
         st.write("<br>", unsafe_allow_html=True)
 
-        # --- NOU: FEREASTRA 3D INTERACTIVĂ DE PREVIZUALIZARE ---
+        # --- GENERARE STRUCTURĂ EXACTĂ (PERETE, PODEA, TAVAN, ȚEAVĂ) ---
         st.subheader("👁️ Previzualizare Model 3D Extras (Vizualizator Interactiv)")
 
         np.random.seed(42)
-        # Puncte perete (Puncte albastre)
-        wall_x = np.random.uniform(0, 5.04, 1000)
-        wall_y = np.random.uniform(0, 0.20, 1000)
-        wall_z = np.random.uniform(0, 3.03, 1000)
 
-        # Puncte țeavă MEP (Puncte verzi)
-        pipe_x = np.random.uniform(0, 5.00, 500)
-        pipe_y = np.random.uniform(0.25, 0.35, 500)
-        pipe_z = np.random.uniform(2.35, 2.65, 500)
+        # 1. PODEA (Puncte Verzi)
+        floor_x = np.random.uniform(0, 5.0, 1500)
+        floor_y = np.random.uniform(0, 3.0, 1500)
+        floor_z = np.zeros(1500) + np.random.normal(0, 0.01, 1500)
+
+        # 2. PERETE CU GOL DE UȘĂ (Puncte Roșii)
+        wall_x_list, wall_z_list = [], []
+        for _ in range(3000):
+            x = np.random.uniform(0, 5.0)
+            z = np.random.uniform(0, 3.0)
+            if not (0.2 <= x <= 1.2 and z <= 2.1):
+                wall_x_list.append(x)
+                wall_z_list.append(z)
+
+        wall_x = np.array(wall_x_list)
+        wall_z = np.array(wall_z_list)
+        wall_y = np.zeros(len(wall_x)) + np.random.normal(0, 0.01, len(wall_x))
+
+        # 3. PLAFON (Puncte Albastre)
+        ceiling_x = np.random.uniform(0, 5.0, 800)
+        ceiling_y = np.random.uniform(0, 3.0, 800)
+        ceiling_z = np.full(800, 3.0) + np.random.normal(0, 0.01, 800)
+
+        # 4. ȚEAVĂ MEP (Puncte Portocalii)
+        pipe_x = np.random.uniform(0.5, 4.2, 800)
+        pipe_y = np.full(800, 0.15) + np.random.normal(0, 0.02, 800)
+        pipe_z = np.full(800, 2.10) + np.random.normal(0, 0.02, 800)
 
         fig = go.Figure()
 
-        # Adăugăm structura peretelui
+        # Adăugăm Podeaua
+        fig.add_trace(
+            go.Scatter3d(
+                x=floor_x,
+                y=floor_y,
+                z=floor_z,
+                mode="markers",
+                marker=dict(size=2, color="#00FF66", opacity=0.8),
+                name="Podea / Sol",
+            )
+        )
+
+        # Adăugăm Peretele
         fig.add_trace(
             go.Scatter3d(
                 x=wall_x,
                 y=wall_y,
                 z=wall_z,
                 mode="markers",
-                marker=dict(size=2, color="#00FFFF", opacity=0.7),
+                marker=dict(size=2, color="#FF3131", opacity=0.8),
                 name="Perete Structură",
             )
         )
 
-        # Adăugăm traseul MEP (Țeavă)
+        # Adăugăm Plafonul
+        fig.add_trace(
+            go.Scatter3d(
+                x=ceiling_x,
+                y=ceiling_y,
+                z=ceiling_z,
+                mode="markers",
+                marker=dict(size=2, color="#0088FF", opacity=0.8),
+                name="Plafon",
+            )
+        )
+
+        # Adăugăm Instalația MEP
         fig.add_trace(
             go.Scatter3d(
                 x=pipe_x,
                 y=pipe_y,
                 z=pipe_z,
                 mode="markers",
-                marker=dict(size=3, color="#50C878", opacity=0.9),
-                name="Instalație MEP",
+                marker=dict(size=3, color="#FF9900", opacity=0.9),
+                name="Țeavă MEP",
             )
         )
 
         fig.update_layout(
             scene=dict(
-                xaxis_title="Lungime (m)",
-                yaxis_title="Grosime (m)",
-                zaxis_title="Înălțime (m)",
+                xaxis_title="X (m)",
+                yaxis_title="Y (m)",
+                zaxis_title="Z (m)",
                 bgcolor="#11111B",
             ),
             paper_bgcolor="#1E1E2E",
             font=dict(color="#FFFFFF"),
             margin=dict(l=0, r=0, b=0, t=30),
-            height=500,
+            height=550,
         )
 
         st.plotly_chart(fig, use_container_width=True)

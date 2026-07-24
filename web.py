@@ -71,7 +71,7 @@ if "otp_reset" not in st.session_state:
 if "email_reset_target" not in st.session_state:
     st.session_state.email_reset_target = None
 
-# 2. Injectare CSS Custom - DEEP EMERALD & OCEAN BLUE THEME
+# 2. Injectare CSS Custom - DEEP EMERALD & OCEAN BLUE THEME (PROFESSIONAL UI)
 st.markdown(
     """
     <style>
@@ -792,7 +792,7 @@ with tab_main:
         with st.spinner(
             "⚡ Se rulează motorul AI Cloud (Voxelization & Parametric Fitting)..."
         ):
-            time.sleep(1.8)  # Spinner profesional de încărcare
+            time.sleep(1.8)
         if sursa != "Demo Interactiv (Camera Model)":
             salveaza_scanare(
                 st.session_state.user_conectat,
@@ -976,58 +976,80 @@ with tab_main:
     st.plotly_chart(fig, use_container_width=True)
 
     st.subheader("💾 Export Formate Profesionale CAD & BIM")
-    e1, e2, e3, e4, e5 = st.columns(5)
 
-    e1.download_button(
-        "📥 .OBJ",
+    # Layout diferențiat: 4 butoane CAD pe rând, iar Raportul Tehnic distinct jos
+    col_d1, col_d2, col_d3, col_d4 = st.columns(4)
+    col_d1.download_button(
+        "📥 Format .OBJ",
         data=mep_data,
         file_name=f"MEP_{nume_proiect}.obj",
         mime="model/obj",
         use_container_width=True,
     )
-    e2.download_button(
-        "📥 .DXF",
+    col_d2.download_button(
+        "📥 Format .DXF",
         data=dxf_data,
         file_name=f"CAD_{nume_proiect}.dxf",
         mime="application/dxf",
         use_container_width=True,
     )
-    e3.download_button(
-        "📥 .IFC",
+    col_d3.download_button(
+        "📥 Format .IFC",
         data=ifc_data,
         file_name=f"BIM_{nume_proiect}.ifc",
         mime="application/octet-stream",
         use_container_width=True,
     )
-    e4.download_button(
-        "📥 .CSV",
+    col_d4.download_button(
+        "📥 Format .CSV",
         data=csv_data,
         file_name=f"Points_{nume_proiect}.csv",
         mime="text/csv",
         use_container_width=True,
     )
 
+    st.write("")
     raport_text = genereaza_raport_tehnic(
         nume_proiect, l_t, l_w, h_w, l_gol, h_gol
     )
-    e5.download_button(
-        "📄 Raport",
+    st.download_button(
+        "📄 Descarcă Fișa Tehnică de Releveu (Raport Complet)",
         data=raport_text,
         file_name=f"RAPORT_TEHNIC_{nume_proiect}.txt",
         mime="text/plain",
         use_container_width=True,
     )
 
-# JURNAL SCANĂRI & DASHBOARD CONT
+# JURNAL SCANĂRI & DASHBOARD CONT (AICI SUNT SETĂRILE DE CONT ȘI PAROLĂ)
 with tab_history:
-    st.subheader(f"⚙️ Panou de Gestionare Cont: {st.session_state.user_conectat}")
+    st.subheader("⚙️ Panou de Gestionare Cont & Setări Securitate")
 
     # Dashboard Metrici Cont
     d_col1, d_col2, d_col3 = st.columns(3)
     scanari_facute = numara_utilizari(st.session_state.user_conectat)
-    d_col1.metric("Scanări Efectuate", f"{scanari_facute} / 1 (Trial)")
-    d_col2.metric("Status Abonament", "Trial Gratuit")
-    d_col3.metric("Conexiune Cloud", "Securizată (SSL)")
+    d_col1.metric("Utilizator Conectat", st.session_state.user_conectat)
+    d_col2.metric("Scanări Efectuate", f"{scanari_facute} / 1 (Trial)")
+    d_col3.metric("Status Abonament", "Trial Gratuit")
+
+    st.write("---")
+    st.markdown("### 🔒 Setări Parolă & Autentificare")
+    with st.container(border=True):
+        col_p1, col_p2 = st.columns(2)
+        with col_p1:
+            p_noua = st.text_input(
+                "Introduceți Noua Parolă:", type="password", key="input_new_pass"
+            )
+        with col_p2:
+            st.write("")
+            st.write("")
+            if st.button(
+                "🔑 Salvează Noua Parolă", use_container_width=True
+            ):
+                if p_noua:
+                    schimba_parola(st.session_state.user_conectat, p_noua)
+                    st.success("✅ Parola a fost actualizată cu succes!")
+                else:
+                    st.warning("Completați noua parolă mai întâi.")
 
     st.write("---")
     st.subheader("📋 Jurnal Privat Scanări Anterioare")
@@ -1050,17 +1072,6 @@ with tab_history:
         st.info(
             "Jurnalul dumneavoastră este gol. Rulați o procesare în tab-ul principal pentru a salva primul proiect!"
         )
-
-    st.write("---")
-    with st.expander("🔐 Securitate Cont & Schimbare Parolă"):
-        p_veche = st.text_input("Parolă Curentă:", type="password")
-        p_noua = st.text_input("Parolă Nouă:", type="password")
-        if st.button("Actualizează Parola Contului"):
-            if p_noua:
-                schimba_parola(st.session_state.user_conectat, p_noua)
-                st.success("✅ Parola a fost actualizată cu succes!")
-            else:
-                st.warning("Introduceți noua parolă.")
 
 # TAB PLANURI & LICENȚIERE
 with tab_pricing:
@@ -1130,7 +1141,7 @@ with tab_pricing:
             use_container_width=True,
         )
 
-# TAB TERMENI & GDPR
+# TAB TERMENI & GDPR (CURĂȚAT DE TAG-URI HTML BRUTE)
 with tab_legal:
     st.subheader("⚖️ Termeni și Condiții & Politică de Confidențialitate (GDPR)")
     st.markdown(

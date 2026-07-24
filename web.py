@@ -56,10 +56,10 @@ st.sidebar.markdown(
     "font-size: 28px; font-weight: 500; font-style: italic; color: #00FFFF; "
     "text-shadow: 0 0 5px #00FFFF, 0 0 15px rgba(0,255,255,0.6); letter-spacing: 1px;'>"
     "Shazam</span>"
-    # Linia - in Rosu Laser, Stralucitoare si ITALIC
+    # Linia - in Verde Smarald (Aceeasi nuanta ca BIM) si ITALIC
     "<span style='font-family: \"Orbitron\", sans-serif; "
-    "font-size: 28px; font-weight: 500; font-style: italic; color: #FF3131; margin: 0 4px; "
-    "text-shadow: 0 0 5px #FF3131;'>"
+    "font-size: 28px; font-weight: 500; font-style: italic; color: #50C878; margin: 0 4px; "
+    "text-shadow: 0 0 5px #50C878;'>"
     "-</span>"
     # BIM in Verde Smarald Vibrant, Geometric, Stralucitor si ITALIC
     "<span style='font-family: \"Orbitron\", sans-serif; "

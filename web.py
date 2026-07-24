@@ -633,7 +633,7 @@ st.markdown(
             🤖 Shazam-BIM AI Processing Engine
         </h2>
         <p style='color: #94A3B8; font-size: 12px; margin: 0; line-height: 1.5;'>
-            Transformați norii de puncte brute 3D (.E57, .XYZ, .PTS, .PLY, .LAS, .LAZ) în modele geometrice solide CAD/BIM gata de importat direct în Revit sau AutoCAD.
+            Transformați norii de puncte brute 3D (.E57, .XYZ, .PTS, .PLY, .LAS, .LAZ, .BIN) în modele geometrice solide CAD/BIM gata de importat direct în Revit sau AutoCAD.
         </p>
     </div>
 """,
@@ -687,7 +687,7 @@ with st.container(border=True):
         if sursa != "Demo Interactiv (Camera Model)":
             up = st.file_uploader(
                 "Încărcați fișierul 3D:",
-                type=["las", "laz", "ply", "e57", "xyz", "txt", "pts"],
+                type=["las", "laz", "ply", "e57", "xyz", "txt", "pts", "bin"],
             )
             st.markdown(
                 """
@@ -697,6 +697,7 @@ with st.container(border=True):
                     <span class='format-badge'>.PTS</span>
                     <span class='format-badge'>.PLY</span>
                     <span class='format-badge'>.LAS</span>
+                    <span class='format-badge'>.BIN</span>
                 </div>
             """,
                 unsafe_allow_html=True,
@@ -1137,7 +1138,7 @@ with tab_pricing:
             use_container_width=True,
         )
 
-# TAB TERMENI & GDPR (CURĂȚAT COMPLET - FOLOSEȘTE MARKDOWN PUR)
+# TAB TERMENI & GDPR
 with tab_legal:
     st.subheader("⚖️ Termeni și Condiții & Politică de Confidențialitate (GDPR)")
     st.write("")
@@ -1148,9 +1149,9 @@ with tab_legal:
     st.markdown(
         "Platforma **Shazam-BIM** respectă Regulamentul General privind"
         " Protecția Datelor (GDPR). Toate fișierele cu nori de puncte"
-        " încărcate (format .LAS, .E57, etc.) sunt procesate strict în memorie"
-        " volatilă securizată și sunt **șterse automat de pe servere** imediat"
-        " după generarea modelului 3D și livrarea exportului către"
+        " încărcate (format .LAS, .E57, .BIN, etc.) sunt procesate strict în"
+        " memorie volatilă securizată și sunt **șterse automat de pe servere**"
+        " imediat după generarea modelului 3D și livrarea exportului către"
         " utilizator."
     )
 

@@ -627,7 +627,7 @@ st.write("<br>", unsafe_allow_html=True)
 # 3. BANNER DE BINE-AI VENIT & STATUS AI ENGINE
 st.markdown(
     """
-    <div style='background: linear-gradient(135deg, #0F2229 0%, #0B1924 100%); padding: 20px 24px; border-radius: 14px; border: 1px solid rgba(80, 200, 120, 0.2); margin-bottom: 20px;'>
+    <div style='background: linear-gradient(135deg, #0F2229 0%, #0B1924 100%); padding: 20px 24px; border-radius: 14px; border: 1px solid rgba(80, 200, 120, 0.2); margin-bottom: 15px;'>
         <div style='display: flex; align-items: center;'>
             <div class='status-badge'><div class='pulse-dot'></div> UNIVERSAL CLOUD ENGINE ONLINE</div>
             <span style='background: rgba(0,255,255,0.08); border: 1px solid rgba(0,255,255,0.2); padding: 3px 10px; border-radius: 16px; font-size: 10px; color: #00FFFF; margin-left: 8px; font-weight: 600;'>⚡ GPU ACCELERATED</span>
@@ -643,7 +643,32 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-# 4. PANOU CONTROL MODUL DE LUCRU & ÎNCĂRCARE DATE
+# 4. CARDURILE KPI (MUTATE SUS, DIRECT SUB DESCRIEREA APLICAȚIEI)
+k1, k2, k3, k4 = st.columns(4)
+with k1:
+    st.markdown(
+        "<div class='kpi-card'><div class='kpi-label'>Acuratețe Digitală</div><div class='kpi-value'>&lt; 5 mm</div></div>",
+        unsafe_allow_html=True,
+    )
+with k2:
+    st.markdown(
+        "<div class='kpi-card'><div class='kpi-label'>Timp Procesare</div><div class='kpi-value' style='color:#50C878;'>~3 Secunde</div></div>",
+        unsafe_allow_html=True,
+    )
+with k3:
+    st.markdown(
+        "<div class='kpi-card'><div class='kpi-label'>Format Export</div><div class='kpi-value' style='color:#FF3131;'>Solid .OBJ</div></div>",
+        unsafe_allow_html=True,
+    )
+with k4:
+    st.markdown(
+        "<div class='kpi-card'><div class='kpi-label'>Compatibilitate</div><div class='kpi-value' style='color:#00FFFF;'>Revit / CAD</div></div>",
+        unsafe_allow_html=True,
+    )
+
+st.write("<br>", unsafe_allow_html=True)
+
+# 5. PANOU CONTROL MODUL DE LUCRU & ÎNCĂRCARE DATE (ACUM MAI APROAPE DE MODELUL 3D)
 st.markdown(
     "<h4 style='color: #00FFFF; font-family: Orbitron, sans-serif; margin-bottom: 8px;'>📂 Sursă Date & Încărcare Nor de Puncte</h4>",
     unsafe_allow_html=True,
@@ -685,7 +710,6 @@ with col_input2:
     vox = st.slider("Filtru Densitate Voxel (m)", 0.01, 0.10, 0.04, 0.01)
     r_c = st.slider("Rază estimată țeavă MEP (m)", 0.05, 0.50, 0.15, 0.01)
 
-    # CHECKBOX SI COORDONATE INTERACTIVE PENTRU GHIDAJ MANUAL
     op = st.checkbox("🎯 Ghidaj manual prin Coordonate Seed", value=False)
 
     seed_x, seed_y, seed_z = 2.5, 0.30, 2.20
@@ -709,32 +733,7 @@ with col_input2:
 
 st.markdown("</div>", unsafe_allow_html=True)
 
-# KPI METRICS COMPACTE
-k1, k2, k3, k4 = st.columns(4)
-with k1:
-    st.markdown(
-        "<div class='kpi-card'><div class='kpi-label'>Acuratețe Digitală</div><div class='kpi-value'>&lt; 5 mm</div></div>",
-        unsafe_allow_html=True,
-    )
-with k2:
-    st.markdown(
-        "<div class='kpi-card'><div class='kpi-label'>Timp Procesare</div><div class='kpi-value' style='color:#50C878;'>~3 Secunde</div></div>",
-        unsafe_allow_html=True,
-    )
-with k3:
-    st.markdown(
-        "<div class='kpi-card'><div class='kpi-label'>Format Export</div><div class='kpi-value' style='color:#FF3131;'>Solid .OBJ</div></div>",
-        unsafe_allow_html=True,
-    )
-with k4:
-    st.markdown(
-        "<div class='kpi-card'><div class='kpi-label'>Compatibilitate</div><div class='kpi-value' style='color:#00FFFF;'>Revit / CAD</div></div>",
-        unsafe_allow_html=True,
-    )
-
-st.write("<br>", unsafe_allow_html=True)
-
-# TAB-URI DE REZULTATE
+# 6. TAB-URI DE REZULTATE (DIRECT SUB CONTROL)
 tab_main, tab_history, tab_pricing = st.tabs(
     [
         "📊 Vizualizator & Elemente 3D",
@@ -810,7 +809,7 @@ with tab_main:
     st.subheader("👁️ Previzualizare Model 3D Extras")
 
     # -------------------------------------------------------------------------
-    # GENERARE DINAMICĂ BAZATĂ PE SLIDERE (DENSITATE VOXEL + RAZĂ ȚEAVĂ)
+    # GENERARE DINAMICĂ BAZATĂ PE SLIDERE
     # -------------------------------------------------------------------------
     np.random.seed(42)
 
@@ -907,7 +906,6 @@ with tab_main:
         )
     )
 
-    # AFISARE MARKER ROȘU INTERACTIV PENTRU GHIDAJ MANUAL SEED POINT
     if op:
         fig.add_trace(
             go.Scatter3d(
@@ -1045,7 +1043,7 @@ with tab_pricing:
         )
 
 # -----------------------------------------------------------------------------
-# 5. FOOTER IN JOSUL PAGINII
+# 7. FOOTER IN JOSUL PAGINII
 # -----------------------------------------------------------------------------
 st.write("<br><br>", unsafe_allow_html=True)
 st.markdown("---")

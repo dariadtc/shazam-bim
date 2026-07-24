@@ -47,9 +47,16 @@ def genereaza_cad_mesh_text(tip="perete"):
 # --- INTERFAȚA WEB ---
 st.title("🤖 Shazam-BIM AI Platform (Cloud Engine)")
 st.sidebar.markdown(
-    "<h1 style='text-align: center; color: #00FF66; font-family: sans-serif; "
-    "text-shadow: 0 0 10px #00FF66, 0 0 20px #00FF66; font-size: 28px; margin-bottom: 20px;'>"
-    "⚡ SHAZAM<span style='color: #00FFFF; text-shadow: 0 0 10px #00FFFF;'>-BIM</span></h1>", 
+    "<div style='text-align: center; margin-bottom: 25px; padding-top: 10px;'>"
+    "<span style='font-family: \"Courier New\", Courier, \"Segoe UI\", sans-serif; "
+    "font-size: 26px; font-weight: 200; font-style: italic; letter-spacing: 2px; "
+    "color: #00FF66; text-shadow: 0 0 4px rgba(0,255,102,0.4);'>"
+    "shazam</span>"
+    "<span style='font-family: \"Courier New\", Courier, \"Segoe UI\", sans-serif; "
+    "font-size: 26px; font-weight: 400; font-style: italic; letter-spacing: 2px; "
+    "color: #00FFFF; text-shadow: 0 0 4px rgba(0,255,255,0.4);'>"
+    ".bim</span>"
+    "</div>", 
     unsafe_allow_html=True
 )
 st.write("Convertiți norii de puncte bruți din scanere SLAM direct în modele solide CAD/BIM.")

@@ -642,7 +642,7 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-# 4. CARDURILE KPI (MUTATE SUS, DIRECT SUB DESCRIEREA APLICAȚIEI)
+# 4. CARDURILE KPI (DIRECT SUB DESCRIEREA APLICAȚIEI)
 k1, k2, k3, k4 = st.columns(4)
 with k1:
     st.markdown(
@@ -667,7 +667,7 @@ with k4:
 
 st.write("<br>", unsafe_allow_html=True)
 
-# 5. PANOU CONTROL MODUL DE LUCRU & ÎNCĂRCARE DATE (CONTAINER NATIV FĂRĂ DREPTUNGHIURI GOALE)
+# 5. PANOU CONTROL MODUL DE LUCRU & ÎNCĂRCARE DATE
 st.markdown(
     "<h4 style='color: #00FFFF; font-family: Orbitron, sans-serif; margin-bottom: 8px;'>📂 Sursă Date & Încărcare Nor de Puncte</h4>",
     unsafe_allow_html=True,
@@ -736,7 +736,7 @@ with st.container(border=True):
 
 st.write("<br>", unsafe_allow_html=True)
 
-# 6. TAB-URI DE REZULTATE (DIRECT SUB CONTROL)
+# 6. TAB-URI DE REZULTATE
 tab_main, tab_history, tab_pricing = st.tabs(
     [
         "📊 Vizualizator & Elemente 3D",
@@ -748,6 +748,39 @@ tab_main, tab_history, tab_pricing = st.tabs(
 utilizari_efectuate = numara_utilizari(st.session_state.user_conectat)
 
 with tab_main:
+    if lansa_btn and sursa != "Demo Interactiv (Camera Model)":
+        if utilizari_efectuate >= 1:
+            st.error("❌ Limita planului tău gratuit a fost atinsă!")
+            st.markdown(
+                f"""
+                <div style='background-color: #0D1E26; padding: 25px; border-radius: 14px; border: 1.5px solid #00FFFF; text-align: center; margin-top: 15px;'>
+                    <h3 style='color: #00FFFF; margin-bottom: 10px;'>🔒 Deblocați puterea maximă Shazam-BIM</h3>
+                    <p style='color: #E2E8F0; font-size: 13px;'>Alegeți planul potrivit pentru a procesa scanări nelimitate:</p>
+                    <hr style='border: 1px solid #162C38; margin: 15px 0;'>
+                    <div style='display: flex; justify-content: space-around; flex-wrap: wrap; gap: 15px;'>
+                        <div style='background-color: #061017; padding: 20px; border-radius: 10px; width: 45%; border: 1px solid #50C878;'>
+                            <h4 style='color: #50C878; margin-top:0;'>Plan Lunar PRO</h4>
+                            <h2 style='color:#FFF; margin: 5px 0;'>29.99 € <span style='font-size:12px; color:#AAA;'>/ lună</span></h2>
+                            <br>
+                            <a href='https://buy.stripe.com/aFaeVdgqJ03l6c4fJEbAs00' target='_blank'>
+                                <button style='background: linear-gradient(135deg, #00E5FF 0%, #10B981 100%); color:#061017; font-weight:bold; padding:10px 15px; border:none; border-radius:6px; cursor:pointer; width:100%;'>Abonează-te Lunar</button>
+                            </a>
+                        </div>
+                        <div style='background-color: #061017; padding: 20px; border-radius: 10px; width: 45%; border: 1px solid #00FFFF;'>
+                            <h4 style='color: #00FFFF; margin-top:0;'>Plan Anual BIZ</h4>
+                            <h2 style='color:#FFF; margin: 5px 0;'>249.99 € <span style='font-size:12px; color:#AAA;'>/ an</span></h2>
+                            <br>
+                            <a href='https://buy.stripe.com/8x23cvcat9DVgQIgNIbAs01' target='_blank'>
+                                <button style='background: linear-gradient(135deg, #00E5FF 0%, #10B981 100%); color:#061017; font-weight:bold; padding:10px 15px; border:none; border-radius:6px; cursor:pointer; width:100%;'>Abonează-te Anual</button>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                """,
+                unsafe_allow_html=True,
+            )
+            st.stop()
+
     nume_proiect = (
         "CAMERA_DEMO_COMPLETĂ"
         if sursa == "Demo Interactiv (Camera Model)"
@@ -757,9 +790,6 @@ with tab_main:
     l_t, l_w, h_w, l_gol, h_gol = 5.02, 5.04, 3.03, 1.00, 2.10
 
     if lansa_btn and sursa != "Demo Interactiv (Camera Model)":
-        if utilizari_efectuate >= 1:
-            st.error("❌ Limita planului tău gratuit a fost atinsă!")
-            st.stop()
         salveaza_scanare(
             st.session_state.user_conectat,
             nume_proiect,
@@ -1027,6 +1057,12 @@ with tab_pricing:
         """,
             unsafe_allow_html=True,
         )
+        st.write("")
+        st.link_button(
+            "💳 Abonează-te Lunar",
+            "https://buy.stripe.com/aFaeVdgqJ03l6c4fJEbAs00",
+            use_container_width=True,
+        )
 
     with p3:
         st.markdown(
@@ -1043,6 +1079,12 @@ with tab_pricing:
             </div>
         """,
             unsafe_allow_html=True,
+        )
+        st.write("")
+        st.link_button(
+            "💳 Abonează-te Anual",
+            "https://buy.stripe.com/8x23cvcat9DVgQIgNIbAs01",
+            use_container_width=True,
         )
 
 # -----------------------------------------------------------------------------

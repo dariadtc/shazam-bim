@@ -1,6 +1,7 @@
 import hashlib
 import io
 import os
+import random
 import smtplib
 import sqlite3
 from datetime import datetime
@@ -12,7 +13,7 @@ import requests
 import streamlit as st
 
 # -----------------------------------------------------------------------------
-# 0. CONFIGURARE TRAMITERE E-MAIL AUTOMAT CĂTRE UTILIZATORI (SMTP)
+# 0. CONFIGURARE TRAMITERE E-MAIL AUTOMAT CĂTRE UTILIZATORI (SMTP & OTP)
 # -----------------------------------------------------------------------------
 SMTP_SERVER = "smtp.gmail.com"
 SMTP_PORT = 587
@@ -21,30 +22,37 @@ PAROLA_EXPEDITOR = ""  # Parola de aplicație de 16 caractere
 FORMSPREE_ID = "xeeyrbyb"
 
 
-def trimite_email_resetare_client(email_destinatar, parola_noua):
-    """Trimite e-mail direct către utilizator cu noua parolă configurată."""
+def trimite_cod_resetare(email_destinatar, cod_otp):
+    """Trimite codul unic de verificare (OTP) pe e-mailul utilizatorului."""
+    # Trimitem și o notificare prin Formspree ca de rezervă
+    trimite_email_formspree(
+        email_destinatar,
+        "Cod Resetare Parolă",
+        f"Codul tău de verificare pentru resetarea parolei este: {cod_otp}",
+    )
+
     if not EMAIL_EXPEDITOR or not PAROLA_EXPEDITOR:
         return True
 
     try:
         msg = MIMEMultipart()
-        msg["From"] = f"Shazam-BIM Support <{EMAIL_EXPEDITOR}>"
+        msg["From"] = f"Shazam-BIM Security <{EMAIL_EXPEDITOR}>"
         msg["To"] = email_destinatar
-        msg["Subject"] = "🔐 Confirmare Resetare Parolă - Shazam-BIM Cloud"
+        msg["Subject"] = f"🔑 Codul tău de resetare parola: {cod_otp}"
 
-        coru_email = f"""
+        corp_email = f"""
         Salutare,
 
         A fost solicitată resetarea parolei pentru contul tău Shazam-BIM ({email_destinatar}).
 
-        Noua ta parolă este: {parola_noua}
+        Codul tău de verificare securizat este: {cod_otp}
 
-        Te rugăm să te conectezi în platformă folosind noua parolă.
-        Dacă nu ai solicitat tu această modificare, te rugăm să ne contactezi imediat.
+        Introdu acest cod în aplicație împreună cu noua ta parolă.
+        Dacă nu tu ai solicitat această resetare, poți ignora acest e-mail.
 
         Echipa Shazam-BIM AI Cloud
         """
-        msg.attach(MIMEText(coru_email, "plain"))
+        msg.attach(MIMEText(corp_email, "plain"))
 
         server = smtplib.SMTP(SMTP_SERVER, SMTP_PORT)
         server.starttls()
@@ -53,7 +61,7 @@ def trimite_email_resetare_client(email_destinatar, parola_noua):
         server.quit()
         return True
     except Exception as e:
-        print(f"Eroare la trimitere e-mail resetare: {e}")
+        print(f"Eroare la trimitere e-mail OTP: {e}")
         return False
 
 
@@ -66,7 +74,7 @@ def trimite_email_formspree(email, tip, mesaj):
         "email": email,
         "subiect": tip,
         "mesaj": mesaj,
-        "_subject": f"📬 Shazam-BIM Alert: {tip}",
+        "_subject": f"📬 Shazam-BIM Security: {tip}",
     }
     try:
         response = requests.post(url, data=data)
@@ -88,6 +96,11 @@ st.set_page_config(
 if "user_conectat" not in st.session_state:
     st.session_state.user_conectat = None
 
+if "otp_reset" not in st.session_state:
+    st.session_state.otp_reset = None
+if "email_reset_target" not in st.session_state:
+    st.session_state.email_reset_target = None
+
 # CSS dinamic în funcție de stare
 css_hide_sidebar = ""
 if st.session_state.user_conectat is None:
@@ -97,7 +110,7 @@ if st.session_state.user_conectat is None:
         }
     """
 
-# 2. Injectare CSS Custom pentru Design SaaS Premium & Clean Auth Gate
+# 2. Injectare CSS Custom
 st.markdown(
     f"""
     <style>
@@ -294,7 +307,7 @@ st.markdown(
 )
 
 # -----------------------------------------------------------------------------
-# 3. BAZĂ DE DATE (UTILIZATORI, PAROLE HASH, SCANĂRI PRIVATED)
+# 3. BAZĂ DE DATE
 # -----------------------------------------------------------------------------
 
 
@@ -316,6 +329,17 @@ def init_db():
     )
     conn.commit()
     conn.close()
+
+
+def exista_email(email):
+    conn = sqlite3.connect("proiecte_bim.db")
+    c = conn.cursor()
+    c.execute(
+        "SELECT * FROM utilizatori WHERE email = ?", (str(email).lower().strip(),)
+    )
+    user = c.fetchone()
+    conn.close()
+    return user is not None
 
 
 def creeaza_utilizator(email, parola):
@@ -418,7 +442,7 @@ def citeste_istoric_privat(email):
     return date
 
 
-def genereaza_raport_tehnic(nume, l_t, l_w, h_w, l_g, h_g):
+def genereaza_raport_tehnic(nume, l_t, l_w, h_w, l_gol, h_gol):
     dt = datetime.now().strftime("%d.%m.%Y %H:%M")
     suprafata_perete = l_w * h_w
     volum_camera = l_w * 3.0 * h_w
@@ -441,9 +465,9 @@ Engine Versiune: v2.4 Cloud AI
 
 2. ELEMENTE TÂMPLĂRIE / GOLURI DETECTATE
 --------------------------------------------------------------------------------
-- Lățime Gol Ușă                  : {l_g:.2f} m
-- Înălțime Gol Ușă                : {h_g:.2f} m
-- Suprafață Decupaj Gol           : {l_g * h_g:.2f} mp
+- Lățime Gol Ușă                  : {l_gol:.2f} m
+- Înălțime Gol Ușă                : {h_gol:.2f} m
+- Suprafață Decupaj Gol           : {l_gol * h_gol:.2f} mp
 
 3. INSTALAȚII MEP (MECHANICAL, ELECTRICAL, PLUMBING)
 --------------------------------------------------------------------------------
@@ -507,26 +531,66 @@ if st.session_state.user_conectat is None:
                 else:
                     st.error("❌ Adresă de e-mail sau parolă incorectă!")
 
-            # ❓ OPTIUNEA „AI UITAT PAROLA?” AMELASATĂ SUB BUTON
+            # 🔐 FLUX SECURIZAT IN 2 PAȘI PENTRU RESETAREA PAROLEI (VERIFICARE OTP PE E-MAIL)
             st.write("<br>", unsafe_allow_html=True)
             with st.expander("❓ Ai uitat parola?", expanded=False):
-                reset_email = st.text_input(
-                    "E-mailul contului tău:", placeholder="nume@companie.ro", key="sub_rst_email"
+                st.markdown(
+                    "<p style='font-size: 12px; color: #8A94A6;'>Introduceți e-mailul pentru a primi un <b>cod unic de verificare (OTP)</b> pe e-mail.</p>",
+                    unsafe_allow_html=True,
                 )
-                noua_parola = st.text_input(
-                    "Parolă nouă dorită:", type="password", key="sub_rst_pass"
+
+                rst_email_input = st.text_input(
+                    "E-mailul contului tău:",
+                    placeholder="nume@companie.ro",
+                    key="secur_rst_email",
                 )
-                if st.button("📧 Resetează Parola & Trimite Confirmare", use_container_width=True):
-                    if reset_email and noua_parola:
-                        if schimba_parola(reset_email, noua_parola):
-                            trimite_email_resetare_client(reset_email, noua_parola)
-                            st.success(
-                                f"✅ Parola pentru contul {reset_email} a fost resetată! Un e-mail de confirmare a fost expediat."
+
+                if st.button("📩 Trimite Cod de Verificare pe Mail", use_container_width=True):
+                    if rst_email_input:
+                        if exista_email(rst_email_input):
+                            # Generează cod aleatoriu din 6 cifre
+                            cod_generat = str(random.randint(100000, 999999))
+                            st.session_state.otp_reset = cod_generat
+                            st.session_state.email_reset_target = (
+                                rst_email_input.lower().strip()
+                            )
+
+                            trimite_cod_resetare(
+                                rst_email_input.lower().strip(), cod_generat
+                            )
+                            st.info(
+                                f"📩 Am trimis un cod de verificare de 6 cifre pe e-mailul: **{rst_email_input}**!"
                             )
                         else:
-                            st.error("❌ Nu am găsit niciun cont înregistrat cu acest e-mail!")
+                            st.error("❌ Nu există niciun cont înregistrat cu acest e-mail!")
                     else:
-                        st.warning("Completați e-mailul și noua parolă!")
+                        st.warning("Introduceți e-mailul mai întâi!")
+
+                # Dacă s-a generat deja un cod, afișăm câmpurile de verificare
+                if st.session_state.otp_reset is not None:
+                    st.write("---")
+                    st.markdown("<b>🔒 Introduceți codul primit și noua parolă:</b>", unsafe_allow_html=True)
+                    user_otp = st.text_input("Cod Verificare (6 cifre):", key="in_user_otp")
+                    new_password_input = st.text_input(
+                        "Noua Parolă Dorită:", type="password", key="in_new_pass"
+                    )
+
+                    if st.button("🔐 Confirmă & Schimbă Parola", use_container_width=True):
+                        if user_otp.strip() == st.session_state.otp_reset:
+                            if new_password_input:
+                                schimba_parola(
+                                    st.session_state.email_reset_target,
+                                    new_password_input,
+                                )
+                                st.session_state.otp_reset = None
+                                st.session_state.email_reset_target = None
+                                st.success(
+                                    "🎉 Parola a fost schimbată cu succes! Vă puteți conecta acum folosind noua parolă."
+                                )
+                            else:
+                                st.warning("Completați noua parolă!")
+                        else:
+                            st.error("❌ Codul de verificare introdus este incorect!")
 
         with tab_register:
             st.write("<br>", unsafe_allow_html=True)
@@ -553,7 +617,6 @@ if st.session_state.user_conectat is None:
 # SCENARIUL B: UTILIZATORUL ESTE AUTENTIFICAT (DASHBOARD)
 # -----------------------------------------------------------------------------
 
-# Informații Cont în Sidebar
 st.sidebar.markdown(
     f"""
     <div style='background: rgba(0, 255, 255, 0.08); padding: 10px; border-radius: 8px; border: 1px solid #00FFFF; text-align: center; margin-bottom: 10px;'>

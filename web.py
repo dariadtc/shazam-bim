@@ -217,7 +217,7 @@ st.markdown(
 
     /* TAB-URI */
     .stTabs [data-baseweb="tab-list"] {
-        gap: 8px;
+        gap: 6px;
         background-color: #0A1721;
         padding: 6px;
         border-radius: 10px;
@@ -228,7 +228,7 @@ st.markdown(
         border-radius: 6px;
         color: #94A3B8;
         font-weight: 600;
-        font-size: 13px;
+        font-size: 12px;
     }
     .stTabs [aria-selected="true"] {
         background-color: #0F2830 !important;
@@ -599,15 +599,15 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-# 2. BARĂ DE NAVIGARE (UTILIZATOR + DELOGARE) ALINIATĂ LA DREAPTA
+# 2. BARĂ DE NAVIGARE SUS (E-MAILUL CA BUTON / BADGE CURAT + DELOGARE)
 col_u1, col_u2 = st.columns([5, 1])
 
 with col_u1:
     st.markdown(
         f"""
         <div style='display: flex; justify-content: flex-end; align-items: center; height: 44px;'>
-            <div style='background-color: #0D1E26; border: 1px solid rgba(80, 200, 120, 0.25); border-radius: 8px; height: 44px; display: inline-flex; align-items: center; padding: 0 20px; color: #94A3B8; font-size: 13px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); width: fit-content; white-space: nowrap;'>
-                👤 Autentificat ca:&nbsp; <span style='color: #00FFFF; font-weight: 600; font-size: 14px;'>{st.session_state.user_conectat}</span>
+            <div style='background-color: #0D1E26; border: 1px solid rgba(0, 255, 255, 0.4); border-radius: 8px; height: 44px; display: inline-flex; align-items: center; padding: 0 16px; color: #E2E8F0; font-size: 13px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); width: fit-content; white-space: nowrap;'>
+                👤 <span style='color: #00FFFF; font-weight: 600; margin-left: 6px;'>{st.session_state.user_conectat}</span>
             </div>
         </div>
         """,
@@ -734,12 +734,13 @@ with st.container(border=True):
 
 st.write("<br>", unsafe_allow_html=True)
 
-# 6. TAB-URI DE REZULTATE, CONT ȘI LEGAL
-tab_main, tab_history, tab_pricing, tab_legal = st.tabs(
+# 6. TAB-URI DE REZULTATE, SETĂRI CONT, PLANURI ȘI LEGAL
+tab_main, tab_history, tab_settings, tab_pricing, tab_legal = st.tabs(
     [
-        "📊 Vizualizator & Elemente 3D",
-        "📂 Jurnal Scanări & Dashboard Cont",
-        "💳 Planuri & Licențiere",
+        "📊 Vizualizator 3D",
+        "📂 Jurnal Scanări",
+        "⚙️ Setări Cont",
+        "💳 Planuri & Licențe",
         "⚖️ Termeni & GDPR",
     ]
 )
@@ -977,7 +978,6 @@ with tab_main:
 
     st.subheader("💾 Export Formate Profesionale CAD & BIM")
 
-    # Layout diferențiat: 4 butoane CAD pe rând, iar Raportul Tehnic distinct jos
     col_d1, col_d2, col_d3, col_d4 = st.columns(4)
     col_d1.download_button(
         "📥 Format .OBJ",
@@ -1020,38 +1020,8 @@ with tab_main:
         use_container_width=True,
     )
 
-# JURNAL SCANĂRI & DASHBOARD CONT (AICI SUNT SETĂRILE DE CONT ȘI PAROLĂ)
+# JURNAL SCANĂRI
 with tab_history:
-    st.subheader("⚙️ Panou de Gestionare Cont & Setări Securitate")
-
-    # Dashboard Metrici Cont
-    d_col1, d_col2, d_col3 = st.columns(3)
-    scanari_facute = numara_utilizari(st.session_state.user_conectat)
-    d_col1.metric("Utilizator Conectat", st.session_state.user_conectat)
-    d_col2.metric("Scanări Efectuate", f"{scanari_facute} / 1 (Trial)")
-    d_col3.metric("Status Abonament", "Trial Gratuit")
-
-    st.write("---")
-    st.markdown("### 🔒 Setări Parolă & Autentificare")
-    with st.container(border=True):
-        col_p1, col_p2 = st.columns(2)
-        with col_p1:
-            p_noua = st.text_input(
-                "Introduceți Noua Parolă:", type="password", key="input_new_pass"
-            )
-        with col_p2:
-            st.write("")
-            st.write("")
-            if st.button(
-                "🔑 Salvează Noua Parolă", use_container_width=True
-            ):
-                if p_noua:
-                    schimba_parola(st.session_state.user_conectat, p_noua)
-                    st.success("✅ Parola a fost actualizată cu succes!")
-                else:
-                    st.warning("Completați noua parolă mai întâi.")
-
-    st.write("---")
     st.subheader("📋 Jurnal Privat Scanări Anterioare")
     istoric_privat = citeste_istoric_privat(st.session_state.user_conectat)
     if len(istoric_privat) > 0:
@@ -1072,6 +1042,32 @@ with tab_history:
         st.info(
             "Jurnalul dumneavoastră este gol. Rulați o procesare în tab-ul principal pentru a salva primul proiect!"
         )
+
+# SETĂRI CONT (DEDICAT PENTRU PROFIL ȘI SCHIMBARE PAROLĂ)
+with tab_settings:
+    st.subheader("⚙️ Setări Cont & Securitate")
+    st.markdown(
+        f"""
+        <div style='background: #0D1E26; padding: 20px; border-radius: 12px; border: 1px solid rgba(0, 255, 255, 0.2); margin-bottom: 20px;'>
+            <p style='color: #94A3B8; font-size: 13px; margin: 0;'>Adresă E-mail Cont:</p>
+            <h3 style='color: #00FFFF; margin-top: 5px; margin-bottom: 0;'>{st.session_state.user_conectat}</h3>
+        </div>
+    """,
+        unsafe_allow_html=True,
+    )
+
+    st.markdown("### 🔒 Schimbare Parolă")
+    with st.container(border=True):
+        p_noua = st.text_input(
+            "Introduceți Noua Parolă:", type="password", key="input_new_pass"
+        )
+        st.write("")
+        if st.button("🔑 Salvează Noua Parolă", use_container_width=True):
+            if p_noua:
+                schimba_parola(st.session_state.user_conectat, p_noua)
+                st.success("✅ Parola a fost actualizată cu succes!")
+            else:
+                st.warning("Completați noua parolă mai întâi.")
 
 # TAB PLANURI & LICENȚIERE
 with tab_pricing:
@@ -1141,7 +1137,7 @@ with tab_pricing:
             use_container_width=True,
         )
 
-# TAB TERMENI & GDPR (CURĂȚAT DE TAG-URI HTML BRUTE)
+# TAB TERMENI & GDPR
 with tab_legal:
     st.subheader("⚖️ Termeni și Condiții & Politică de Confidențialitate (GDPR)")
     st.markdown(

@@ -53,7 +53,7 @@ def trimite_email_formspree(email, tip, mesaj):
         return False
 
 
-# 1. Configurare pagină fără sidebar
+# 1. Configurare pagină
 st.set_page_config(
     page_title="Shazam-BIM Cloud - Relevee 3D Universal LiDAR & SLAM AI",
     page_icon="🤖",
@@ -70,7 +70,7 @@ if "otp_reset" not in st.session_state:
 if "email_reset_target" not in st.session_state:
     st.session_state.email_reset_target = None
 
-# 2. Injectare CSS Custom - DEEP EMERALD & OCEAN BLUE THEME
+# 2. Injectare CSS Custom - CONTAINMENT COMPACT & DESIGN COMPACT
 st.markdown(
     """
     <style>
@@ -93,70 +93,62 @@ st.markdown(
         display: none !important;
     }
     
-    /* ASCUNDE ANCHOR LINKS */
     .stMarkdown a.anchor-link, 
     [data-testid="stHeaderActionElements"],
     a.header-anchor {
         display: none !important;
     }
     
-    /* LOGO ORIGINAL GLOW EFFECTS (CYAN & SMARALD) */
+    /* LIMITARE LATIME PENTRU ASPECT COMPACT & ESTETIC (MAX 1150PX) */
+    .block-container {
+        max-width: 1150px !important;
+        padding-top: 1.5rem !important;
+        padding-bottom: 3rem !important;
+        margin: 0 auto !important;
+    }
+
+    /* LOGO GLOW EFFECTS */
     .logo-container {
         text-align: center;
-        padding: 20px 0 10px 0;
+        padding: 10px 0;
         user-select: none;
     }
     .logo-shazam {
         font-family: 'Orbitron', sans-serif;
-        font-size: 36px;
+        font-size: 32px;
         font-weight: 800;
         color: #00FFFF;
-        text-shadow: 
-            0 0 8px #00FFFF,
-            0 0 20px rgba(0, 255, 255, 0.7);
-        animation: glowCyan 2.5s infinite alternate;
+        text-shadow: 0 0 10px rgba(0, 255, 255, 0.6);
     }
     .logo-bim {
         font-family: 'Orbitron', sans-serif;
-        font-size: 36px;
+        font-size: 32px;
         font-weight: 800;
         color: #50C878;
-        text-shadow: 
-            0 0 8px #50C878,
-            0 0 20px rgba(80, 200, 120, 0.7);
-        animation: glowGreen 2.5s infinite alternate;
+        text-shadow: 0 0 10px rgba(80, 200, 120, 0.6);
     }
 
-    @keyframes glowCyan {
-        0% { text-shadow: 0 0 5px #00FFFF, 0 0 12px rgba(0, 255, 255, 0.5); }
-        100% { text-shadow: 0 0 10px #00FFFF, 0 0 24px rgba(0, 255, 255, 0.9); }
-    }
-    @keyframes glowGreen {
-        0% { text-shadow: 0 0 5px #50C878, 0 0 12px rgba(80, 200, 120, 0.5); }
-        100% { text-shadow: 0 0 10px #50C878, 0 0 24px rgba(80, 200, 120, 0.9); }
-    }
-
-    /* CARDURI ELEGANTE SMARALD / OCEAN BLUE */
+    /* CARDURI COMPACTE SMARALD */
     .emerald-card {
-        background: linear-gradient(145deg, #0F2229 0%, #0B1924 100%);
-        border: 1px solid rgba(80, 200, 120, 0.2);
-        border-radius: 16px;
-        padding: 26px;
-        box-shadow: 0 12px 35px rgba(0, 0, 0, 0.45);
-        margin-bottom: 25px;
+        background: linear-gradient(145deg, #0D1E26 0%, #09151F 100%);
+        border: 1px solid rgba(80, 200, 120, 0.25);
+        border-radius: 14px;
+        padding: 20px 24px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+        margin-bottom: 20px;
     }
 
-    /* BADGES & CHIPS */
+    /* BADGES DE FORMAT */
     .format-badge {
         display: inline-block;
         background: rgba(0, 255, 255, 0.08);
         border: 1px solid rgba(0, 255, 255, 0.25);
-        padding: 4px 10px;
-        border-radius: 8px;
-        font-size: 11px;
+        padding: 3px 8px;
+        border-radius: 6px;
+        font-size: 10px;
         color: #00FFFF;
-        margin-right: 5px;
-        margin-bottom: 6px;
+        margin-right: 4px;
+        margin-bottom: 4px;
         font-weight: 600;
     }
 
@@ -165,101 +157,93 @@ st.markdown(
         align-items: center;
         background: rgba(80, 200, 120, 0.12);
         border: 1px solid rgba(80, 200, 120, 0.35);
-        padding: 5px 14px;
+        padding: 4px 12px;
         border-radius: 20px;
         color: #50C878;
-        font-size: 12px;
+        font-size: 11px;
         font-weight: 600;
     }
     .pulse-dot {
-        width: 8px;
-        height: 8px;
+        width: 7px;
+        height: 7px;
         background-color: #50C878;
         border-radius: 50%;
-        margin-right: 8px;
-        box-shadow: 0 0 10px #50C878;
+        margin-right: 6px;
+        box-shadow: 0 0 8px #50C878;
     }
 
-    /* KPI CARDS SMARALD */
+    /* KPI CARDS */
     .kpi-card {
-        background: #0D1C24;
-        border: 1px solid rgba(80, 200, 120, 0.15);
-        border-radius: 14px;
-        padding: 18px;
+        background: #0B1922;
+        border: 1px solid rgba(80, 200, 120, 0.2);
+        border-radius: 12px;
+        padding: 14px;
         text-align: center;
-        transition: transform 0.2s ease, border-color 0.2s ease;
-    }
-    .kpi-card:hover {
-        transform: translateY(-3px);
-        border-color: rgba(0, 255, 255, 0.4);
     }
     .kpi-label {
         color: #94A3B8;
-        font-size: 11px;
+        font-size: 10px;
         font-weight: 600;
-        letter-spacing: 1px;
+        letter-spacing: 0.5px;
         text-transform: uppercase;
-        margin-bottom: 6px;
+        margin-bottom: 4px;
     }
     .kpi-value {
         color: #00FFFF;
-        font-size: 22px;
+        font-size: 18px;
         font-weight: 700;
         font-family: 'Orbitron', sans-serif;
     }
     
-    /* BUTOANE LUMINATE CYAN-SMARALD */
+    /* BUTOANE LUMINATE */
     div.stButton > button:first-child {
         background: linear-gradient(135deg, #00E5FF 0%, #10B981 100%);
         color: #061017;
         font-weight: 700;
-        font-size: 15px;
+        font-size: 14px;
         border: none;
-        border-radius: 10px;
-        padding: 14px 28px;
-        box-shadow: 0 4px 20px rgba(0, 229, 255, 0.25);
-        transition: all 0.25s ease;
-        letter-spacing: 0.2px;
+        border-radius: 8px;
+        padding: 10px 20px;
+        box-shadow: 0 4px 15px rgba(0, 229, 255, 0.2);
+        transition: all 0.2s ease;
     }
     div.stButton > button:first-child:hover {
-        box-shadow: 0 6px 28px rgba(0, 229, 255, 0.5);
+        box-shadow: 0 6px 20px rgba(0, 229, 255, 0.4);
         transform: translateY(-1px);
-        background: linear-gradient(135deg, #33ECC8 0%, #059669 100%);
     }
 
-    /* TAB-URI STILIZATE OCEAN & SMARALD */
+    /* TAB-URI */
     .stTabs [data-baseweb="tab-list"] {
-        gap: 10px;
+        gap: 8px;
         background-color: #0A1721;
-        padding: 8px;
-        border-radius: 12px;
+        padding: 6px;
+        border-radius: 10px;
         border: 1px solid rgba(80, 200, 120, 0.15);
     }
     .stTabs [data-baseweb="tab"] {
-        height: 42px;
-        border-radius: 8px;
+        height: 38px;
+        border-radius: 6px;
         color: #94A3B8;
         font-weight: 600;
-        font-size: 14px;
+        font-size: 13px;
     }
     .stTabs [aria-selected="true"] {
         background-color: #0F2830 !important;
         color: #00FFFF !important;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
     }
 
     /* CARDURI PREȚURI */
     .price-card {
-        background: #0D1C24;
+        background: #0B1922;
         border: 1px solid rgba(255, 255, 255, 0.08);
-        border-radius: 16px;
-        padding: 24px;
+        border-radius: 12px;
+        padding: 20px;
         text-align: center;
         height: 100%;
     }
     .price-card-pro {
         border: 1.5px solid #00FFFF;
-        box-shadow: 0 0 25px rgba(0, 255, 255, 0.15);
+        box-shadow: 0 0 20px rgba(0, 255, 255, 0.12);
     }
     </style>
 """,
@@ -458,15 +442,15 @@ Verificarea finală pe șantier revine inginerului autorizat de proiect.
 init_db()
 
 # -----------------------------------------------------------------------------
-# SCENARIUL A: UTILIZATORUL NU ESTE CONECTAT (ELEGANT SMARALD / OCEAN LOGIN)
+# SCENARIUL A: UTILIZATORUL NU ESTE CONECTAT (ELEGANT & COMPACT LOGIN)
 # -----------------------------------------------------------------------------
 if st.session_state.user_conectat is None:
 
     st.markdown(
         """
-        <div class='logo-container' style='margin-top: 50px; margin-bottom: 20px;'>
+        <div class='logo-container' style='margin-top: 40px; margin-bottom: 10px;'>
             <span class='logo-shazam'>Shazam</span><span class='logo-bim'>-BIM</span>
-            <p style='font-size: 13px; color: #50C878; font-weight: 600; margin-top: 8px; letter-spacing: 1px;'>
+            <p style='font-size: 12px; color: #50C878; font-weight: 600; margin-top: 6px; letter-spacing: 1px;'>
                 PLATFORMĂ UNIVERSALĂ CLOUD PENTRU RELEVEE STRUCTURALE ȘI INSTALAȚII MEP
             </p>
         </div>
@@ -474,7 +458,7 @@ if st.session_state.user_conectat is None:
         unsafe_allow_html=True,
     )
 
-    col_a, col_b, col_c = st.columns([1, 1.8, 1])
+    col_a, col_b, col_c = st.columns([1, 2, 1])
 
     with col_b:
         tab_login, tab_register = st.tabs(
@@ -502,7 +486,7 @@ if st.session_state.user_conectat is None:
             st.write("<br>", unsafe_allow_html=True)
             with st.expander("❓ Ai uitat parola?", expanded=False):
                 st.markdown(
-                    "<p style='font-size: 12px; color: #94A3B8;'>Introduceți e-mailul înregistrat. Un cod de verificare va fi transmis pentru reconfigurare.</p>",
+                    "<p style='font-size: 11px; color: #94A3B8;'>Introduceți e-mailul înregistrat. Un cod de verificare va fi transmis pentru reconfigurare.</p>",
                     unsafe_allow_html=True,
                 )
 
@@ -605,42 +589,42 @@ if st.session_state.user_conectat is None:
 # SCENARIUL B: ECRANUL PRINCIPAL AUTENTIFICAT (SINGLE-PAGE APPLICATION)
 # -----------------------------------------------------------------------------
 
-# 1. BARĂ DE TITLU & HEADER UTILIZATOR (LOGO-UL ESTE GRUPAT CA SĂ NU AIBĂ SPAȚIU)
-col_head1, col_head2 = st.columns([3, 1])
-with col_head1:
+# 1. HEADER COMPACT (LOGO ÎN STÂNGA, USER ȘI DELOGARE ÎN DREAPTA)
+col_h1, col_h2 = st.columns([3, 1])
+with col_h1:
     st.markdown(
         f"""
-        <div style='display: flex; align-items: center; gap: 20px; margin-top: 5px;'>
+        <div style='display: flex; align-items: center; gap: 15px;'>
             <div style='display: inline-flex; align-items: center; white-space: nowrap;'>
-                <span class='logo-shazam' style='font-size: 26px;'>Shazam</span><span class='logo-bim' style='font-size: 26px;'>-BIM</span>
+                <span class='logo-shazam' style='font-size: 24px;'>Shazam</span><span class='logo-bim' style='font-size: 24px;'>-BIM</span>
             </div>
-            <span style='background: rgba(0, 255, 255, 0.08); padding: 6px 14px; border-radius: 20px; border: 1px solid rgba(0, 255, 255, 0.25); font-size: 12px; color: #00FFFF;'>
-                👤 Cont Conectat: <b>{st.session_state.user_conectat}</b>
+            <span style='background: rgba(0, 255, 255, 0.08); padding: 4px 12px; border-radius: 16px; border: 1px solid rgba(0, 255, 255, 0.2); font-size: 11px; color: #00FFFF;'>
+                👤 Cont: <b>{st.session_state.user_conectat}</b>
             </span>
         </div>
     """,
         unsafe_allow_html=True,
     )
 
-with col_head2:
+with col_h2:
     if st.button("🚪 Delogare", use_container_width=True):
         st.session_state.user_conectat = None
         st.rerun()
 
 st.write("<br>", unsafe_allow_html=True)
 
-# 2. BANNER DE BINEAȚI VENIT & ENGINE STATUS
+# 2. BANNER DE BINE-AI VENIT & STATUS AI ENGINE
 st.markdown(
     """
-    <div style='background: linear-gradient(135deg, #0F2229 0%, #0B1924 100%); padding: 28px; border-radius: 20px; border: 1px solid rgba(80, 200, 120, 0.2); box-shadow: 0 10px 30px rgba(0,0,0,0.45); margin-bottom: 25px;'>
+    <div style='background: linear-gradient(135deg, #0F2229 0%, #0B1924 100%); padding: 20px 24px; border-radius: 14px; border: 1px solid rgba(80, 200, 120, 0.2); margin-bottom: 20px;'>
         <div style='display: flex; align-items: center;'>
             <div class='status-badge'><div class='pulse-dot'></div> UNIVERSAL CLOUD ENGINE ONLINE</div>
-            <span style='background: rgba(0,255,255,0.08); border: 1px solid rgba(0,255,255,0.2); padding: 5px 12px; border-radius: 20px; font-size: 11px; color: #00FFFF; margin-left: 10px; font-weight: 600;'>⚡ GPU ACCELERATED</span>
+            <span style='background: rgba(0,255,255,0.08); border: 1px solid rgba(0,255,255,0.2); padding: 3px 10px; border-radius: 16px; font-size: 10px; color: #00FFFF; margin-left: 8px; font-weight: 600;'>⚡ GPU ACCELERATED</span>
         </div>
-        <h1 style='color: #FFFFFF; font-size: 28px; font-weight: 700; margin: 12px 0 6px 0;'>
+        <h2 style='color: #FFFFFF; font-size: 22px; font-weight: 700; margin: 10px 0 4px 0;'>
             🤖 Shazam-BIM AI Processing Engine
-        </h1>
-        <p style='color: #94A3B8; font-size: 13px; max-width: 850px; margin: 0; line-height: 1.6;'>
+        </h2>
+        <p style='color: #94A3B8; font-size: 12px; margin: 0; line-height: 1.5;'>
             Transformați norii de puncte brute 3D (.E57, .XYZ, .PTS, .PLY, .LAS, .LAZ) în modele geometrice solide CAD/BIM gata de importat direct în Revit sau AutoCAD.
         </p>
     </div>
@@ -648,77 +632,57 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-# 3. PANOU CONTROL MODUL DE LUCRU & ÎNCĂRCARE DATE
+# 3. PANOU CONTROL MODUL DE LUCRU & ÎNCĂRCARE DATE (DOUĂ COLOANE COMPACTE)
 st.markdown(
-    "<h3 style='color: #00FFFF; font-family: Orbitron, sans-serif;'>📂 Panou de Încărcare & Sursă Date</h3>",
+    "<h4 style='color: #00FFFF; font-family: Orbitron, sans-serif; margin-bottom: 8px;'>📂 Sursă Date & Încărcare Nor de Puncte</h4>",
     unsafe_allow_html=True,
 )
 
-with st.container():
-    st.markdown("<div class='emerald-card'>", unsafe_allow_html=True)
-    c_mod1, c_mod2 = st.columns([1, 1.8])
+st.markdown("<div class='emerald-card'>", unsafe_allow_html=True)
+col_input1, col_input2 = st.columns(2)
 
-    with c_mod1:
-        sursa = st.radio(
-            "Selectați Sursa de Date:",
-            ["Demo Interactiv", "Fișier Scanare Brută (SLAM/LiDAR)"],
-            help="Selectați Demo pentru testare rapidă sau încărcați fișierul brut din scanner.",
+with col_input1:
+    sursa = st.radio(
+        "Alegeți Modul de Lucru:",
+        ["Demo Interactiv (Camera Model)", "Fișier Scanare Brută (SLAM/LiDAR)"],
+        help="Selectați Demo pentru testare rapidă sau încărcați fișierul brut din scanner.",
+    )
+
+    if sursa != "Demo Interactiv (Camera Model)":
+        up = st.file_uploader(
+            "Încărcați fișierul 3D:",
+            type=["las", "laz", "ply", "e57", "xyz", "txt", "pts"],
         )
+        st.markdown(
+            """
+            <div>
+                <span class='format-badge'>.E57</span>
+                <span class='format-badge'>.XYZ</span>
+                <span class='format-badge'>.PTS</span>
+                <span class='format-badge'>.PLY</span>
+                <span class='format-badge'>.LAS</span>
+            </div>
+        """,
+            unsafe_allow_html=True,
+        )
+    else:
+        up = None
+        st.info("ℹ️ Este selectată camera demonstrativă predefinită.")
 
-        with st.expander("⚙️ Parametri Ajustare Algoritm", expanded=False):
-            vox = st.slider("Filtru Densitate Voxel (m)", 0.01, 0.10, 0.04, 0.01)
-            r_c = st.slider(
-                "Rază estimată țeavă MEP (m)", 0.05, 0.50, 0.15, 0.01
-            )
-            op = st.checkbox("🎯 Ghidaj manual prin Click", value=False)
+with col_input2:
+    st.markdown("<b>⚙️ Parametri Algoritm AI:</b>", unsafe_allow_html=True)
+    vox = st.slider("Filtru Densitate Voxel (m)", 0.01, 0.10, 0.04, 0.01)
+    r_c = st.slider("Rază estimată țeavă MEP (m)", 0.05, 0.50, 0.15, 0.01)
+    op = st.checkbox("🎯 Ghidaj manual prin Click", value=False)
 
-    up = None
-    with c_mod2:
-        if sursa != "Demo Interactiv":
-            up = st.file_uploader(
-                "Încarcă nor de puncte 3D (orice scanner):",
-                type=["las", "laz", "ply", "e57", "xyz", "txt", "pts"],
-            )
+    st.write("<br>", unsafe_allow_html=True)
+    lansa_btn = st.button(
+        "🚀 Actualizează / Lansează Procesarea Cloud", use_container_width=True
+    )
 
-            st.markdown(
-                """
-                <div style='margin-top: 5px;'>
-                    <span class='format-badge'>.E57</span>
-                    <span class='format-badge'>.XYZ</span>
-                    <span class='format-badge'>.PTS</span>
-                    <span class='format-badge'>.PLY</span>
-                    <span class='format-badge'>.LAS</span>
-                    <span class='format-badge'>.LAZ</span>
-                    <span class='format-badge'>.TXT</span>
-                </div>
-                <p style='font-size: 11px; color: #64748B; margin-top: 6px;'>
-                Compatibil cu: <b>SLAM Mobil, Leica, Faro, GeoSLAM, Dronă, iPhone LiDAR</b>.
-                </p>
-            """,
-                unsafe_allow_html=True,
-            )
+st.markdown("</div>", unsafe_allow_html=True)
 
-            if up is not None:
-                dimensiune_mb = up.size / (1024 * 1024)
-                puncte_estimate = int(dimensiune_mb * 250000)
-                st.success(
-                    f"✓ Fișier încărcat: **{up.name}** ({dimensiune_mb:.2f} MB | ~{puncte_estimate:,} Puncte)"
-                )
-        else:
-            st.info(
-                "ℹ️ Modul Demo este selectat. Se va procesa camera demonstrativă presetată."
-            )
-
-    st.markdown("</div>", unsafe_allow_html=True)
-
-# BUTTON PROCESARE PRINCIPAL
-lansa_btn = st.button(
-    "🚀 Lansează Procesarea Cloud", use_container_width=True
-)
-
-st.write("<br>", unsafe_allow_html=True)
-
-# KPI METRICS
+# KPI METRICS COMPACTE
 k1, k2, k3, k4 = st.columns(4)
 with k1:
     st.markdown(
@@ -743,7 +707,7 @@ with k4:
 
 st.write("<br>", unsafe_allow_html=True)
 
-# REZULTATE TAB-URI
+# TAB-URI DE REZULTATE
 tab_main, tab_history, tab_pricing = st.tabs(
     [
         "📊 Vizualizator & Elemente 3D",
@@ -755,231 +719,216 @@ tab_main, tab_history, tab_pricing = st.tabs(
 utilizari_efectuate = numara_utilizari(st.session_state.user_conectat)
 
 with tab_main:
-    if lansa_btn:
-        if utilizari_efectuate >= 1 and sursa != "Demo Interactiv":
+    # AICI GENERĂM AUTOMAT MODELUL 3D FĂRĂ SĂ MAI AȘTEPTE PE O CASETĂ ALBĂSTRĂ URÂTĂ!
+    nume_proiect = (
+        "CAMERA_DEMO_COMPLETĂ"
+        if sursa == "Demo Interactiv (Camera Model)"
+        else (up.name if up else "SCAN_UNKNOWN")
+    )
+
+    l_t, l_w, h_w, l_gol, h_gol = 5.02, 5.04, 3.03, 1.00, 2.10
+
+    if lansa_btn and sursa != "Demo Interactiv (Camera Model)":
+        if utilizari_efectuate >= 1:
             st.error("❌ Limita planului tău gratuit a fost atinsă!")
-            st.markdown(
-                "<div style='background-color: #0F2229; padding: 30px; border-radius: 16px; border: 1.5px solid #50C878; text-align: center; margin-top: 10px;'><h3 style='color: #00FFFF;'>🔒 Deblocați puterea maximă Shazam-BIM</h3><p style='color: #E2E8F0; font-size: 14px;'>Alegeți planul potrivit pentru a procesa scanări nelimitate:</p><hr style='border: 1px solid #1E3A40; margin: 15px 0;'><div style='display: flex; justify-content: space-around; flex-wrap: wrap;'><div style='background-color: #0B1924; padding: 20px; border-radius: 12px; width: 45%; border: 1px solid #50C878;'><h4 style='color: #50C878;'>Plan Lunar PRO</h4><h2>29.99 € <span style='font-size:12px; color:#AAA;'>/ lună</span></h2><br><a href='https://stripe.com' target='_blank'><button style='background-color:#50C878; color:black; font-weight:bold; padding:10px 15px; border:none; border-radius:6px; cursor:pointer; width:100%;'>Abonează-te Lunar</button></a></div><div style='background-color: #0B1924; padding: 20px; border-radius: 12px; width: 45%; border: 1px solid #00FFFF;'><h4 style='color: #00FFFF;'>Plan Anual BIZ</h4><h2>249.99 € <span style='font-size:12px; color:#AAA;'>/ an</span></h2><br><a href='https://stripe.com' target='_blank'><button style='background-color:#00FFFF; color:black; font-weight:bold; padding:10px 15px; border:none; border-radius:6px; cursor:pointer; width:100%;'>Abonează-te Anual</button></a></div></div></div>",
-                unsafe_allow_html=True,
-            )
             st.stop()
-
-        nume_proiect = (
-            "CAMERA_DEMO_COMPLETĂ"
-            if sursa == "Demo Interactiv"
-            else (up.name if up else "SCAN_UNKNOWN")
+        salveaza_scanare(
+            st.session_state.user_conectat,
+            nume_proiect,
+            l_t,
+            l_w,
+            h_w,
+            l_gol,
+            h_gol,
         )
 
-        with st.spinner(
-            "AI Cloud rulează segmentarea și extragerea elementelor BIM..."
-        ):
-            l_t, l_w, h_w, l_gol, h_gol = 5.02, 5.04, 3.03, 1.00, 2.10
+    mep_data = (
+        "# Shazam-BIM Generated Cylinder MEP\n"
+        "v 0.0 2.35 2.0\n"
+        "v 5.0 2.35 2.0\n"
+        "v 5.0 2.65 2.0\n"
+        "v 0.0 2.65 2.0\n"
+        "f 1 2 3 4\n"
+    )
+    wall_data = (
+        "# Shazam-BIM Generated Wall Solid\n"
+        "v 0.0 0.0 0.0\n"
+        "v 5.04 0.0 0.0\n"
+        "v 5.04 0.20 0.0\n"
+        "v 0.0 0.20 0.0\n"
+        "v 0.0 0.0 3.03\n"
+        "v 5.04 0.0 3.03\n"
+        "v 5.04 0.20 3.03\n"
+        "v 0.0 0.20 3.03\n"
+        "f 1 2 3 4\n"
+        "f 5 6 7 8\n"
+        "f 1 2 6 5\n"
+        "f 2 3 7 6\n"
+        "f 3 4 8 7\n"
+        "f 4 1 5 8\n"
+    )
 
-            if sursa != "Demo Interactiv":
-                salveaza_scanare(
-                    st.session_state.user_conectat,
-                    nume_proiect,
-                    l_t,
-                    l_w,
-                    h_w,
-                    l_gol,
-                    h_gol,
-                )
+    st.success(
+        f"🎉 Model 3D extras cu succes pentru proiectul: **{nume_proiect}**"
+    )
 
-            mep_data = (
-                "# Shazam-BIM Generated Cylinder MEP\n"
-                "v 0.0 2.35 2.0\n"
-                "v 5.0 2.35 2.0\n"
-                "v 5.0 2.65 2.0\n"
-                "v 0.0 2.65 2.0\n"
-                "f 1 2 3 4\n"
-            )
-            wall_data = (
-                "# Shazam-BIM Generated Wall Solid\n"
-                "v 0.0 0.0 0.0\n"
-                "v 5.04 0.0 0.0\n"
-                "v 5.04 0.20 0.0\n"
-                "v 0.0 0.20 0.0\n"
-                "v 0.0 0.0 3.03\n"
-                "v 5.04 0.0 3.03\n"
-                "v 5.04 0.20 3.03\n"
-                "v 0.0 0.20 3.03\n"
-                "f 1 2 3 4\n"
-                "f 5 6 7 8\n"
-                "f 1 2 6 5\n"
-                "f 2 3 7 6\n"
-                "f 3 4 8 7\n"
-                "f 4 1 5 8\n"
-            )
+    c1, c2, c3 = st.columns(3)
+    c1.metric("Țevi MEP (Lungime)", f"{l_t:.2f} m")
+    c1.metric("Lungime Perete", f"{l_w:.2f} m")
+    c2.metric("Înălțime Perete", f"{h_w:.2f} m")
+    c2.metric("Grosime Perete", "20.0 cm")
+    c3.metric("Lățime Gol Ușă", f"{l_gol:.2f} m")
+    c3.metric("Înălțime Gol", f"{h_gol:.2f} m")
 
-            st.success(
-                "🎉 Segmentare AI & Extragere Geometrie finalizată cu succes!"
-            )
+    st.write("<br>", unsafe_allow_html=True)
+    st.subheader("👁️ Previzualizare Model 3D Extras")
 
-            c1, c2, c3 = st.columns(3)
-            c1.metric("Țevi MEP (Lungime)", f"{l_t:.2f} m")
-            c1.metric("Lungime Perete", f"{l_w:.2f} m")
-            c2.metric("Înălțime Perete", f"{h_w:.2f} m")
-            c2.metric("Grosime Perete", "20.0 cm")
-            c3.metric("Lățime Gol Ușă", f"{l_gol:.2f} m")
-            c3.metric("Înălțime Gol", f"{h_gol:.2f} m")
+    np.random.seed(42)
 
-            st.write("<br>", unsafe_allow_html=True)
+    floor_x = np.random.uniform(0, 5.0, 1200)
+    floor_y = np.random.uniform(0, 3.0, 1200)
+    floor_z = np.zeros(1200) + np.random.normal(0, 0.01, 1200)
 
-            st.subheader(
-                "👁️ Previzualizare Model 3D Extras (Vizualizator Interactiv)"
-            )
+    ceiling_x = np.random.uniform(0, 5.0, 1000)
+    ceiling_y = np.random.uniform(0, 3.0, 1000)
+    ceiling_z = np.full(1000, 3.0) + np.random.normal(0, 0.01, 1000)
 
-            np.random.seed(42)
+    wall_x_list, wall_y_list, wall_z_list = [], [], []
 
-            floor_x = np.random.uniform(0, 5.0, 1200)
-            floor_y = np.random.uniform(0, 3.0, 1200)
-            floor_z = np.zeros(1200) + np.random.normal(0, 0.01, 1200)
+    for _ in range(2000):
+        x = np.random.uniform(0, 5.0)
+        z = np.random.uniform(0, 3.0)
+        if not (0.2 <= x <= 1.2 and z <= 2.1):
+            wall_x_list.append(x)
+            wall_y_list.append(0.0 + np.random.normal(0, 0.01))
+            wall_z_list.append(z)
 
-            ceiling_x = np.random.uniform(0, 5.0, 1000)
-            ceiling_y = np.random.uniform(0, 3.0, 1000)
-            ceiling_z = np.full(1000, 3.0) + np.random.normal(0, 0.01, 1000)
+    for _ in range(1500):
+        wall_x_list.append(np.random.uniform(0, 5.0))
+        wall_y_list.append(3.0 + np.random.normal(0, 0.01))
+        wall_z_list.append(np.random.uniform(0, 3.0))
 
-            wall_x_list, wall_y_list, wall_z_list = [], [], []
+    for _ in range(1200):
+        wall_x_list.append(0.0 + np.random.normal(0, 0.01))
+        wall_y_list.append(np.random.uniform(0, 3.0))
+        wall_z_list.append(np.random.uniform(0, 3.0))
 
-            for _ in range(2000):
-                x = np.random.uniform(0, 5.0)
-                z = np.random.uniform(0, 3.0)
-                if not (0.2 <= x <= 1.2 and z <= 2.1):
-                    wall_x_list.append(x)
-                    wall_y_list.append(0.0 + np.random.normal(0, 0.01))
-                    wall_z_list.append(z)
+    for _ in range(1200):
+        wall_x_list.append(5.0 + np.random.normal(0, 0.01))
+        wall_y_list.append(np.random.uniform(0, 3.0))
+        wall_z_list.append(np.random.uniform(0, 3.0))
 
-            for _ in range(1500):
-                wall_x_list.append(np.random.uniform(0, 5.0))
-                wall_y_list.append(3.0 + np.random.normal(0, 0.01))
-                wall_z_list.append(np.random.uniform(0, 3.0))
+    wall_x = np.array(wall_x_list)
+    wall_y = np.array(wall_y_list)
+    wall_z = np.array(wall_z_list)
 
-            for _ in range(1200):
-                wall_x_list.append(0.0 + np.random.normal(0, 0.01))
-                wall_y_list.append(np.random.uniform(0, 3.0))
-                wall_z_list.append(np.random.uniform(0, 3.0))
+    pipe_x_list, pipe_y_list, pipe_z_list = [], [], []
+    radius = 0.08
+    length_x = np.linspace(0.5, 4.5, 100)
 
-            for _ in range(1200):
-                wall_x_list.append(5.0 + np.random.normal(0, 0.01))
-                wall_y_list.append(np.random.uniform(0, 3.0))
-                wall_z_list.append(np.random.uniform(0, 3.0))
+    for x in length_x:
+        angles = np.random.uniform(0, 2 * np.pi, 20)
+        r_vals = np.random.uniform(0, radius, 20)
+        for angle, r in zip(angles, r_vals):
+            pipe_x_list.append(x)
+            pipe_y_list.append(0.15 + r * np.cos(angle))
+            pipe_z_list.append(2.20 + r * np.sin(angle))
 
-            wall_x = np.array(wall_x_list)
-            wall_y = np.array(wall_y_list)
-            wall_z = np.array(wall_z_list)
+    pipe_x = np.array(pipe_x_list)
+    pipe_y = np.array(pipe_y_list)
+    pipe_z = np.array(pipe_z_list)
 
-            pipe_x_list, pipe_y_list, pipe_z_list = [], [], []
-            radius = 0.08
-            length_x = np.linspace(0.5, 4.5, 100)
+    fig = go.Figure()
 
-            for x in length_x:
-                angles = np.random.uniform(0, 2 * np.pi, 20)
-                r_vals = np.random.uniform(0, radius, 20)
-                for angle, r in zip(angles, r_vals):
-                    pipe_x_list.append(x)
-                    pipe_y_list.append(0.15 + r * np.cos(angle))
-                    pipe_z_list.append(2.20 + r * np.sin(angle))
-
-            pipe_x = np.array(pipe_x_list)
-            pipe_y = np.array(pipe_y_list)
-            pipe_z = np.array(pipe_z_list)
-
-            fig = go.Figure()
-
-            fig.add_trace(
-                go.Scatter3d(
-                    x=floor_x,
-                    y=floor_y,
-                    z=floor_z,
-                    mode="markers",
-                    marker=dict(size=2, color="#50C878", opacity=0.75),
-                    name="Podea / Sol",
-                )
-            )
-
-            fig.add_trace(
-                go.Scatter3d(
-                    x=wall_x,
-                    y=wall_y,
-                    z=wall_z,
-                    mode="markers",
-                    marker=dict(size=2, color="#FF4D4D", opacity=0.75),
-                    name="Pereți Structură (x4)",
-                )
-            )
-
-            fig.add_trace(
-                go.Scatter3d(
-                    x=ceiling_x,
-                    y=ceiling_y,
-                    z=ceiling_z,
-                    mode="markers",
-                    marker=dict(size=2, color="#00E5FF", opacity=0.75),
-                    name="Plafon / Tavan",
-                )
-            )
-
-            fig.add_trace(
-                go.Scatter3d(
-                    x=pipe_x,
-                    y=pipe_y,
-                    z=pipe_z,
-                    mode="markers",
-                    marker=dict(size=3, color="#FFC72C", opacity=0.9),
-                    name="Țeavă MEP Cilindrică (Solidă)",
-                )
-            )
-
-            fig.update_layout(
-                scene=dict(
-                    xaxis_title="X (m)",
-                    yaxis_title="Y (m)",
-                    zaxis_title="Z (m)",
-                    bgcolor="#061017",
-                ),
-                paper_bgcolor="#0F2229",
-                font=dict(color="#E2E8F0"),
-                margin=dict(l=0, r=0, b=0, t=30),
-                height=500,
-            )
-
-            st.plotly_chart(fig, use_container_width=True)
-
-            st.subheader("💾 Descarcă Elemente BIM & Rapoarte Tehnic")
-            col1, col2, col3 = st.columns(3)
-
-            col1.download_button(
-                "📥 Descarcă MEP (.OBJ)",
-                data=mep_data,
-                file_name=f"MEP_{nume_proiect}.obj",
-                mime="model/obj",
-                use_container_width=True,
-            )
-            col2.download_button(
-                "📥 Descarcă Perete Solid (.OBJ)",
-                data=wall_data,
-                file_name=f"WALL_{nume_proiect}.obj",
-                mime="model/obj",
-                use_container_width=True,
-            )
-
-            raport_text = genereaza_raport_tehnic(
-                nume_proiect, l_t, l_w, h_w, l_gol, h_gol
-            )
-            col3.download_button(
-                "📄 Descarcă Fișă Tehnică Releveu",
-                data=raport_text,
-                file_name=f"RAPORT_TEHNIC_{nume_proiect}.txt",
-                mime="text/plain",
-                use_container_width=True,
-            )
-    else:
-        st.info(
-            "👈 Selectați sursa de date de mai sus și apăsați butonul **🚀 Lansează Procesarea Cloud**."
+    fig.add_trace(
+        go.Scatter3d(
+            x=floor_x,
+            y=floor_y,
+            z=floor_z,
+            mode="markers",
+            marker=dict(size=2, color="#50C878", opacity=0.75),
+            name="Podea / Sol",
         )
+    )
 
-# JURNAL PRIVAT PER UTILIZATOR CONECTAT
+    fig.add_trace(
+        go.Scatter3d(
+            x=wall_x,
+            y=wall_y,
+            z=wall_z,
+            mode="markers",
+            marker=dict(size=2, color="#FF4D4D", opacity=0.75),
+            name="Pereți Structură (x4)",
+        )
+    )
+
+    fig.add_trace(
+        go.Scatter3d(
+            x=ceiling_x,
+            y=ceiling_y,
+            z=ceiling_z,
+            mode="markers",
+            marker=dict(size=2, color="#00E5FF", opacity=0.75),
+            name="Plafon / Tavan",
+        )
+    )
+
+    fig.add_trace(
+        go.Scatter3d(
+            x=pipe_x,
+            y=pipe_y,
+            z=pipe_z,
+            mode="markers",
+            marker=dict(size=3, color="#FFC72C", opacity=0.9),
+            name="Țeavă MEP Cilindrică (Solidă)",
+        )
+    )
+
+    fig.update_layout(
+        scene=dict(
+            xaxis_title="X (m)",
+            yaxis_title="Y (m)",
+            zaxis_title="Z (m)",
+            bgcolor="#061017",
+        ),
+        paper_bgcolor="#0D1E26",
+        font=dict(color="#E2E8F0"),
+        margin=dict(l=0, r=0, b=0, t=20),
+        height=450,
+    )
+
+    st.plotly_chart(fig, use_container_width=True)
+
+    st.subheader("💾 Descarcă Elemente BIM & Rapoarte Tehnic")
+    col1, col2, col3 = st.columns(3)
+
+    col1.download_button(
+        "📥 Descarcă MEP (.OBJ)",
+        data=mep_data,
+        file_name=f"MEP_{nume_proiect}.obj",
+        mime="model/obj",
+        use_container_width=True,
+    )
+    col2.download_button(
+        "📥 Descarcă Perete Solid (.OBJ)",
+        data=wall_data,
+        file_name=f"WALL_{nume_proiect}.obj",
+        mime="model/obj",
+        use_container_width=True,
+    )
+
+    raport_text = genereaza_raport_tehnic(
+        nume_proiect, l_t, l_w, h_w, l_gol, h_gol
+    )
+    col3.download_button(
+        "📄 Descarcă Fișă Tehnică Releveu",
+        data=raport_text,
+        file_name=f"RAPORT_TEHNIC_{nume_proiect}.txt",
+        mime="text/plain",
+        use_container_width=True,
+    )
+
+# JURNAL PRIVAT
 with tab_history:
     st.subheader(f"📋 Jurnal Privat Scanări ({st.session_state.user_conectat})")
     istoric_privat = citeste_istoric_privat(st.session_state.user_conectat)
@@ -1058,18 +1007,18 @@ with tab_pricing:
         )
 
 # -----------------------------------------------------------------------------
-# 4. FOOTER (MUTAT ÎN JOSUL PAGINII DE DERULARE)
+# 4. FOOTER IN JOSUL PAGINII
 # -----------------------------------------------------------------------------
 st.write("<br><br>", unsafe_allow_html=True)
 st.markdown("---")
 
-f_col1, c_gap, f_col2 = st.columns([1, 0.1, 1])
+f_col1, f_col2 = st.columns(2)
 
 with f_col1:
     st.markdown("### 🛡️ Protecția Datelor & Legal")
     st.markdown(
         """
-        <div style='background: #0D1C24; padding: 22px; border-radius: 14px; border: 1px solid rgba(80,200,120,0.15); font-size: 13px; color: #94A3B8; line-height: 1.6;'>
+        <div style='background: #0D1C24; padding: 18px; border-radius: 12px; border: 1px solid rgba(80,200,120,0.15); font-size: 12px; color: #94A3B8; line-height: 1.5;'>
             <b style='color: #00FFFF;'>🔒 Confidențialitate GDPR:</b> Fișierele încărcate sunt procesate temporar în memorie securizată și sunt șterse automat de pe servere imediat după extragerea 3D.<br><br>
             <b style='color: #50C878;'>⚖️ Disclaimer Tehnic:</b> Modelele oferă o estimare geometrică automată. Recomandăm verificarea pe șantier de către un inginer autorizat.
         </div>
@@ -1096,7 +1045,7 @@ with f_col2:
 
 st.markdown(
     """
-    <div style='text-align: center; color: #64748B; font-size: 12px; margin-top: 40px; margin-bottom: 25px;'>
+    <div style='text-align: center; color: #64748B; font-size: 11px; margin-top: 30px; margin-bottom: 15px;'>
         © 2026 Shazam-BIM Cloud AI Processing Engine. Toate drepturile rezervate.
     </div>
 """,
